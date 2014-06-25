@@ -21,9 +21,7 @@ class Admin_control_panel extends CI_Controller {
 		$this->data['title'] .= 'Админ-панель';
 
 		$center_block = $this->last_users();
-		$center_block .= $this->last_products(0);
-		$center_block .= $this->last_products(1);
-		$center_block .= $this->last_orders();
+		//$center_block .= $this->last_orders();
 
 		$this->data['header'] = false;
 
@@ -128,50 +126,6 @@ class Admin_control_panel extends CI_Controller {
 		))
 			->create(function($CI) {
 				return $CI->db->select('*, active as status')->limit($CI->data['limit'])->order_by('id', 'desc')->get('users');
-			});
-
-		return $this->load->view(ADM_FOLDER.'s_page', $this->data, true);
-	}
-
-	private function last_products($status = false, $limit = 5) {
-		$this->load->model(ADM_FOLDER.'admin_product_model');
-		$product_categories = $this->admin_product_model->get_product_categories();
-		if ($status == 0) {
-			$this->data['header'] = 'Последние товары на модерацию';
-		} elseif ($status == 1) {
-			$this->data['header'] = 'Последние активные товары';
-		} else {
-			$this->data['header'] = 'Последние товары';
-		}
-		$this->data['limit']  = $limit;
-		$this->MAIN_URL       = ADM_URL.'manage_product/';
-		$this->data['status'] = $status;
-
-		$this->load->library('table');
-		$this->data['center_block'] = $this->table
-			->text('name', array(
-				'title'   => 'Имя',
-				'p_width' => 50
-			))
-			->text('cat_id', array(
-				'title' => 'Категория',
-				'extra' => $product_categories ,
-				'func'  => function($row, $params) {
-					if (isset($params['extra'][$row['cat_id']]['name'])) {
-						return '<span class="label label-info">'.$params['extra'][$row['cat_id']]['name'].'</span>';
-					} else {
-						return '<span class="label label-warning">Отсутствует</span>';
-					}
-				}
-		))
-			->date('add_date', array(
-				'title' => 'Дата создания'
-			))
-			->edit(array('link' => $this->MAIN_URL.'edit/%d'))
-			->delete(array('link' => $this->MAIN_URL.'delete/%d', 'modal' => 1))
-			->create(function($CI) {
-				$CI->db->limit($CI->data['limit']);
-				return $CI->admin_product_model->get_all_products($CI->data['status']);
 			});
 
 		return $this->load->view(ADM_FOLDER.'s_page', $this->data, true);
