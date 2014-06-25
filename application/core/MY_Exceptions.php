@@ -13,14 +13,12 @@ class MY_Exceptions extends CI_Exceptions {
 		parent::__construct();
 		$CI->load->model(array(
 			'menu_model',
-			'shop_model',
 		));
 		$CI->load->library(array(
 			'session',
 			'ion_auth',
 		));
 		$CI->data['main_menu']  = $CI->menu_model->get_menu('upper');
-		$CI->data['left_block'] = $CI->shop_model->get_categories();
 		// do what you want here, even db stuff or just 
 		// load your template with a custom 404
 
