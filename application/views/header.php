@@ -24,28 +24,12 @@
 		<title><?php echo !empty($title) ? $title : SITE_NAME ?></title>
 
 	</head>
-	<body>
+	<body<?php echo $_SERVER['REQUEST_URI'] == '/' ? ' class="main_page"' : ''?>>
 		<div class="top_block">
 			<div class="container">
 				<div class="row">
-					<div class="col-md-3 relative">
-						<div class="lang_block dropdown">
-							<?php $langs = array('en' => 'Eng', 'ru' => 'Rus')?>
-							<a href="#" data-toggle="dropdown" class="dropdown current"><?php echo $langs[$this->config->item('lang_abbr')]?></a>
-							<ul class="dropdown-menu">
-								<?php foreach($langs as $abbr => $lang) {
-									$current = $this->config->item('lang_abbr');
-									if (strpos(current_url(), '/'.$current.'/') !== false) {
-										$link = str_replace('/'.$current.'/', '/'.$abbr.'/', current_url());
-									} else {
-										$link = base_url($abbr != 'en' ? $abbr : '');
-									}
-								?>
-									<li><a href="<?php echo $link?>"><?php echo $lang ?></a></li>
-								<?php }?>
-							</ul>
-						</div>
-						<a href="<?php echo $current == 'en' ? '/' : '/'.$current?>" class="logo"></a>
+					<div class="col-md-3">
+						<a href="/" class="logo">Plecle.com</a>
 					</div>
 					<div class="col-md-9">
 						<div class="menu">

@@ -2,7 +2,6 @@
 		<script src="/dist/js/bootstrap.min.js"></script>
 		<script src="/js/notify/pnotify.custom.min.js"></script>
 		<link href="/js/notify/pnotify.custom.min.css" media="all" rel="stylesheet" type="text/css" />
-		<script src="/js/jquery.uniform.min.js"></script>
 		<?php echo after_load('css');?>
 		<?php echo after_load('js');?>
 		<!-- The XDomainRequest Transport is included for cross-domain file deletion for IE 8 and IE 9 -->
@@ -14,11 +13,9 @@
 		$(function(){
 			$('a').tooltip();
 
-			$('input[type="radio"], input[type="checkbox"]').uniform();
-
 			if (typeof $().selectpicker === 'function') {
 				$('.selectpicker').selectpicker();
-			}	
+			}
 
 			$(document).on('click', '.modal-body form button[type="submit"]', function() {
 				var form = $('.modal-dialog').find('form');
@@ -55,90 +52,12 @@
 				}
 				if (typeof $().selectpicker === 'function') {
 					$('.selectpicker').selectpicker('render');
-				}	
-			});
-
-			//SHOPPING CART METHODS
-			$('.add_to_cart').on('click', function() {
-				var id = $(this).data('id');
-				if (typeof id === 'undefined') {
-					return false;
 				}
-				var name = $(this).data('name');
-				var link = $(this).data('href');
-				if (typeof name !== 'undefined') {
-					if (typeof link !== 'undefined') {
-						name = ' "<a href="' + link + '">' + name + '</a>"';
-					} else {
-						name = ' "' + name + '"';
-					}
-				}
-
-				$.post('<?php echo site_url('add_to_cart')?>', {id : id}).done(function(data) {
-					if ($.trim(data) == 'Noqty') {
-						new PNotify({
-							title : '<?php echo lang('product_not_added_to_cart')?>',
-							text  : '<?php echo lang('product')?> '+ name + ' <?php echo lang('product_cannot_be_bought')?> </a>',
-							type  : 'error',
-							delay : 3000,
-						});
-					} else if ($.trim(data) == 'is_seller') {
-						new PNotify({
-							title : '<?php echo lang('product_not_added_to_cart')?>',
-							text  : '<?php echo lang('product')?> '+ name + ' <?php echo lang('product_cannot_be_bought_seller')?> </a>',
-							type  : 'error',
-							delay : 3000,
-						});
-					} else {
-						new PNotify({
-							title : '<?php echo lang('product_added_to_cart')?>',
-							text  : '<?php echo lang('product')?> ' + name + ' <?php echo lang('product_succesfuly_added_to')?> <a href="<?php echo site_url('cart')?>"><?php echo lang('to_cart')?></a>',
-							icon  : 'icon-shopping-cart',
-							type  : 'success',
-							delay : 3000,
-						});
-					}
-				});
-			});
-
-			$('.left_block a').on('click', function() {
-				var li = $(this).parent();
-				if (!li.hasClass('drop')) {
-					return true;
-				}
-				var ul = li.children('ul');
-				if (ul.length === 0) {
-					return true;
-				}
-				if (li.hasClass('down')) {
-					ul.slideUp('medium');
-					li.removeClass('down');
-				} else {
-					ul.stop().slideDown('medium');
-					li.addClass('down');
-				}
-				return false;
-			});
-
-
-			var set_block_height = function() {
-				if ($(window).height() < $(document).height()) {
-					return false;
-				}
-				var center_offset = $('.center_block').offset();
-				var total_height = $(window).height() - $('.footer_block').height() + 50 - center_offset.top;
-				$('.center_block').css('min-height', total_height);
-			};
-
-			set_block_height();
-
-			$(window).resize(function() {
-				set_block_height();
 			});
 		});
-
 		</script>
 
+		<?php if ($_SERVER['REQUEST_URI'] != '/') {?>
 		<div class="footer_block">
 			<div class="container">
 				<div class="row">
@@ -154,10 +73,60 @@
 				</div>
 			</div>
 		</div>
-	
+		<?php } else {?>
+		<div class="footer_big_block">
+			<div class="container">
+				<div class="row">
+					<div class="col-md-4">
+						<div class="menu">
+							<div class="title">Услуги</div>
+							<ul>
+								<li><a href="#">Ручная уборка</a></li>
+								<li><a href="#">Влажная уборка</a></li>
+								<li><a href="#">Послепраздничная уборка</a></li>
+								<li><a href="#">Уборка спальни</a></li>
+								<li><a href="#">Уборка кухни</a></li>
+								<li><a href="#">Вынос мусора</a></li>
+							</ul>
+						</div>				
+					</div>
+					<div class="col-md-4">
+						<div class="menu">
+							<div class="title">Районы</div>
+							<ul>
+								<li><a href="#">Жовтневый район</a></li>
+								<li><a href="#">Коммунарский район</a></li>
+								<li><a href="#">Ленинский район</a></li>
+								<li><a href="#">Орджоникидзевский район</a></li>
+								<li><a href="#">Хортицкий район</a></li>
+								<li><a href="#">Шевченковский район</a></li>
+							</ul>
+						</div>				
+					</div>
+					<div class="col-md-4">
+						<div class="menu">
+							<div class="title">Справка</div>
+							<ul>
+								<li><a href="#">Как мы работаем</a></li>
+								<li><a href="#">Счастливые клиенты</a></li>
+								<li><a href="#">Наши цены</a></li>
+								<li><a href="#">Пресса</a></li>
+								<li><a href="#">FAQ</a></li>
+								<li><a href="#">Как стать горничной</a></li>
+								<li><a href="#">О компании</a></li>
+							</ul>
+						</div>				
+					</div>
+				</div>
+				<hr />
+				<div class="contact_block">Напишите нам info@plecle.com или позвоните нам 02033221136. © 2014 Plecle.com</div>
+			</div>
+		</div>
+		<?php }?>
+		
 		<div class="modal fade" id="ajaxModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 			<div class="modal-dialog">
-				  <div class="modal-content"></div>
+				<div class="modal-content"></div>
 			</div>
 		</div>
 	</body>

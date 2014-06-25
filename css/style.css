@@ -1,9 +1,9 @@
 @font-face {
 	font-family: 'CGothic';
-	src: url('../fonts/CGothic.eot');
+	src: url('../css/fonts/CGothic.eot');
 	src: local('CGothic'),
-	url('../fonts/CGothic.woff') format('woff'),
-	url('../fonts/CGothic.ttf') format('truetype')
+	url('../css/fonts/CGothic.woff') format('woff'),
+	url('../css/fonts/CGothic.ttf') format('truetype')
 }
 
 * {font-size: 12px;font-family: 'CGothic', 'Century Gothic', Verdana, Geneva, sans-serif;}

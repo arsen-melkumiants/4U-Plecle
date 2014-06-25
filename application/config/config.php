@@ -77,6 +77,8 @@ if (isset($_SERVER['QUERY_STRING']) && strpos($_SERVER['QUERY_STRING'], '4U') !=
 	$config['language']	= 'english';
 	$config['lang_abbr'] = 'en';
 }
+$config['language']	= 'russian';
+$config['lang_abbr'] = 'ru';
 
 /* set available language abbreviations */
 $config['lang_uri_abbr'] = array(
