@@ -26,7 +26,7 @@ class Admin_control_menu_model extends CI_Model
 					'1'                                  => '',
 					'manage_content/categories'          => 'Категории контента',
 				),
-				'Магазин'                                => array(
+				/*'Магазин'                                => array(
 					'manage_category'                    => 'Список категорий',
 					'1'                                  => '',
 					'manage_product'                     => 'Список всех продуктов',
@@ -42,7 +42,7 @@ class Admin_control_menu_model extends CI_Model
 					'4'                                  => '',
 					'manage_special'                     => 'Информационный контент',
 					//'manage_currency'                    => 'Список валют',
-				),
+				),*/
 				'Пользователи'                           => array(
 					'manage_user'                        => 'Список всех пользователей',
 					'manage_user/activated'              => 'Список активированных пользователей',
