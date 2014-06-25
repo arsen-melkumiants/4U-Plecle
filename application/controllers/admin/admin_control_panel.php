@@ -62,67 +62,6 @@ class Admin_control_panel extends CI_Controller {
 				'valid_rules' => 'required|trim|xss_clean|valid_email',
 				'label'       => 'Почта сайта',
 			))
-			->separator()
-			->text('WITHDRAWAL_COMMISSION', array(
-				'value'       => (defined('WITHDRAWAL_COMMISSION') ? WITHDRAWAL_COMMISSION : ''),
-				'valid_rules' => 'required|trim|xss_clean|numeric',
-				'label'       => 'Комиссия по выводу денег',
-				'width'       => '2',
-				'symbol'      => '%',
-			))
-			->select('TYPE_SALE_COMMISSION', array(
-				'value'       => (defined('TYPE_SALE_COMMISSION') ? TYPE_SALE_COMMISSION : ''),
-				'valid_rules' => 'required|trim|xss_clean',
-				'label'       => 'Тип комиссии по продаже товара',
-				'options'     => array('fixed' => 'Фиксированная', 'percent' => 'Процент'),
-			))
-			->text('SALE_COMMISSION', array(
-				'value'       => (defined('SALE_COMMISSION') ? SALE_COMMISSION : ''),
-				'valid_rules' => 'required|trim|xss_clean|numeric',
-				'label'       => 'Комиссия по продаже товара',
-				'width'       => '2',
-			))
-			->separator()
-			->text('LIFT_UP_PRICE', array(
-				'value'       => (defined('LIFT_UP_PRICE') ? LIFT_UP_PRICE : ''),
-				'valid_rules' => 'required|trim|xss_clean|numeric',
-				'label'       => 'Цена поднятия сообщения',
-				'width'       => '2',
-				'symbol'      => '$',
-				'icon_post'   => 'right',
-			))
-			->text('VIP_DAYS', array(
-				'value'       => (defined('VIP_DAYS') ? VIP_DAYS : ''),
-				'valid_rules' => 'required|trim|xss_clean|integer',
-				'label'       => 'Время жизни VIP статуса',
-				'width'       => '2',
-				'symbol'      => 'дней',
-				'icon_post'   => 'right',
-			))
-			->text('VIP_PRICE', array(
-				'value'       => (defined('VIP_PRICE') ? VIP_PRICE : ''),
-				'valid_rules' => 'required|trim|xss_clean|numeric',
-				'label'       => 'Цена VIP статуса',
-				'width'       => '2',
-				'symbol'      => '$',
-				'icon_post'   => 'right',
-			))
-			->text('MARK_DAYS', array(
-				'value'       => (defined('MARK_DAYS') ? MARK_DAYS : ''),
-				'valid_rules' => 'required|trim|xss_clean|integer',
-				'label'       => 'Время жизни выделенного статуса',
-				'width'       => '2',
-				'symbol'      => 'дней',
-				'icon_post'   => 'right',
-			))
-			->text('MARK_PRICE', array(
-				'value'       => (defined('MARK_PRICE') ? MARK_PRICE : ''),
-				'valid_rules' => 'required|trim|xss_clean|numeric',
-				'label'       => 'Цена выделенного статуса',
-				'width'       => '2',
-				'symbol'      => '$',
-				'icon_post'   => 'right',
-			))
 			->btn(array('offset' => 3, 'value' => 'Изменить'))
 			->create();
 
@@ -132,13 +71,6 @@ class Admin_control_panel extends CI_Controller {
 			$this->load->view(ADM_FOLDER.'footer', $this->data);
 		} else {
 			$data = $this->input->post();
-
-			$data['WITHDRAWAL_COMMISSION'] = abs(round($data['WITHDRAWAL_COMMISSION'], 2));
-			$data['SALE_COMMISSION']       = abs(round($data['SALE_COMMISSION'], 2));
-			$data['LIFT_UP_PRICE']         = abs(round($data['LIFT_UP_PRICE'], 2));
-			$data['VIP_PRICE']             = abs(round($data['VIP_PRICE'], 2));
-			$data['MARK_PRICE']            = abs(round($data['MARK_PRICE'], 2));
-
 			$add_sets = '';
 			foreach($data as $key => $row) {
 				if(strtolower($key) == 'submit') {

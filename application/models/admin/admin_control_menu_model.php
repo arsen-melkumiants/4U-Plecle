@@ -26,29 +26,12 @@ class Admin_control_menu_model extends CI_Model
 					'1'                                  => '',
 					'manage_content/categories'          => 'Категории контента',
 				),
-				/*'Магазин'                                => array(
-					'manage_category'                    => 'Список категорий',
-					'1'                                  => '',
-					'manage_product'                     => 'Список всех продуктов',
-					'manage_product/moderate'            => 'Продукты на модерацию',
-					'manage_product/activated'           => 'Активные продукты',
-					'manage_product/rejected'            => 'Продукты непрошедшие модерацию',
-					'2'                                  => '',
-					'manage_product/orders'              => 'Список заказов',
-					'3'                                  => '',
-					'manage_product/withdrawal_requests' => 'Заявки на вывод денег покупателя',
-					'manage_product/withdrawal_sellers'  => 'Заявки на вывод денег продавцов',
-					'manage_product/fill_up_requests'    => 'Заявки на пополнение',
-					'4'                                  => '',
-					'manage_special'                     => 'Информационный контент',
-					//'manage_currency'                    => 'Список валют',
-				),*/
 				'Пользователи'                           => array(
 					'manage_user'                        => 'Список всех пользователей',
 					'manage_user/activated'              => 'Список активированных пользователей',
 					'manage_user/inactivated'            => 'Список неактивированных пользователей',
 				),
-				'История операций'                       => array(
+				/*'История операций'                       => array(
 					'manage_history'                     => 'Все операции',
 					'manage_history/refillng'            => 'Пополнения',
 					'manage_history/withdrawing'         => 'Снятия',
@@ -58,7 +41,7 @@ class Admin_control_menu_model extends CI_Model
 					'manage_statistic'                   => 'Общая статистика',
 					'manage_statistic/paid_products'     => 'Статистика по продажам',
 					'manage_statistic/user_incomes'      => 'Статистика по выплатам',
-				),
+				),*/
 			),
 		);
 
