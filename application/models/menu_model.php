@@ -61,7 +61,7 @@ class Menu_model extends CI_Model {
 						$link = $item['item_id'];
 						$user_info = $this->ion_auth->user()->row_array();
 						$this->lang->load('auth');
-						$item['name_'.$this->config->item('lang_abbr')] = $user_info['login'].' ('.(!empty($user_info['is_seller']) ? lang('create_user_seller') : lang('create_user_buyer')).')';
+						$item['name_'.$this->config->item('lang_abbr')] = $user_info['first_name'].' ('.(!empty($user_info['is_seller']) ? lang('create_user_seller') : lang('create_user_buyer')).')';
 					} elseif ($item['item_id'] == 'balance') {
 						if (!is_object($this->ion_auth) || !$this->ion_auth->logged_in()) { 
 							return false;
@@ -76,13 +76,6 @@ class Menu_model extends CI_Model {
 					}
 				} else {
 					$link = $url.$item['alias'];
-				}
-
-				//For seller
-				if (is_object($this->ion_auth) && $this->ion_auth->logged_in()) {
-					if ($item['item_id'] == 'cart' && $this->ion_auth->user()->row()->is_seller) {
-						continue;
-					}
 				}
 
 				if ($item['type'] != 'external' || $link != '#') {

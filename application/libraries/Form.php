@@ -11,7 +11,7 @@ class Form {
 	public $ajax_mode         = false;
 
 	public $load_editor       = false;
-	
+
 	public $load_selectpicker = false;
 
 	public function __construct($grid_type = false) {
@@ -41,17 +41,17 @@ class Form {
 		}
 		return $attrs;
 	}
-	
+
 	public function func($func = false, $params = false) {
 		if (empty($func)) {
 			return $this;
 		}
-		
+
 		$this->form_data[] = array(
 			'form'   => $func,
 			'params' => $params,
 		);
-		
+
 		return $this;
 	}
 
@@ -77,8 +77,6 @@ class Form {
 
 		$params['class'] = !empty($params['class']) ? 'form-control '.$params['class'] : 'form-control';
 
-		$label = !empty($params['label']) ? '<label class="'.$this->grid_type.'-3 control-label">'.$params['label'].'</label>' : '';
-
 		$addon = '';
 		if (!empty($params['icon'])) {
 			$addon = '<i class="icon-'.$params['icon'].'"></i>';
@@ -91,6 +89,8 @@ class Form {
 		}else{
 			$params['width'] = ($this->ajax_mode && $params['width'] <= 10 ? $params['width'] + 2 : $params['width']);
 		}
+
+		$label = !empty($params['label']) ? '<label class="'.$this->grid_type.'-'.($params['width'] == 12 ? 12 : 3).' control-label">'.$params['label'].'</label>' : '';
 
 		if(empty($params['error_width'])) {
 			$params['error_width'] = !empty($params['label']) ? 12 - 3 - $params['width'] : 12 - $params['width'];
@@ -273,7 +273,7 @@ class Form {
 
 	public function create($params = false) {
 		$html = '';
-		
+
 		//js editor for textarea
 		if (file_exists(FCPATH.'dist/ckeditor/ckeditor.js') && $this->load_editor && $this->load_editor !== 'exists') {
 			$this->load_editor = 'exists';
@@ -295,8 +295,10 @@ class Form {
 		$params['action'] = $params['action'].$get_vars;
 		$params['upload'] = !empty($params['upload']) ? ' enctype="multipart/form-data"' : false;
 
-		$html .= '<form class="form-horizontal" method="'.$params['method'].'" action="'.$params['action'].'"'.$params['upload'].'>'.PHP_EOL.
-			'<div'.$params['class'].'>'.PHP_EOL;
+		if (empty($params['no_form_tag'])) {
+			$html .= '<form class="form-horizontal" method="'.$params['method'].'" action="'.$params['action'].'"'.$params['upload'].'>'.PHP_EOL;
+		}
+		$html .= '<div'.$params['class'].'>'.PHP_EOL;
 		$html .= !empty($params['title']) ? '<h3>'.$params['title'].'</h3>'.PHP_EOL : '';
 		$html .= !empty($params['info']) ? '<p>'.$params['info'].'</p>'.PHP_EOL : '';
 		foreach ($this->form_data as $item) {
@@ -310,7 +312,8 @@ class Form {
 			}
 			$group_class = !empty($item['params']['group_class']) ? ' '.$item['params']['group_class'] : '';
 			if (is_callable($item['form'])) {
-				$html .= $item['form']($item['params']);
+				$CI =& get_instance();
+				$html .= $item['form']($item['params'], $CI);
 			} elseif ($item['params']['type'] == 'hidden') {
 				$html .= $item['form'].PHP_EOL;
 			} else {
@@ -336,7 +339,10 @@ class Form {
 			$html .= '</div></div>'.PHP_EOL;
 		}
 
-		$html .= '</div>'.PHP_EOL.'</form>'.PHP_EOL;
+		$html .= '</div>'.PHP_EOL;
+		if (empty($params['no_form_tag'])) {
+			$html .= '</form>'.PHP_EOL;
+		}
 		$this->clear();
 
 		return $html;

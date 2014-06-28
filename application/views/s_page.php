@@ -1,1 +1,3 @@
-<?php echo $center_block;?>
+<div class="container">
+	<?php echo $center_block;?>
+</div>

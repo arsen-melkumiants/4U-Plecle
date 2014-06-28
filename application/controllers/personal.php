@@ -23,10 +23,8 @@ class Personal extends CI_Controller {
 
 		$this->load->model(array(
 			'menu_model',
-			'shop_model',
 		));
-		$this->data['main_menu']  = $this->menu_model->get_menu('upper');
-		$this->data['left_block'] = $this->shop_model->get_categories();
+		$this->data['main_menu']  = $this->menu_model->get_menu('main');
 
 		set_alert($this->session->flashdata('success'), false, 'success');
 		set_alert($this->session->flashdata('danger'), false, 'danger');
@@ -82,11 +80,11 @@ class Personal extends CI_Controller {
 				//$this->session->set_flashdata('danger', $this->ion_auth->errors());
 				$this->form->form_data[0]['params']['error'] = $this->ion_auth->errors();
 				$this->data['center_block'] = $this->form->create(array('action' => current_url(), 'error_inline' => 'true'));
-				load_views();	
+				load_views();
 			}
 		} else {
 			$this->data['center_block'] = $this->form->create(array('action' => current_url(), 'error_inline' => 'true'));
-			load_views();	
+			load_views();
 		}
 	}
 
@@ -128,47 +126,43 @@ class Personal extends CI_Controller {
 			redirect('', 'refresh');
 		}
 
-		$this->data['center_block'] = $this->form
-			->radio('is_seller', array(
-				'inputs'      => array(
-					'0' => lang('create_user_buyer'),
-					'1' => lang('create_user_seller'),
-				),
-				'label'       => lang('create_user_type_label'),
-				'valid_rules' => 'required|trim|xss_clean|is_natural',
-			))
-			->text('login', array('valid_rules' => 'required|trim|xss_clean|max_length[150]|is_unique[users.login]|alpha_dash',  'label' => lang('create_user_login_label')))
-			->text('username', array('valid_rules' => 'required|trim|xss_clean|max_length[150]',  'label' => lang('create_user_fname_label')))
-			->text('email', array('valid_rules' => 'required|trim|xss_clean|max_length[150]|valid_email',  'label' => lang('create_user_email_label')))
-			->password('password', array('valid_rules' => 'required|min_length[' . $this->config->item('min_password_length', 'ion_auth') . ']|max_length[' . $this->config->item('max_password_length', 'ion_auth') . ']',  'label' => $this->lang->line('create_user_password_label')))
-			->password('password_confirm', array('valid_rules' => 'required|matches[password]',  'label' => lang('create_user_password_confirm_label')))
-			->text('company', array('valid_rules' => 'required|trim|xss_clean|max_length[100]',  'label' => lang('create_user_company_label')))
-			->text('address', array('valid_rules' => 'required|trim|xss_clean|max_length[100]',  'label' => lang('create_user_address_label')))
-			->text('city', array('valid_rules' => 'required|trim|xss_clean|max_length[100]',  'label' => lang('create_user_city_label')))
-			->text('state', array('valid_rules' => 'required|trim|xss_clean|max_length[100]',  'label' => lang('create_user_state_label')))
-			->text('country', array('valid_rules' => 'required|trim|xss_clean|max_length[100]',  'label' => lang('create_user_country_label')))
-			->text('zip', array('valid_rules' => 'required|trim|xss_clean|max_length[100]|is_natural',  'label' => lang('create_user_zip_label')))
-			->text('phone', array('valid_rules' => 'required|trim|xss_clean|max_length[100]|is_natural',  'label' => lang('create_user_phone_label')))
-			->text('url', array('valid_rules' => 'trim|xss_clean|max_length[100]',  'label' => lang('create_user_url_label')))
-			->btn(array('value' => lang('create_user_submit_btn')))
-			->create(array('action' => current_url(), 'error_inline' => 'true'));
+		$this->data['user_info_form'] = $this->form
+			->text('first_name', array('valid_rules' => 'required|trim|xss_clean|max_length[150]',  'label' => lang('create_user_fname_label'), 'width' => 12, 'group_class' => 'col-sm-6'))
+			->text('last_name', array('valid_rules' => 'required|trim|xss_clean|max_length[150]',  'label' => lang('create_user_lname_label'), 'width' => 12, 'group_class' => 'col-sm-6'))
+			->text('phone', array('valid_rules' => 'required|trim|xss_clean|max_length[100]|is_natural',  'label' => lang('create_user_phone_label'), 'width' => 12, 'group_class' => 'col-sm-6'))
+			->text('email', array('valid_rules' => 'required|trim|xss_clean|max_length[150]|valid_email|is_unique[users.email]',  'label' => lang('create_user_email_label'), 'width' => 12, 'group_class' => 'col-sm-6'))
+			->select('gender', array('options' => array('male' => 'Мужской', 'female' => 'Женский'), 'valid_rules' => 'required|trim|xss_clean',  'label' => lang('create_user_gender_label'), 'width' => 12, 'group_class' => 'col-sm-6'))
+			->func(function($params, $CI) {
+				return $CI->load->view('date_form', $CI->data, true);
+			}, array('label' => lang('create_user_birth_label')))
+			->password('password', array('valid_rules' => 'required|min_length[' . $this->config->item('min_password_length', 'ion_auth') . ']|max_length[' . $this->config->item('max_password_length', 'ion_auth') . ']',  'label' => $this->lang->line('create_user_password_label'), 'width' => 12, 'group_class' => 'col-sm-6'))
+			->password('password_confirm', array('valid_rules' => 'required|matches[password]',  'label' => lang('create_user_password_confirm_label'), 'width' => 12, 'group_class' => 'col-sm-6'))
+			->create(array('error_inline' => true, 'no_form_tag' => true));
+
+		$this->data['address_form'] = $this->form
+			->text('country', array('valid_rules' => 'required|trim|xss_clean|max_length[100]',  'label' => lang('create_user_country_label'), 'width' => 12, 'group_class' => 'col-sm-6'))
+			->text('city', array('valid_rules' => 'required|trim|xss_clean|max_length[100]',  'label' => lang('create_user_city_label'), 'width' => 12, 'group_class' => 'col-sm-6'))
+			->text('address', array('valid_rules' => 'required|trim|xss_clean|max_length[100]',  'label' => lang('create_user_address_label'), 'width' => 12, 'group_class' => 'col-sm-6'))
+			->text('zip', array('valid_rules' => 'required|trim|xss_clean|max_length[100]|is_natural',  'label' => lang('create_user_zip_label'), 'width' => 12, 'group_class' => 'col-sm-6'))
+			->create(array('error_inline' => true, 'no_form_tag' => true));
+
 
 		if ($this->form_validation->run() == true) {
-			$username = $this->input->post('username');
+			$username = $this->input->post('first_name').'_'.$this->input->post('last_name');
 			$email    = strtolower($this->input->post('email'));
 			$password = $this->input->post('password');
 
 			$additional_data = array(
-				'login'     => $this->input->post('login'),
-				'company'   => $this->input->post('company'),
-				'address'   => $this->input->post('address'),
-				'city'      => $this->input->post('city'),
-				'state'     => $this->input->post('state'),
-				'country'   => $this->input->post('country'),
-				'zip'       => $this->input->post('zip'),
-				'phone'     => $this->input->post('phone'),
-				'url'       => $this->input->post('url'),
-				'is_seller' => $this->input->post('is_seller'),
+				'first_name' => $this->input->post('first_name'),
+				'last_name'  => $this->input->post('last_name'),
+				'gender'     => $this->input->post('gender'),
+				'birth'      => $this->input->post('gender'),
+				'country'    => $this->input->post('country'),
+				'city'       => $this->input->post('city'),
+				'address'    => $this->input->post('address'),
+				'zip'        => $this->input->post('zip'),
+				'phone'      => $this->input->post('phone'),
+				'is_cleaner' => 1,
 			);
 		}
 
@@ -180,7 +174,10 @@ class Personal extends CI_Controller {
 			redirect("", 'refresh');
 		} else {
 			$this->data['message'] = (validation_errors() ? validation_errors() : ($this->ion_auth->errors() ? $this->ion_auth->errors() : $this->session->flashdata('message')));
-			load_views();	
+
+			$this->load->view('header', $this->data);
+			$this->load->view('reg_cleaners', $this->data);
+			$this->load->view('footer', $this->data);
 		}
 	}
 
@@ -226,7 +223,7 @@ class Personal extends CI_Controller {
 			->password('password_confirm', array('label' => $this->lang->line('edit_user_password_confirm_label')));
 
 		if ($user_info['is_seller']) {
-			$this->form 
+			$this->form
 				->separator('<h4>'.lang('finance_payment_info').'</h4>')
 				->select('payment_name', array(
 					'value'       => $user_info['payment_name'],
@@ -319,7 +316,7 @@ class Personal extends CI_Controller {
 	function forgot_password() {
 		$this->data['header'] = $this->data['title'] = lang('forgot_password_heading');
 
-		if ($this->config->item('identity', 'ion_auth') == 'username') { 
+		if ($this->config->item('identity', 'ion_auth') == 'username') {
 			$label = 'forgot_password_username_identity_label';
 			$email_rule = '';
 		} else {
@@ -329,7 +326,7 @@ class Personal extends CI_Controller {
 		$label = $this->lang->line($label);
 		$this->form
 			->text('email', array(
-				'valid_rules' => 'required|trim|xss_clean'.$email_rule, 
+				'valid_rules' => 'required|trim|xss_clean'.$email_rule,
 				'label' => $label
 			))
 			->btn(array('value' => lang('forgot_password_submit_btn')));
@@ -338,7 +335,7 @@ class Personal extends CI_Controller {
 			$this->form->form_data[0]['params']['error'] = $this->session->flashdata('message');
 			$this->data['center_block'] = $this->form
 				->create(array('action' => current_url(), 'error_inline' => 'true'));
-			load_views();	
+			load_views();
 		} else {
 			$identity = $this->ion_auth->where('email', strtolower($this->input->post('email')))->users()->row();
 			if(empty($identity)) {

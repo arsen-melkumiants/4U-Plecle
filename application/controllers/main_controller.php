@@ -11,7 +11,7 @@ class Main_controller extends CI_Controller {
 			'session',
 			'ion_auth',
 		));
-		$this->data['main_menu']  = $this->menu_model->get_menu('upper');
+		$this->data['main_menu']  = $this->menu_model->get_menu('main');
 
 		set_alert($this->session->flashdata('success'), false, 'success');
 		set_alert($this->session->flashdata('danger'), false, 'danger');
@@ -22,7 +22,9 @@ class Main_controller extends CI_Controller {
 		$this->data['center_block'] = $this->load->view('main_form', $this->data, true);
 		$this->data['center_block'] .= $this->load->view('promo_page', $this->data, true);
 
-		load_views();
+		$this->load->view('header', $this->data);
+		$this->load->view('main_page', $this->data);
+		$this->load->view('footer', $this->data);
 	}
 
 	function menu_content($name = false) {
