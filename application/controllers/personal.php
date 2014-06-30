@@ -56,16 +56,19 @@ class Personal extends CI_Controller {
 		$this->form
 			->text('identity', array(
 				'label'       => lang('login_identity_label'),
-				'valid_rules' => 'required|xss'
+				'valid_rules' => 'required|xss_clean',
+				'width'       => 12,
 			))
 			->password('password', array(
 				'label'       => lang('login_password_label'),
-				'valid_rules' => 'required|xss'
+				'valid_rules' => 'required|xss_clean',
+				'width'       => 12,
 			))
 			->btn(array(
-				'value' => lang('login_submit_btn'),
+				'value'      => lang('login_submit_btn'),
+				'class'      => 'btn-primary btn-block',
 			))
-			->link(array('name' => lang('login_forgot_password'), 'class' => 'text-danger', 'href' => site_url('personal/forgot_password')))
+			->link(array('name' => lang('login_forgot_password'), 'class' => 'btn btn-link btn-block', 'href' => site_url('personal/forgot_password')))
 			;
 
 		if ($this->form_validation->run() == true) {
@@ -83,7 +86,7 @@ class Personal extends CI_Controller {
 				load_views();
 			}
 		} else {
-			$this->data['center_block'] = $this->form->create(array('action' => current_url(), 'error_inline' => 'true'));
+			$this->data['center_block'] = $this->form->create(array('action' => current_url(), 'error_inline' => 'true', 'btn_offset' => 0));
 			load_views();
 		}
 	}

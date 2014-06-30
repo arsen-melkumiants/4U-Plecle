@@ -169,3 +169,6 @@ table .btn.btn-primary:hover {color: #fff;background-color: #005668;}
 .footer_block .menu li a {color: #7b7b7b;}
 .footer_block .menu li:before {content: "/";padding-right: 10px;}
 .footer_block .menu li:first-child:before {content: "";}
+
+.modal-body {padding: 20px 100px 0;}
+.modal-body .title {text-align: center;}
