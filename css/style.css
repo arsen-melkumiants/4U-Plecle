@@ -172,3 +172,4 @@ table .btn.btn-primary:hover {color: #fff;background-color: #005668;}
 
 .modal-body {padding: 20px 100px 0;}
 .modal-body .title {text-align: center;}
+.modal-content button.close {display: block;position: absolute;right: 20px;top: 15px;font-size: 26px;}
