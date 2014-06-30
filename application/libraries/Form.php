@@ -104,7 +104,7 @@ class Form {
 
 		//radio-buttons
 		$input = '';
-		if ($type == 'radio') {
+		if ($type == 'radio' || $type == 'checkbox') {
 			if (isset($params['inputs']) && is_array($params['inputs'])) {
 				foreach ($params['inputs'] as $value => $info) {
 					if (is_array($info)) {
@@ -113,8 +113,8 @@ class Form {
 						$radio_name = $info;
 					}
 					$radio_checked = isset($params['value']) && $params['value'] == $value ? ' checked="checked"' : '';
-					$input .= '<label class="radio-inline">'.PHP_EOL;
-					$input .= '<input type="radio" name="'.$name.'" value="'.$value.'"'.$radio_checked.'> '.$radio_name.PHP_EOL;
+					$input .= '<label class="'.$type.'-inline">'.PHP_EOL;
+					$input .= '<input type="'.$type.'" name="'.$name.'" value="'.$value.'"'.$radio_checked.'> '.$radio_name.PHP_EOL;
 					$input .= '</label>'.PHP_EOL;
 				}
 			}
@@ -163,6 +163,11 @@ class Form {
 
 	public function text($name = false, $params = false) {
 		$this->input($name, $params, 'text');
+		return $this;
+	}
+
+	public function checkbox($name = false, $params = false) {
+		$this->input($name, $params, 'checkbox');
 		return $this;
 	}
 

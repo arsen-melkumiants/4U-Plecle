@@ -17,31 +17,9 @@
 					<h4 class="title">Поставьте соответствующие галочки</h4>
 					<div class="form-group">
 						<div class="col-sm-12">
-							<div class="checkbox"><label><input type="checkbox"> Я хорошо разговариваю по-английски</label></div>
-						</div>
-						<div class="col-sm-12">
-							<div class="checkbox"><label><input type="checkbox"> У меня есть право работать на территории РФ</label></div>
-						</div>
-						<div class="col-sm-12">
-							<div class="checkbox"><label><input type="checkbox"> У меня есть паспорт, который я могу предоставить при собеседовании</label></div>
-						</div>
-						<div class="col-sm-12">
-							<div class="checkbox"><label><input type="checkbox"> Я понимаю, что Plecle.com не агентство</label></div>
-						</div>
-						<div class="col-sm-12">
-							<div class="checkbox"><label><input type="checkbox"> У меня есть минимум 6 месяц опыта работы горничной</label></div>
-						</div>
-						<div class="col-sm-12">
-							<div class="checkbox"><label><input type="checkbox"> У меня есть 3 работодательские характеристики</label></div>
-						</div>
-						<div class="col-sm-12">
-							<div class="checkbox"><label><input type="checkbox"> Я понимаю, что моя работа будет оплачена на банковский счет</label></div>
-						</div>
-						<div class="col-sm-12">
-							<div class="checkbox"><label><input type="checkbox"> У меня есть мобильный телефон и я могу принимать и получать сообщения</label></div>
-						</div>
-						<div class="col-sm-12">
-							<div class="checkbox"><label><input type="checkbox"> Я разрешаю Plecle.com загружать и отображать мои фото</label></div>
+							<?php foreach($options as $key => $info) { ?>
+							<div class="checkbox"><label><input type="checkbox" name="options[<?php echo $key?>]" value="1" <?php echo !empty($result_options[$key]) ? 'checked="checked"' : '' ?>> <?php echo $info?></label></div>
+							<?php }?>
 						</div>
 					</div>
 					<h4 class="title">Ваши персональные данные</h4>
@@ -53,11 +31,10 @@
 						<?php echo $address_form?>
 					</div>
 					<h4 class="title">Правила сайта</h4>
-					<div class="checkbox">
-						<label>
-							<input type="checkbox"> Я согласен с <a href="#">правилами</a> сайта
-						</label>
-					</div>
+					<?php echo $confirm?>
+					<br />
+					<br />
+					<br />
 					<div class="row">
 						<div class="col-sm-6 col-sm-offset-3">
 							<button type="submit" class="btn btn-primary btn-lg btn-block">Зарегистрироваться</button>

@@ -82,7 +82,7 @@ class Personal extends CI_Controller {
 			} else {
 				//$this->session->set_flashdata('danger', $this->ion_auth->errors());
 				$this->form->form_data[0]['params']['error'] = $this->ion_auth->errors();
-				$this->data['center_block'] = $this->form->create(array('action' => current_url(), 'error_inline' => 'true'));
+				$this->data['center_block'] = $this->form->create(array('action' => current_url(), 'error_inline' => 'true', 'btn_offset' => 0));
 				load_views();
 			}
 		} else {
@@ -129,6 +129,24 @@ class Personal extends CI_Controller {
 			redirect('', 'refresh');
 		}
 
+		$this->data['options'] = array(
+			'english'                 => 'Я хорошо разговариваю по-английски',
+			'country_work_permission' => 'У меня есть право работать на территории РФ',
+			'passport'                => 'У меня есть паспорт, который я могу предоставить при собеседовании',
+			'not_agency'              => 'Я понимаю, что Plecle.com не агентство',
+			'experience'              => 'У меня есть минимум 6 месяц опыта работы горничной',
+			'reference'               => 'У меня есть 3 работодательские характеристики',
+			'bank_account'            => 'Я понимаю, что моя работа будет оплачена на банковский счет',
+			'mobile_phone'            => 'У меня есть мобильный телефон и я могу принимать и получать сообщения',
+		);
+		foreach ($this->data['options'] as $key => $item) {
+			if (!empty($_POST['options'][$key])) {
+				$this->data['result_options'][$key] = 1;
+			} else {
+				$this->data['result_options'][$key] = 0;
+			}
+		}
+
 		$this->data['user_info_form'] = $this->form
 			->text('first_name', array('valid_rules' => 'required|trim|xss_clean|max_length[150]',  'label' => lang('create_user_fname_label'), 'width' => 12, 'group_class' => 'col-sm-6'))
 			->text('last_name', array('valid_rules' => 'required|trim|xss_clean|max_length[150]',  'label' => lang('create_user_lname_label'), 'width' => 12, 'group_class' => 'col-sm-6'))
@@ -136,11 +154,12 @@ class Personal extends CI_Controller {
 			->text('email', array('valid_rules' => 'required|trim|xss_clean|max_length[150]|valid_email|is_unique[users.email]',  'label' => lang('create_user_email_label'), 'width' => 12, 'group_class' => 'col-sm-6'))
 			->select('gender', array('options' => array('male' => 'Мужской', 'female' => 'Женский'), 'valid_rules' => 'required|trim|xss_clean',  'label' => lang('create_user_gender_label'), 'width' => 12, 'group_class' => 'col-sm-6'))
 			->func(function($params, $CI) {
+				$CI->data['params'] = $params;
 				return $CI->load->view('date_form', $CI->data, true);
 			}, array('label' => lang('create_user_birth_label')))
-			->password('password', array('valid_rules' => 'required|min_length[' . $this->config->item('min_password_length', 'ion_auth') . ']|max_length[' . $this->config->item('max_password_length', 'ion_auth') . ']',  'label' => $this->lang->line('create_user_password_label'), 'width' => 12, 'group_class' => 'col-sm-6'))
-			->password('password_confirm', array('valid_rules' => 'required|matches[password]',  'label' => lang('create_user_password_confirm_label'), 'width' => 12, 'group_class' => 'col-sm-6'))
-			->create(array('error_inline' => true, 'no_form_tag' => true));
+				->password('password', array('valid_rules' => 'required|min_length[' . $this->config->item('min_password_length', 'ion_auth') . ']|max_length[' . $this->config->item('max_password_length', 'ion_auth') . ']',  'label' => $this->lang->line('create_user_password_label'), 'width' => 12, 'group_class' => 'col-sm-6'))
+				->password('password_confirm', array('valid_rules' => 'required|matches[password]',  'label' => lang('create_user_password_confirm_label'), 'width' => 12, 'group_class' => 'col-sm-6'))
+				->create(array('error_inline' => true, 'no_form_tag' => true));
 
 		$this->data['address_form'] = $this->form
 			->text('country', array('valid_rules' => 'required|trim|xss_clean|max_length[100]',  'label' => lang('create_user_country_label'), 'width' => 12, 'group_class' => 'col-sm-6'))
@@ -149,11 +168,15 @@ class Personal extends CI_Controller {
 			->text('zip', array('valid_rules' => 'required|trim|xss_clean|max_length[100]|is_natural',  'label' => lang('create_user_zip_label'), 'width' => 12, 'group_class' => 'col-sm-6'))
 			->create(array('error_inline' => true, 'no_form_tag' => true));
 
+		$this->data['confirm'] = $this->form
+			->checkbox('confirm', array('valid_rules' => 'required', 'inputs' => array('confirm' => 'Я согласен с <a href="'.site_url('rules').'">правилами</a> сайта')))
+			->create(array('error_inline' => true, 'no_form_tag' => true));
 
 		if ($this->form_validation->run() == true) {
 			$username = $this->input->post('first_name').'_'.$this->input->post('last_name');
 			$email    = strtolower($this->input->post('email'));
 			$password = $this->input->post('password');
+
 
 			$additional_data = array(
 				'first_name' => $this->input->post('first_name'),
@@ -165,6 +188,7 @@ class Personal extends CI_Controller {
 				'address'    => $this->input->post('address'),
 				'zip'        => $this->input->post('zip'),
 				'phone'      => $this->input->post('phone'),
+				'extra'      => json_encode($this->data['result_options']),
 				'is_cleaner' => 1,
 			);
 		}
@@ -262,9 +286,6 @@ class Personal extends CI_Controller {
 				'zip'            => $this->input->post('zip'),
 				'phone'          => $this->input->post('phone'),
 				'url'            => $this->input->post('url'),
-				'payment_name'   => $this->input->post('payment_name'),
-				'payment_number' => $this->input->post('payment_number'),
-				'payment_amount' => $this->input->post('payment_amount'),
 			);
 
 			//Update the groups user belongs to
