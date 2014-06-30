@@ -55,7 +55,7 @@ class Personal extends CI_Controller {
 
 		$this->form
 			->text('identity', array(
-				'label'       => lang('login_identity_label'),
+				'label'       => 'Email',
 				'valid_rules' => 'required|xss_clean',
 				'width'       => 12,
 			))
