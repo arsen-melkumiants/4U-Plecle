@@ -60,11 +60,10 @@
 		<?php if ($_SERVER['REQUEST_URI'] != '/') {?>
 		<div class="footer_block">
 			<div class="container">
+				<hr>
 				<div class="row">
-					<div class="col-md-3">
-						<div class="copyright">Copyright © 2014</div>
-					</div>
-					<div class="col-md-9">
+					<div class="col-sm-3">© 2014 Plecle.com</div>
+					<div class="col-sm-9">
 						<div class="menu">
 							<?php echo !empty($main_menu) ? $main_menu : '';?>
 							<div class="clear"></div>
