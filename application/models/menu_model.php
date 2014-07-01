@@ -58,10 +58,10 @@ class Menu_model extends CI_Model {
 					}
 
 					if ($item['item_id'] == 'profile') {
-						$link = $item['item_id'];
+						$link = 'orders';
 						$user_info = $this->ion_auth->user()->row_array();
 						$this->lang->load('auth');
-						$item['name_'.$this->config->item('lang_abbr')] = $user_info['first_name'].' ('.(!empty($user_info['is_seller']) ? lang('create_user_seller') : lang('create_user_buyer')).')';
+						$item['name_'.$this->config->item('lang_abbr')] = $user_info['first_name'];
 					} elseif ($item['item_id'] == 'balance') {
 						if (!is_object($this->ion_auth) || !$this->ion_auth->logged_in()) { 
 							return false;

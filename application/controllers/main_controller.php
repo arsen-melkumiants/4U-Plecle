@@ -19,7 +19,10 @@ class Main_controller extends CI_Controller {
 
 	public function index() {
 		$this->data['title'] = SITE_NAME;
-		$this->data['center_block'] = $this->load->view('main_form', $this->data, true);
+		$this->data['center_block'] = '';
+		if (empty($this->ion_auth->user()->row()->is_cleaner)) {
+			$this->data['center_block'] .= $this->load->view('main_form', $this->data, true);
+		}
 		$this->data['center_block'] .= $this->load->view('promo_page', $this->data, true);
 
 		$this->load->view('header', $this->data);

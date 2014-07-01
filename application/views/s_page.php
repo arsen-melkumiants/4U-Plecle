@@ -1,3 +1,1 @@
-<div class="container">
-	<?php echo $center_block;?>
-</div>
+<?php echo !empty($center_block) ? $center_block : false;?>

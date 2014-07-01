@@ -59,6 +59,9 @@ $route[$admin_url.'(:any)']        = $admin_folder.'$1';
 $route['profile']        = 'profile';
 $route['profile/(:any)'] = 'profile/$1';
 
+$route['orders']        = 'orders';
+$route['orders/(:any)'] = 'orders/$1';
+
 $route['personal/(:any)'] = 'personal/$1';
 
 $route['(:any)'] = 'main_controller/menu_content/$1';
