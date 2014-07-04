@@ -11,7 +11,6 @@ class Orders extends CI_Controller {
 		));
 		$this->load->helper('url');
 
-		// Load MongoDB library instead of native db driver if required
 		if (!$this->ion_auth->logged_in()) {
 			if ($this->input->is_ajax_request()) {
 				echo 'refresh';exit;
@@ -67,42 +66,6 @@ class Orders extends CI_Controller {
 		$this->load->view('footer', $this->data);
 	}
 
-	function add_product() {
-		if (!$this->data['user_info']['is_cleaner']) {
-			redirect('profile');
-		}
-		$this->data['title'] = $this->data['header'] = lang('product_add_header');
-		$this->data['center_block'] = $this->edit_form();
-
-		if ($this->form_validation->run() == FALSE) {
-			load_views();
-		} else {
-			$info = array(
-				'name'            => $this->input->post('name'),
-				'price'           => $this->input->post('price'),
-				'type'            => $this->input->post('type'),
-				'amount'          => $this->input->post('amount'),
-				'cat_id'          => $this->input->post('cat_id'),
-				'content'         => $this->input->post('content'),
-				'add_date'        => time(),
-				'sort_date'       => time(),
-				'author_id'       => $this->data['user_info']['id'],
-				'status'          => 0,
-				'type_commission' => '',
-			);
-			if ($info['type'] == 'licenses') {
-				$info['amount'] = 0;
-			} else {
-				$info['type'] = 'media';
-				$info['amount']    = $this->input->post('amount');
-				$info['unlimited'] = $this->input->post('unlimited');
-			}
-			$this->db->insert('shop_products', $info);
-			$id = $this->db->insert_id();
-			$this->session->set_flashdata('success', lang('product_add_message_success'));
-			redirect('profile/product_gallery/'.$id, 'refresh');
-		}
-	}
 
 	function edit_product($id = false) {
 		$id = $this->data['id'] = intval($id);

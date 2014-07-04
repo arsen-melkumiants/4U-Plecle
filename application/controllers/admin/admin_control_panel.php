@@ -60,6 +60,21 @@ class Admin_control_panel extends CI_Controller {
 				'valid_rules' => 'required|trim|xss_clean|valid_email',
 				'label'       => 'Почта сайта',
 			))
+			->separator()
+			->text('PRICE_PER_HOUR', array(
+				'value'       => (defined('PRICE_PER_HOUR') ? PRICE_PER_HOUR : ''),
+				'valid_rules' => 'required|trim|xss_clean|numeric',
+				'label'       => 'Цена за час работы',
+				'width'       => '2',
+				'symbol'      => 'руб',
+			))
+			->text('PRICE_DETERGENTS', array(
+				'value'       => (defined('PRICE_DETERGENTS') ? PRICE_DETERGENTS : ''),
+				'valid_rules' => 'required|trim|xss_clean|numeric',
+				'label'       => 'Цена за моющие средства',
+				'width'       => '2',
+				'symbol'      => 'руб',
+			))
 			->btn(array('offset' => 3, 'value' => 'Изменить'))
 			->create();
 
@@ -69,6 +84,10 @@ class Admin_control_panel extends CI_Controller {
 			$this->load->view(ADM_FOLDER.'footer', $this->data);
 		} else {
 			$data = $this->input->post();
+
+			$data['PRICE_PER_HOUR']   = abs(round($data['PRICE_PER_HOUR'], 2));
+			$data['PRICE_DETERGENTS'] = abs(round($data['PRICE_DETERGENTS'], 2));
+
 			$add_sets = '';
 			foreach($data as $key => $row) {
 				if(strtolower($key) == 'submit') {

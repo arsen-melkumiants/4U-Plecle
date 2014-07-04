@@ -7,11 +7,11 @@
 			<div class="row">
 				<div class="col-sm-offset-4 col-sm-4 form_body">
 					<p>Онлайн платежи, фиксированная цена 300 рублей/час</p>
-					<form class="form-horizontal" method="post" action="">
+					<form class="form-horizontal" method="post" action="<?php echo site_url('make_order')?>">
 						<div class="form-group">
 							<div class="col-md-12">
 								<label class="sr-only">Email address</label>
-								<input type="text" class="form-control" placeholder="Введите свой индекс">
+								<input type="text" name="zip" class="form-control" placeholder="Введите свой индекс">
 							</div>
 						</div>
 						<div class="form-group">

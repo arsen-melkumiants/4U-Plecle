@@ -82,11 +82,21 @@ class Personal extends CI_Controller {
 			} else {
 				//$this->session->set_flashdata('danger', $this->ion_auth->errors());
 				$this->form->form_data[0]['params']['error'] = $this->ion_auth->errors();
-				$this->data['center_block'] = $this->form->create(array('action' => current_url(), 'error_inline' => 'true', 'btn_offset' => 0));
+				$this->data['center_block'] = $this->form->create(array(
+					'action'       => current_url(),
+					'error_inline' => 'true',
+					'btn_offset'   => 0,
+					'class'        => !$this->input->is_ajax_request() ? 'col-md-4 col-md-offset-4' : false,
+				));
 				load_views();
 			}
 		} else {
-			$this->data['center_block'] = $this->form->create(array('action' => current_url(), 'error_inline' => 'true', 'btn_offset' => 0));
+			$this->data['center_block'] = $this->form->create(array(
+				'action'       => current_url(),
+				'error_inline' => 'true',
+				'btn_offset'   => 0,
+				'class'        => !$this->input->is_ajax_request() ? 'col-md-4 col-md-offset-4' : false,
+			));
 			load_views();
 		}
 	}
@@ -351,20 +361,28 @@ class Personal extends CI_Controller {
 		$this->form
 			->text('email', array(
 				'valid_rules' => 'required|trim|xss_clean'.$email_rule,
-				'label' => $label
+				'label'       => $label,
+				'width'       => 12,
 			))
-			->btn(array('value' => lang('forgot_password_submit_btn')));
+			->btn(array(
+				'value'      => lang('forgot_password_submit_btn'),
+				'class'      => 'btn-primary btn-block',
+			));
 
 		if ($this->form_validation->run() == false) {
-			$this->form->form_data[0]['params']['error'] = $this->session->flashdata('message');
-			$this->data['center_block'] = $this->form
-				->create(array('action' => current_url(), 'error_inline' => 'true'));
+			$this->form->form_data[0]['params']['error'] .= $this->session->flashdata('message');
+			$this->data['center_block'] = $this->form->create(array(
+				'action'       => current_url(),
+				'error_inline' => true,
+				'btn_offset'   => 0,
+				'class'        => !$this->input->is_ajax_request() ? 'col-md-4 col-md-offset-4' : false,
+			));
 			load_views();
 		} else {
 			$identity = $this->ion_auth->where('email', strtolower($this->input->post('email')))->users()->row();
 			if(empty($identity)) {
 				$this->ion_auth->set_message('forgot_password_email_not_found');
-				$this->session->set_flashdata('message', $this->ion_auth->messages());
+				$this->session->set_flashdata('danger', $this->ion_auth->messages());
 				redirect('personal/forgot_password', 'refresh');
 			}
 
@@ -405,5 +423,62 @@ class Personal extends CI_Controller {
 		$this->viewdata = (empty($data)) ? $this->data: $data;
 		$view_html = $this->load->view($view, $this->viewdata, $render);
 		if (!$render) return $view_html;
+	}
+
+
+	function make_order() {
+		$this->data['user_info'] = $this->ion_auth->user()->row_array();
+		if ($this->ion_auth->logged_in() && !$this->data['user_info']['is_cleaner']) {
+			if ($this->input->is_ajax_request()) {
+				echo 'refresh';exit;
+			}
+			redirect('', 'refresh');
+		}
+
+		if (!isset($_POST['duration'])) {
+			$this->data['temp_post']['zip'] = $this->input->post('zip');
+			$_POST = array();
+		}
+		$price_detergents = $this->input->post('detergents') ? PRICE_DETERGENTS : 0;
+
+
+		$this->data['title'] = $this->data['header'] = 'Создание заявки';
+		$this->load->model('order_model');
+		$this->data['center_block'] = $this->order_model->order_form();
+
+		if ($this->form_validation->run() == FALSE) {
+
+			$this->data['right_info'] = array(
+				'title'       => 'Ваш профиль',
+				'info_array'  => array(
+					'Индекс'          => !empty($this->data['temp_post']['zip']) ? $this->data['temp_post']['zip'] : $this->input->post('zip'),
+					'Дата'            => date('d.m.Y'),
+					'Время'           => date('h:i'),
+					'Частота'         => isset($this->order_model->frequency[$this->input->post('frequency')]) ? $this->order_model->frequency[$this->input->post('frequency')] : false,
+					'Рабочие часы'    => isset($this->order_model->duration[$this->input->post('duration')]) ? $this->order_model->duration[$this->input->post('duration')] : false,
+					'Цена за час'     => PRICE_PER_HOUR,
+					'Моющие средства' => $price_detergents,
+					'<b>Итого</b>'    => '<b>'.(PRICE_PER_HOUR * $this->input->post('duration') + $price_detergents).'</b>'
+				),
+			);
+			$this->load->view('header', $this->data);
+			$this->load->view('orders/cleaner_list', $this->data);
+			$this->load->view('orders/order_page', $this->data);
+			$this->load->view('footer', $this->data);
+		} else {
+
+
+			$info = array(
+				'name'            => $this->input->post('name'),
+				'add_date'        => time(),
+				'sort_date'       => time(),
+				'status'          => 0,
+			);
+
+			$this->db->insert('orders', $info);
+			$id = $this->db->insert_id();
+			$this->session->set_flashdata('success', lang('product_add_message_success'));
+			redirect('profile/product_gallery/'.$id, 'refresh');
+		}
 	}
 }

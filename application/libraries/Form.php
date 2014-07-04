@@ -90,7 +90,9 @@ class Form {
 			$params['width'] = ($this->ajax_mode && $params['width'] <= 10 ? $params['width'] + 2 : $params['width']);
 		}
 
-		$label = !empty($params['label']) ? '<label class="'.$this->grid_type.'-'.($params['width'] == 12 ? 12 : 3).' control-label">'.$params['label'].'</label>' : '';
+		$params['label_width'] = !empty($params['label_width']) ? $params['label_width'] : 3;
+
+		$label = !empty($params['label']) ? '<label class="'.$this->grid_type.'-'.($params['width'] == 12 ? 12 : $params['label_width']).' control-label">'.$params['label'].'</label>' : '';
 
 		if(empty($params['error_width'])) {
 			$params['error_width'] = !empty($params['label']) ? 12 - 3 - $params['width'] : 12 - $params['width'];
@@ -113,7 +115,7 @@ class Form {
 						$radio_name = $info;
 					}
 					$radio_checked = isset($params['value']) && $params['value'] == $value ? ' checked="checked"' : '';
-					$input .= '<label class="'.$type.'-inline">'.PHP_EOL;
+					$input .= '<label class="'.$type.(isset($params['inline']) && !$params['inline'] ? '' : '-inline').'">'.PHP_EOL;
 					$input .= '<input type="'.$type.'" name="'.$name.'" value="'.$value.'"'.$radio_checked.'> '.$radio_name.PHP_EOL;
 					$input .= '</label>'.PHP_EOL;
 				}
@@ -134,10 +136,10 @@ class Form {
 				}
 				$input .= '</select>';
 			}
-		}elseif ($type == 'textarea') {
+		} elseif ($type == 'textarea') {
 			$attrs_list = array('class','name','readonly','rows');
 			$input .= '<textarea'.$this->attributes($attrs_list, $params).'>'.$params['value'].'</textarea>';
-		}else{
+		} else {
 			$attrs_list = array('type','class','name','value','placeholder','readonly');
 			$input .= '<input'.$this->attributes($attrs_list, $params).'/>';
 		}
@@ -259,7 +261,10 @@ class Form {
 		if (empty($params['no_editor'])) {
 			$params['class'] = !empty($params['class']) ? $params['class'].' ckeditor' : 'ckeditor';
 		}
-		$params['width'] = 9;
+
+		if (empty($params['full_width'])) {
+			$params['width'] = !empty($params['width']) ? $params['width'] : 9;
+		}
 		$this->input($name, $params, 'textarea');
 		return $this;
 	}

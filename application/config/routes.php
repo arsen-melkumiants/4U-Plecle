@@ -61,6 +61,7 @@ $route['profile/(:any)'] = 'profile/$1';
 
 $route['orders']        = 'orders';
 $route['orders/(:any)'] = 'orders/$1';
+$route['make_order'] = 'personal/make_order';
 
 $route['personal/(:any)'] = 'personal/$1';
 
