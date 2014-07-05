@@ -4,7 +4,7 @@
 		<div class="row">
 			<?php echo $order_form?>
 		</div>
-		
+
 		<?php if (!empty($login_form)) {?>
 		<h4 class="title">
 			<a href="#registration_form" role="tab" data-toggle="tab">Ваши персональные данные</a>
@@ -19,7 +19,7 @@
 			</div>
 		</div>
 		<?php }?>
-		
+
 		<h4 class="title">Ваш адрес</h4>
 		<div class="row">
 			<?php echo $address_form?>
@@ -41,15 +41,38 @@
 	</div>
 </form>
 
+<?php after_load('js', '/dist/js/moment-with-langs.min.js')?>
+<?php after_load('js', '/dist/js/bootstrap-datetimepicker.min.js')?>
+<?php after_load('js', '/dist/js/bootstrap-datetimepicker.ru.js')?>
+<?php after_load('css', '/dist/css/bootstrap-datetimepicker.min.css')?>
+
 <?php after_load('js', '/dist/js/jquery.cookie.js')?>
 <script>
-	window.onload = function () {
-		$('a[data-toggle="tab"]').on('shown.bs.tab', function () {
-			console.log($(this).attr('href').substring(1));
-			$.cookie('of_tab', $(this).attr('href').substring(1));
-		})
+window.onload = function () {
+
+	$(".date_time").datetimepicker({language: 'ru', todayBtn: true});
+	$(document).on('focus', '.date_time', function(){
+		$(this).datetimepicker({language: 'ru', todayBtn: true});
+	});
+
+	$('input').on('keyup', function() {
+		var input = $(this);
+		setTimeout(function() {
+			console.log(input.val());
+			$('input[name="' + input.attr('name') + '"]').val(input.val());
+		}, 100);
+	});
+
+	$('input').on('change', function() {
+		var input = $(this);
+		$('input[name="' + input.attr('name') + '"]').val(input.val());
+	});
+
+	$('a[data-toggle="tab"]').on('shown.bs.tab', function () {
+		$.cookie('of_tab', $(this).attr('href').substring(1));
+	})
 		<?php if (!empty($is_login)) {?>
-			$('.order_form').submit();
-		<?php }?>
-	}
+		$('.order_form').submit();
+	<?php }?>
+}
 </script>

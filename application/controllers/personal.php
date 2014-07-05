@@ -187,12 +187,17 @@ class Personal extends CI_Controller {
 			$email    = strtolower($this->input->post('email'));
 			$password = $this->input->post('password');
 
+			$birth = strtotime(
+				intval($this->input->post('year')).'-'.
+				intval($this->input->post('month')).'-'.
+				intval($this->input->post('day'))
+			);
 
 			$additional_data = array(
 				'first_name' => $this->input->post('first_name'),
 				'last_name'  => $this->input->post('last_name'),
 				'gender'     => $this->input->post('gender'),
-				'birth'      => $this->input->post('birth'),
+				'birth'      => $birth,
 				'country'    => $this->input->post('country'),
 				'city'       => $this->input->post('city'),
 				'address'    => $this->input->post('address'),
@@ -484,7 +489,7 @@ class Personal extends CI_Controller {
 				$user_id = $this->ion_auth->register($username, $password, $email, $additional_data);
 				$auto_reg = true;
 			} else {
-				$user_id;
+				$user_id = $this->ion_auth->user()->row()->id;
 			}
 
 			$info = array(
@@ -502,6 +507,7 @@ class Personal extends CI_Controller {
 				'city'            => $this->input->post('city'),
 				'address'         => $this->input->post('address'),
 				'zip'             => $this->input->post('zip'),
+				'start_date'      => strtotime($this->input->post('start_date')),
 				'add_date'        => time(),
 				'status'          => 0,
 			);

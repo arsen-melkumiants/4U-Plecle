@@ -193,7 +193,7 @@ class Form {
 
 	public function date($name = false, $params = false) {
 		$params['width'] = !empty($params['width']) ? $params['width'] : 3;
-		$params['icon'] = isset($params['icon']) ? $params['width'] : 'calendar';
+		$params['icon'] = isset($params['icon']) ? $params['icon'] : 'calendar';
 		$params['icon_pos'] = !empty($params['icon_pos']) ? $params['icon_pos'] : 'right';
 		$params['class'] = isset($params['class']) ? $params['class'] : 'date_time';
 		$params['type'] = !empty($params['type']) ? $params['type'] : 'Y-m-d';

@@ -34,12 +34,13 @@
 					<?php echo $confirm?>
 					<br />
 					<br />
-					<br />
 					<div class="row">
 						<div class="col-sm-6 col-sm-offset-3">
 							<button type="submit" class="btn btn-primary btn-lg btn-block">Зарегистрироваться</button>
 						</div>
 					</div>
+					<br />
+					<br />
 				</div>
 			</form>
 			<div class="col-md-4">

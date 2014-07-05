@@ -5,14 +5,14 @@
 			<div class="col-xs-4">
 				<select name="day" class="form-control">
 					<?php for($i = 1; $i <= 31; $i++) {?>
-					<option value="<?php echo $i?>"><?php echo $i?></option>
+					<option value="<?php echo $i?>"><?php echo sprintf('%02d', $i);?></option>
 					<?php }?>
 				</select>
 			</div>
 			<div class="col-xs-4">
-				<select name="mounth" class="form-control">
+				<select name="month" class="form-control">
 					<?php for($i = 1; $i <= 12; $i++) {?>
-					<option value="<?php echo $i?>"><?php echo $i?></option>
+					<option value="<?php echo $i?>"><?php echo sprintf('%02d', $i);?></option>
 					<?php }?>
 				</select>
 			</div>
