@@ -68,8 +68,8 @@ class Admin_control_panel extends CI_Controller {
 				'width'       => '2',
 				'symbol'      => 'руб',
 			))
-			->text('PRICE_DETERGENTS', array(
-				'value'       => (defined('PRICE_DETERGENTS') ? PRICE_DETERGENTS : ''),
+			->text('DETERGENT_PRICE', array(
+				'value'       => (defined('DETERGENT_PRICE') ? DETERGENT_PRICE : ''),
 				'valid_rules' => 'required|trim|xss_clean|numeric',
 				'label'       => 'Цена за моющие средства',
 				'width'       => '2',
@@ -86,7 +86,7 @@ class Admin_control_panel extends CI_Controller {
 			$data = $this->input->post();
 
 			$data['PRICE_PER_HOUR']   = abs(round($data['PRICE_PER_HOUR'], 2));
-			$data['PRICE_DETERGENTS'] = abs(round($data['PRICE_DETERGENTS'], 2));
+			$data['DETERGENT_PRICE'] = abs(round($data['DETERGENT_PRICE'], 2));
 
 			$add_sets = '';
 			foreach($data as $key => $row) {

@@ -65,13 +65,15 @@ class Form {
 		$params['value'] = isset($params['value']) ? $params['value'] : '';
 		$params['label'] = !empty($params['label']) ? $params['label'] : '';
 
+		$CI =& get_instance();
+		$CI->load->library('form_validation');
 		if (!empty($params['valid_rules'])) {
-			$CI =& get_instance();
-			$CI->load->library('form_validation');
 			$field_name = !empty($params['label']) ? $params['label'] : (!empty($params['placeholder']) ? $params['placeholder'] : ucfirst($name));
 			$CI->form_validation->set_rules($name, $field_name, $params['valid_rules']);
 			$CI->form_validation->run();
-			$params['value'] = $CI->form_validation->set_value($name, $params['value']);
+			if ($type != 'radio' && $type != 'checkbox') {
+				$params['value'] = set_value($name, $params['value']);
+			}
 			$params['error'] = !empty($params['error']) ? $params['error'] : form_error($name);
 		}
 
@@ -110,13 +112,19 @@ class Form {
 			if (isset($params['inputs']) && is_array($params['inputs'])) {
 				foreach ($params['inputs'] as $value => $info) {
 					if (is_array($info)) {
-						$radio_name = $info['name'];
+						$input_name = $info['name'];
 					} else {
-						$radio_name = $info;
+						$input_name = $info;
 					}
-					$radio_checked = isset($params['value']) && $params['value'] == $value ? ' checked="checked"' : '';
+
+					if ($type == 'checkbox') {
+						$input_checked = set_checkbox($name, $value);
+					} else {
+						$input_checked = set_radio($name, $value);
+					}
+
 					$input .= '<label class="'.$type.(isset($params['inline']) && !$params['inline'] ? '' : '-inline').'">'.PHP_EOL;
-					$input .= '<input type="'.$type.'" name="'.$name.'" value="'.$value.'"'.$radio_checked.'> '.$radio_name.PHP_EOL;
+					$input .= '<input type="'.$type.'" name="'.$name.'" value="'.$value.'"'.$input_checked.'> '.$input_name.PHP_EOL;
 					$input .= '</label>'.PHP_EOL;
 				}
 			}

@@ -192,7 +192,7 @@ class Personal extends CI_Controller {
 				'first_name' => $this->input->post('first_name'),
 				'last_name'  => $this->input->post('last_name'),
 				'gender'     => $this->input->post('gender'),
-				'birth'      => $this->input->post('gender'),
+				'birth'      => $this->input->post('birth'),
 				'country'    => $this->input->post('country'),
 				'city'       => $this->input->post('city'),
 				'address'    => $this->input->post('address'),
@@ -428,7 +428,7 @@ class Personal extends CI_Controller {
 
 	function make_order() {
 		$this->data['user_info'] = $this->ion_auth->user()->row_array();
-		if ($this->ion_auth->logged_in() && !$this->data['user_info']['is_cleaner']) {
+		if ($this->ion_auth->logged_in() && $this->data['user_info']['is_cleaner']) {
 			if ($this->input->is_ajax_request()) {
 				echo 'refresh';exit;
 			}
@@ -439,7 +439,7 @@ class Personal extends CI_Controller {
 			$this->data['temp_post']['zip'] = $this->input->post('zip');
 			$_POST = array();
 		}
-		$price_detergents = $this->input->post('detergents') ? PRICE_DETERGENTS : 0;
+		$detergent_price = $this->input->post('detergents') ? DETERGENT_PRICE : 0;
 
 
 		$this->data['title'] = $this->data['header'] = 'Создание заявки';
@@ -457,8 +457,8 @@ class Personal extends CI_Controller {
 					'Частота'         => isset($this->order_model->frequency[$this->input->post('frequency')]) ? $this->order_model->frequency[$this->input->post('frequency')] : false,
 					'Рабочие часы'    => isset($this->order_model->duration[$this->input->post('duration')]) ? $this->order_model->duration[$this->input->post('duration')] : false,
 					'Цена за час'     => PRICE_PER_HOUR,
-					'Моющие средства' => $price_detergents,
-					'<b>Итого</b>'    => '<b>'.(PRICE_PER_HOUR * $this->input->post('duration') + $price_detergents).'</b>'
+					'Моющие средства' => $detergent_price,
+					'<b>Итого</b>'    => '<b>'.(PRICE_PER_HOUR * $this->input->post('duration') + $detergent_price).'</b>'
 				),
 			);
 			$this->load->view('header', $this->data);
@@ -466,19 +466,57 @@ class Personal extends CI_Controller {
 			$this->load->view('orders/order_page', $this->data);
 			$this->load->view('footer', $this->data);
 		} else {
+			if (!$this->ion_auth->logged_in()) {
+				$username = $this->input->post('first_name').'_'.$this->input->post('last_name');
+				$email    = strtolower($this->input->post('email'));
+				$password = $this->input->post('password');
 
+				$additional_data = array(
+					'first_name' => $this->input->post('first_name'),
+					'last_name'  => $this->input->post('last_name'),
+					'country'    => $this->input->post('country'),
+					'city'       => $this->input->post('city'),
+					'address'    => $this->input->post('address'),
+					'zip'        => $this->input->post('zip'),
+					'phone'      => $this->input->post('phone'),
+					'is_cleaner' => 0,
+				);
+				$user_id = $this->ion_auth->register($username, $password, $email, $additional_data);
+				$auto_reg = true;
+			} else {
+				$user_id;
+			}
 
 			$info = array(
-				'name'            => $this->input->post('name'),
+				'client_id'       => $user_id,
+				'price_per_hour'  => PRICE_PER_HOUR,
+				'detergent_price' => $detergent_price,
+				'total_price'     => PRICE_PER_HOUR * $this->input->post('duration') + $detergent_price,
+				'frequency'       => $this->input->post('frequency'),
+				'duration'        => $this->input->post('duration'),
+				'need_ironing'    => $this->input->post('need_ironing'),
+				'have_pets'       => $this->input->post('have_pets'),
+				'need_detergents' => $this->input->post('need_detergents'),
+				'comment'         => $this->input->post('frequency'),
+				'country'         => $this->input->post('country'),
+				'city'            => $this->input->post('city'),
+				'address'         => $this->input->post('address'),
+				'zip'             => $this->input->post('zip'),
 				'add_date'        => time(),
-				'sort_date'       => time(),
 				'status'          => 0,
 			);
+			$this->db->trans_commit();
 
 			$this->db->insert('orders', $info);
-			$id = $this->db->insert_id();
-			$this->session->set_flashdata('success', lang('product_add_message_success'));
-			redirect('profile/product_gallery/'.$id, 'refresh');
+			$order_id = $this->db->insert_id();
+
+			$email_info = array(
+				'order_id'  => $order_id,
+				'auto_reg'  => $auto_reg,
+				'email'     => $user_data['order_info']['email'],
+			);
+			$this->session->set_flashdata('success', 'Ваша завяка успешно создана');
+			redirect();
 		}
 	}
 }

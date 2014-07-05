@@ -26,7 +26,6 @@ class Order_model extends CI_Model {
 	}
 
 	function order_form() {
-
 		if (!$this->ion_auth->logged_in()) {
 			//------------------------------------------
 			$this->form
@@ -55,6 +54,8 @@ class Order_model extends CI_Model {
 				} else {
 					$data['login_form'] = $this->form->create(array('error_inline' => true, 'no_form_tag' => true));
 				}
+			} else {
+				$data['login_form'] = $this->form->create(array('error_inline' => true, 'no_form_tag' => true));
 			}
 
 			//------------------------------------------
@@ -98,33 +99,15 @@ class Order_model extends CI_Model {
 		}
 
 		//------------------------------------------
-		$data['order_form'] = $this->form
-			->radio('frequency', array(
-				'valid_rules' => 'required',
-				'label' => 'Как часто нужна горничная?',
-				'inline' => false, 'group_class' => 'col-sm-12', 'label_width' => 6,
-				'inputs' => $this->frequency
-			))
-			->select('duration', array(
-				'valid_rules' => 'required',
-				'label' => 'На сколько времени нужна?',
-				'group_class' => 'col-sm-12', 'label_width' => 6,
-				'options' => $this->duration
-			))
-			->checkbox('special[]', array(
-				'label' => 'Особые требования',
-				'inline' => false, 'group_class' => 'col-sm-12', 'label_width' => 6,
-				'inputs' => $this->special
-			))
-			->create(array('error_inline' => true, 'no_form_tag' => true));
-
-
-		//------------------------------------------
 		$user_info = $this->ion_auth->user()->row_array();
 		foreach (array('country', 'city', 'address', 'zip') as $item) {
-			if (empty($user_info[$item]) || !isset($_POST[$item])) {
+			if (empty($user_info[$item]) || $this->input->post($item)) {
+				continue;
 			}
+			$_POST[$item] = $user_info[$item];
 		}
+
+
 		$data['address_form'] = $this->form
 			->text('country', array(
 				'valid_rules' => 'required|trim|xss_clean|max_length[100]',
@@ -146,6 +129,28 @@ class Order_model extends CI_Model {
 				'label' => lang('create_user_zip_label'),
 				'width' => 12, 'group_class' => 'col-sm-6',
 				'value' => !empty($this->data['temp_post']['zip']) ? $this->data['temp_post']['zip'] : false
+			))
+			->create(array('error_inline' => true, 'no_form_tag' => true));
+
+		//------------------------------------------
+		$data['order_form'] = $this->form
+			->radio('frequency', array(
+				'valid_rules' => 'required',
+				'label' => 'Как часто нужна горничная?',
+				'inline' => false, 'group_class' => 'col-sm-12', 'label_width' => 6,
+				'inputs' => $this->frequency
+			))
+			->select('duration', array(
+				'valid_rules' => 'required',
+				'label' => 'На сколько времени нужна?',
+				'group_class' => 'col-sm-12', 'label_width' => 6,
+				'options' => $this->duration
+			))
+			->checkbox('special[]', array(
+				'valid_rules' => 'trim|xss_clean',
+				'label' => 'Особые требования',
+				'inline' => false, 'group_class' => 'col-sm-12', 'label_width' => 6,
+				'inputs' => $this->special
 			))
 			->create(array('error_inline' => true, 'no_form_tag' => true));
 
