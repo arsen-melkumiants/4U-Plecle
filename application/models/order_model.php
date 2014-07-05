@@ -25,6 +25,43 @@ class Order_model extends CI_Model {
 		$this->load->database();
 	}
 
+	function get_user_order($order_id, $user_id = false, $user_type = false) {
+		if (empty($user_type)) {
+			if (!empty($this->data['user_info']['is_cleaner'])) {
+				$user_type = 'cleaner';
+			} else {
+				$user_type = 'client';
+			}
+		}
+		if (empty($user_id) && !empty($this->data['user_info'])) {
+			$user_id = $this->data['user_info']['id'];
+		}
+		return $this->db
+			->where('id', $user_id)
+			->where($user_type.'_id', $user_id)
+			->order_by('id', 'desc')
+			->get('orders')
+			->row_array();
+	}
+
+	function get_all_orders($user_id, $status = '0', $user_type = false) {
+		if (empty($user_type)) {
+			if (!empty($this->data['user_info']['is_cleaner'])) {
+				$user_type = 'cleaner';
+			} else {
+				$user_type = 'client';
+			}
+		}
+		if (empty($user_id) && !empty($this->data['user_info'])) {
+			$user_id = $this->data['user_info']['id'];
+		}
+		return $this->db
+			->where($user_type.'_id', $user_id)
+			->where('status', $status)
+			->order_by('id', 'desc')
+			->get('orders');
+	}
+
 	function order_form() {
 		if (!$this->ion_auth->logged_in()) {
 			//------------------------------------------
@@ -100,35 +137,30 @@ class Order_model extends CI_Model {
 
 		//------------------------------------------
 		$user_info = $this->ion_auth->user()->row_array();
-		foreach (array('country', 'city', 'address', 'zip') as $item) {
-			if (empty($user_info[$item]) || $this->input->post($item)) {
-				continue;
-			}
-			$_POST[$item] = $user_info[$item];
-		}
-
-
 		$data['address_form'] = $this->form
 			->text('country', array(
 				'valid_rules' => 'required|trim|xss_clean|max_length[100]',
 				'label'       => lang('create_user_country_label'),
 				'width'       => 12, 'group_class' => 'col-sm-6',
+				'value'       => !empty($user_info['country']) ? $user_info['country'] : false,
 			))
 			->text('city', array(
 				'valid_rules' => 'required|trim|xss_clean|max_length[100]',
 				'label'       => lang('create_user_city_label'),
 				'width'       => 12, 'group_class' => 'col-sm-6',
+				'value'       => !empty($user_info['city']) ? $user_info['city'] : false,
 			))
 			->text('address', array(
 				'valid_rules' => 'required|trim|xss_clean|max_length[100]',
 				'label'       => lang('create_user_address_label'),
 				'width'       => 12, 'group_class' => 'col-sm-6',
+				'value'       => !empty($user_info['address']) ? $user_info['address'] : false,
 			))
 			->text('zip', array(
 				'valid_rules' => 'required|trim|xss_clean|max_length[100]|is_natural',
 				'label'       => lang('create_user_zip_label'),
 				'width'       => 12, 'group_class' => 'col-sm-6',
-				'value'       => !empty($this->data['temp_post']['zip']) ? $this->data['temp_post']['zip'] : false
+				'value'       => !empty($this->data['temp_post']['zip']) ? $this->data['temp_post']['zip'] : (!empty($user_info['zip']) ? $user_info['zip'] : false)
 			))
 			->create(array('error_inline' => true, 'no_form_tag' => true));
 
