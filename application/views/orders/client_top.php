@@ -39,16 +39,21 @@
 				<?php }?>
 			</div>
 			<div class="col-sm-2 text-center">
-				<img src="http://placehold.it/100x100" alt="..." class="img-circle">
-				<div class="name">Наталья</div>
-				<a href="#" class="label">Профиль</a>
+				<?php if (!empty($cleaner_info)) {?>
+				<img src="/img/no_photo.jpg" width="100" class="img-circle">
+				<div class="name"><?php echo $cleaner_info['first_name']?></div>
+				<a href="<?php echo site_url('profile/'.$cleaner_info['id'])?>" class="label">Профиль</a>
+				<?php } else {?>
+				<img src="/img/no_photo.jpg" width="100" class="img-circle">
+				<div class="name">Неизвестно</div>
+				<?php }?>
 			</div>
 			<div class="col-sm-5 text-left info_block">
 				<?php if ($order_info['status'] == 0) {?>
-					<a href="#" class="black_link">Отказаться от сделки</a>
+					<a href="<?php echo site_url('orders/reject/'.$order_info['id'])?>" class="black_link no_margin">Отказаться от сделки</a>
 				<?php } elseif ($order_info['status'] == 1) {?>
-					<a href="#" class="black_link no_margin">Отказаться от сделки</a>
-					<a href="#" class="big_status no_margin">Оплатить сделку</a>
+					<a href="<?php echo site_url('orders/reject/'.$order_info['id'])?>" class="black_link no_margin">Отказаться от сделки</a>
+					<a href="<?php echo site_url('orders/pay/'.$order_info['id'])?>" class="big_status no_margin">Оплатить сделку</a>
 				<?php } elseif ($order_info['status'] == 2) {
 					if (($order_info['start_date'] + (3600 * $order_info['duration']) + 1800) < time()) {?>
 						<a href="#" class="btn btn-success">Уборкой доволен(а)</a>

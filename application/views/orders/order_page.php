@@ -1,7 +1,10 @@
 <div class="container">
+	<?php echo get_alerts();?>
 	<div class="row">
 		<?php if (!empty($right_info)) {?>
-		<div class="col-md-8"><?php echo $center_block?></div>
+		<div class="col-md-8">
+			<?php echo $center_block?>
+		</div>
 		<div class="col-md-4">
 			<div class="detail_block">
 				<div class="title"><?php echo $right_info['title']?></div>

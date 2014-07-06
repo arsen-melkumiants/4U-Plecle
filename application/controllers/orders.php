@@ -94,8 +94,12 @@ class Orders extends CI_Controller {
 
 		$this->load->view('header', $this->data);
 		if ($this->data['user_info']['is_cleaner']) {
+			$this->data['client_info'] = $this->ion_auth->user($this->data['order_info']['client_id'])->row_array();
 			$this->load->view('orders/cleaner_top', $this->data);
 		} else {
+			if (!empty($this->data['order_info']['cleaner_id'])) {
+				$this->data['cleaner_info'] = $this->ion_auth->user($this->data['order_info']['cleaner_id'])->row_array();
+			}
 			$this->load->view('orders/client_top', $this->data);
 		}
 		$this->load->view('orders/order_page', $this->data);
@@ -132,6 +136,39 @@ class Orders extends CI_Controller {
 			$result_html = '<h4 class="title">'.$status_labels[$status].'</h4>'.$result_html;
 		}
 		return $result_html;
+	}
+
+	function pay($order_id) {
+		$order_id = intval($order_id);
+		if (empty($order_id)) {
+			custom_404();
+		}
+
+		$order_info = $this->order_model->get_user_order($order_id);
+		if (empty($order_info)) {
+			custom_404();
+		}
+
+		if ($order_info['status'] == 1) {
+			$this->db->trans_begin();
+			$this->db->where('id', $order_id)->update('orders', array('status' => 2));
+			$this->db->insert('payments', array(
+				'order_id'        => $order_info['id'],
+				'price_per_hour'  => $order_info['price_per_hour'],
+				'detergent_price' => $order_info['detergent_price'],
+				'total_price'     => $order_info['total_price'],
+				'status'          => 1,
+			));
+			$this->db->trans_commit();
+			$this->session->set_flashdata('success', 'Оплата успешно произведена');
+		} elseif ($order_info['status'] == 0) {
+			$this->session->set_flashdata('danger', 'У вас пока eще нет работника');
+		} elseif ($order_info['status'] == 2) {
+			$this->session->set_flashdata('danger', 'Оплата уже совершена');
+		} else {
+			$this->session->set_flashdata('danger', 'Оплата не может быть произведена');
+		}
+		redirect('orders/detail/'.$order_id, 'refresh');
 	}
 
 }
