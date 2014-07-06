@@ -44,7 +44,15 @@ class Order_model extends CI_Model {
 			->row_array();
 	}
 
-	function get_all_orders($user_id, $status = '0', $user_type = false) {
+	function get_order_payments($order_id) {
+		return $this->db
+			->where('order_id', $order_id)
+			->where('status', 1)
+			->order_by('id', 'desc')
+			->get('payments');
+	}
+
+	function get_all_orders($status = '0', $user_id = false, $user_type = false) {
 		if (empty($user_type)) {
 			if (!empty($this->data['user_info']['is_cleaner'])) {
 				$user_type = 'cleaner';
@@ -55,9 +63,17 @@ class Order_model extends CI_Model {
 		if (empty($user_id) && !empty($this->data['user_info'])) {
 			$user_id = $this->data['user_info']['id'];
 		}
+
+		if ($status == 0) {
+			$this->db->where('status', 0);
+		} elseif ($status == 1) {
+			$this->db->where_in('status', array(1,2));
+		} else {
+			$this->db->where('status >', 2);
+		}
+
 		return $this->db
 			->where($user_type.'_id', $user_id)
-			->where('status', $status)
 			->order_by('id', 'desc')
 			->get('orders');
 	}
@@ -183,7 +199,7 @@ class Order_model extends CI_Model {
 				'label'       => 'Время начала уборки',
 				'icon'        => false,
 				'group_class' => 'col-sm-12', 'label_width' => 6,
-				'type'        => 'd.m.Y h:i',
+				'type'        => 'd.m.Y H:i',
 			))
 			->checkbox('special[]', array(
 				'valid_rules' => 'trim|xss_clean',

@@ -54,7 +54,7 @@ class Table {
 		$params['title'] = !empty($params['title']) ? ' title="'.$params['title'].'"' : '';
 		$params['link']  = !empty($params['link']) ? (strpos($params['link'], 'http') === false ? site_url($params['link']) : $params['link']) : '#';
 		$params['modal'] = !empty($params['modal']) ? ' data-toggle="modal" data-target="#ajaxModal"' : '';
-		
+
 		$result = array(
 			'html'   => '<a href="'.$params['link'].'" '.$params['class'].$params['title'].$params['modal'].'>'.$params['icon'].$params['name'].'</a>',
 			'params' => $params
@@ -63,7 +63,7 @@ class Table {
 		if (isset($params['func']) && is_callable($params['func'])) {
 			$result['func'] = $params['func'];
 		}
-		
+
 		if ($get_result) {
 			return $result;
 		}
@@ -172,7 +172,7 @@ class Table {
 				if (isset($item['params']['date']) && intval($row[$item['name']])) {
 					$result = date($item['params']['type'], $row[$item['name']]);
 				}
-				
+
 				if (empty($result)) {
 					$result = isset($item['params']['func']) ? $item['params']['func']($row, $item['params'], $this, $CI) : $row[$item['name']];
 				}
@@ -269,7 +269,7 @@ class Table {
 		}
 		$n = 0;
 		for ($i = $start_off;$i <= $pages;$i++) {
-			if ($n == $size) { 
+			if ($n == $size) {
 				break;
 			}
 

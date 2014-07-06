@@ -77,18 +77,19 @@ class Orders extends CI_Controller {
 			custom_404();
 		}
 
+		$this->data['payment_history'] = $this->payment_table($order_id);
 		$this->data['center_block'] = $this->load->view('orders/order_info', $this->data, true);
 		$this->data['right_info']   = array(
 			'title'      => 'Ваш профиль',
 			'info_array' => array(
 				'Индекс'          => $this->data['order_info']['zip'],
 				'Дата'            => date('d.m.Y', $this->data['order_info']['start_date']),
-				'Время'           => date('h:i', $this->data['order_info']['start_date']),
+				'Время'           => date('H:i', $this->data['order_info']['start_date']),
 				'Частота'         => $this->order_model->frequency[$this->data['order_info']['frequency']],
 				'Рабочие часы'    => $this->order_model->duration[$this->data['order_info']['duration']],
-				'Цена за час'     => floatval($this->data['order_info']['price_per_hour']).' руб',
-				'Моющие средства' => floatval($this->data['order_info']['detergent_price'] * $this->data['order_info']['need_detergents']).' руб',
-				'Итого'           => floatval($this->data['order_info']['total_price']).' руб',
+				'Цена за час'     => floatval($this->data['order_info']['price_per_hour']).' рублей',
+				'Моющие средства' => floatval($this->data['order_info']['detergent_price'] * $this->data['order_info']['need_detergents']).' рублей',
+				'Итого'           => floatval($this->data['order_info']['total_price']).' рублей',
 			),
 		);
 
@@ -126,16 +127,35 @@ class Orders extends CI_Controller {
 			->text('status', array(
 				'title' => 'Информация',
 				'func'  => function($row, $params) {
-					return '<a href="'.site_url('orders/detail/'.$row['id']).'">Уборка '.date('d.m.Y в h:i', $row['start_date']).'</a>';
+					return '<a href="'.site_url('orders/detail/'.$row['id']).'">Уборка '.date('d.m.Y в H:i', $row['start_date']).'</a>';
 				}
 		))
 			->create(function($CI) {
-				return $CI->order_model->get_all_orders($CI->data['user_info']['id'], $CI->data['status']);
+				return $CI->order_model->get_all_orders($CI->data['status']);
 			}, array('no_header' => true, 'class' => 'list'));
 		if (!empty($result_html)) {
 			$result_html = '<h4 class="title">'.$status_labels[$status].'</h4>'.$result_html;
 		}
 		return $result_html;
+	}
+
+	private function payment_table($order_id = 0) {
+		$this->data['order_id'] = $order_id;
+		return $this->table
+			->date('add_date', array(
+				'title' => 'Номер',
+				'type' => 'd.m.Y H:i',
+				'width' => '50%',
+			))
+			->text('total_price', array(
+				'title' => 'Цена',
+				'func'  => function($row, $params) {
+					return floatval($row['total_price']).' рублей';
+				}
+		))
+			->create(function($CI) {
+				return $CI->order_model->get_order_payments($CI->data['order_id']);
+			}, array('no_header' => true, 'class' => 'list'));
 	}
 
 	function pay($order_id) {
@@ -157,6 +177,7 @@ class Orders extends CI_Controller {
 				'price_per_hour'  => $order_info['price_per_hour'],
 				'detergent_price' => $order_info['detergent_price'],
 				'total_price'     => $order_info['total_price'],
+				'add_date'        => time(),
 				'status'          => 1,
 			));
 			$this->db->trans_commit();

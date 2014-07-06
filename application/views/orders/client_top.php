@@ -20,7 +20,7 @@
 					<div class="add_title"><?php echo $order_info['country'].', '.$order_info['city'].', '.$order_info['address']?></div>
 				<?php } elseif ($order_info['status'] == 1 || $order_info['status'] == 2) {?>
 					<div class="add_title">Начало уборки:</div>
-					<div class="big_status"><?php echo date('d.m.Y в h:i', $order_info['start_date'])?></div>
+					<div class="big_status"><?php echo date('d.m.Y в H:i', $order_info['start_date'])?></div>
 					<?php if ($order_info['status'] == 1 && ($order_info['start_date'] - 86400) < time()) {
 					$time_left = $order_info['start_date'] - time();
 						if ($time_left > 0) {?>
@@ -35,7 +35,7 @@
 					<?php }?>
 				<?php } elseif ($order_info['status'] == 3) {?>
 					<div class="big_status">Уборка завершена</div>
-					<div class="add_title"><?php echo date('В h:i d.m.Y', $order_info['start_date'] + (3600 * $order_info['duration']))?></div>
+					<div class="add_title"><?php echo date('В H:i d.m.Y', $order_info['start_date'] + (3600 * $order_info['duration']))?></div>
 				<?php }?>
 			</div>
 			<div class="col-sm-2 text-center">

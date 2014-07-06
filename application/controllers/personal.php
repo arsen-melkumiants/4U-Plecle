@@ -458,7 +458,7 @@ class Personal extends CI_Controller {
 				'info_array'  => array(
 					'Индекс'          => !empty($this->data['temp_post']['zip']) ? $this->data['temp_post']['zip'] : $this->input->post('zip'),
 					'Дата'            => date('d.m.Y'),
-					'Время'           => date('h:i'),
+					'Время'           => date('H:i'),
 					'Частота'         => isset($this->order_model->frequency[$this->input->post('frequency')]) ? $this->order_model->frequency[$this->input->post('frequency')] : false,
 					'Рабочие часы'    => isset($this->order_model->duration[$this->input->post('duration')]) ? $this->order_model->duration[$this->input->post('duration')] : false,
 					'Цена за час'     => PRICE_PER_HOUR,

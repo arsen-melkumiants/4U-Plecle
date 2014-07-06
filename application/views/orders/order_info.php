@@ -5,7 +5,7 @@
 	<dt>Рабочее время</dt>
 	<dd><?php echo $this->order_model->duration[$order_info['duration']]?></dd>
 	<dt>Дата уборки</dt>
-	<dd><?php echo date('d.m.Y с h:i', $order_info['start_date'])?></dd>
+	<dd><?php echo date('d.m.Y с H:i', $order_info['start_date'])?></dd>
 	<dt>Особые условия</dt>
 	<dd>Требуется глажка, есть животные</dd>
 	<dt>Заметки клиента для Вас</dt>
@@ -24,8 +24,4 @@
 <?php if (!empty($payment_history)) {?>
 <h4 class="title">История оплат</h4>
 <?php echo $payment_history?>
-<dl class="dl-horizontal list">
-	<dt>25.05.2014</dt>
-	<dd>1 200 рублей</dd>
-</dl>
 <?php }?>
