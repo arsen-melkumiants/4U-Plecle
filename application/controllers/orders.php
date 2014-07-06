@@ -72,16 +72,31 @@ class Orders extends CI_Controller {
 			custom_404();
 		}
 
-		$order_info = $this->order_model->get_user_order($order_id);
-		if (empty($order_info)) {
+		$this->data['order_info'] = $this->order_model->get_user_order($order_id);
+		if (empty($this->data['order_info'])) {
 			custom_404();
 		}
+
+		$this->data['center_block'] = $this->load->view('orders/order_info', $this->data, true);
+		$this->data['right_info']   = array(
+			'title'      => 'Ваш профиль',
+			'info_array' => array(
+				'Индекс'          => $this->data['order_info']['zip'],
+				'Дата'            => date('d.m.Y', $this->data['order_info']['start_date']),
+				'Время'           => date('h:i', $this->data['order_info']['start_date']),
+				'Частота'         => $this->order_model->frequency[$this->data['order_info']['frequency']],
+				'Рабочие часы'    => $this->order_model->duration[$this->data['order_info']['duration']],
+				'Цена за час'     => floatval($this->data['order_info']['price_per_hour']).' руб',
+				'Моющие средства' => floatval($this->data['order_info']['detergent_price'] * $this->data['order_info']['need_detergents']).' руб',
+				'Итого'           => floatval($this->data['order_info']['total_price']).' руб',
+			),
+		);
 
 		$this->load->view('header', $this->data);
 		if ($this->data['user_info']['is_cleaner']) {
 			$this->load->view('orders/cleaner_top', $this->data);
 		} else {
-			$this->load->view('orders/cleaner_top', $this->data);
+			$this->load->view('orders/client_top', $this->data);
 		}
 		$this->load->view('orders/order_page', $this->data);
 		$this->load->view('footer', $this->data);

@@ -37,7 +37,7 @@ class Order_model extends CI_Model {
 			$user_id = $this->data['user_info']['id'];
 		}
 		return $this->db
-			->where('id', $user_id)
+			->where('id', $order_id)
 			->where($user_type.'_id', $user_id)
 			->order_by('id', 'desc')
 			->get('orders')

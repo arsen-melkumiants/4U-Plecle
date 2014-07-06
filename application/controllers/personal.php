@@ -502,7 +502,7 @@ class Personal extends CI_Controller {
 				'need_ironing'    => $this->input->post('need_ironing'),
 				'have_pets'       => $this->input->post('have_pets'),
 				'need_detergents' => $this->input->post('need_detergents'),
-				'comment'         => $this->input->post('frequency'),
+				'comment'         => $this->input->post('comment'),
 				'country'         => $this->input->post('country'),
 				'city'            => $this->input->post('city'),
 				'address'         => $this->input->post('address'),
