@@ -42,7 +42,7 @@
 					<div class="add_title"><?php echo date('В H:i d.m.Y', $order_info['start_date'] + (3600 * $order_info['duration']))?></div>
 				<?php } elseif ($order_info['status'] > 3) {?>
 					<div class="big_status">Сделка отменена</div>
-					<div class="add_title"><?php echo date('В H:i d.m.Y', $order_info['start_date'] + (3600 * $order_info['duration']))?></div>
+					<div class="add_title"><?php echo date('В H:i d.m.Y', $order_info['cancel_date'])?></div>
 				<?php }?>
 			</div>
 			<div class="col-sm-2 text-center">
