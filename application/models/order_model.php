@@ -66,16 +66,28 @@ class Order_model extends CI_Model {
 
 		if ($status == 0) {
 			$this->db->where('status', 0);
+			$this->db->where('start_date >', time() + 86400);
 		} elseif ($status == 1) {
-			$this->db->where_in('status', array(1,2));
+			$this->db->where('(status = 2 OR (status = 1 AND start_date > '.(time() + 86400).'))');
 		} else {
-			$this->db->where('status >', 2);
+			$this->db->where('(status > 2 OR (status IN (0,1) AND start_date < '.(time() + 86400).'))');
 		}
 
 		return $this->db
 			->where($user_type.'_id', $user_id)
 			->order_by('id', 'desc')
 			->get('orders');
+	}
+
+	function get_all_cleaners($zip = false) {
+		if (!empty($zip)) {
+			$this->db->like('zip', ','.$zip.',');
+		}
+		return $this->db
+			->where('active', 1)
+			->where('is_cleaner', 1)
+			->get('users')
+			->result_array();
 	}
 
 	function order_form() {
@@ -176,7 +188,7 @@ class Order_model extends CI_Model {
 				'valid_rules' => 'required|trim|xss_clean|max_length[100]|is_natural',
 				'label'       => lang('create_user_zip_label'),
 				'width'       => 12, 'group_class' => 'col-sm-6',
-				'value'       => !empty($this->data['temp_post']['zip']) ? $this->data['temp_post']['zip'] : (!empty($user_info['zip']) ? $user_info['zip'] : false)
+				'value'       => !empty($this->data['temp_post']['zip']) ? $this->data['temp_post']['zip'] : (!empty($user_info['zip']) ? trim($user_info['zip'], ',') : false)
 			))
 			->create(array('error_inline' => true, 'no_form_tag' => true));
 

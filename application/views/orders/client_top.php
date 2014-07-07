@@ -16,25 +16,32 @@
 			</div>
 			<div class="col-sm-5 text-right info_block">
 				<?php if ($order_info['status'] == 0) {?>
-					<div class="big_status">Ждем работника</div>
+					<div class="big_status">Ожидание оплаты</div>
 					<div class="add_title"><?php echo $order_info['country'].', '.$order_info['city'].', '.$order_info['address']?></div>
 				<?php } elseif ($order_info['status'] == 1 || $order_info['status'] == 2) {?>
 					<div class="add_title">Начало уборки:</div>
 					<div class="big_status"><?php echo date('d.m.Y в H:i', $order_info['start_date'])?></div>
-					<?php if ($order_info['status'] == 1 && ($order_info['start_date'] - 86400) < time()) {
-					$time_left = $order_info['start_date'] - time();
+					<?php if ($order_info['status'] == 1 && ($order_info['start_date'] - 86400 * 2) < time()) {
+					$time_left = $order_info['start_date'] - 86400 - time();
 						if ($time_left > 0) {?>
 						<div class="black_link no_margin">
-							Осталось <?php echo date('h часа(ов) и i минут(ы)')?> для оплаты заказа
+							<?php
+							$hours = $time_left / 60 / 60;
+							$minutes = ($hours - floor($hours)) * 60;
+							?>
+							Осталось <?php echo floor($hours)?> часа(ов) и <?php echo ceil($minutes)?> минут(ы) для оплаты заказа
 						</div>
 						<?php } else {?>
 						<div class="add_title text-danger no_margin">
-							Заказ не оплачен!<br />Сделка заморожена!
+							Заказ не оплачен!<br />Сделка отменена!
 						</div>
 						<?php }?>
 					<?php }?>
 				<?php } elseif ($order_info['status'] == 3) {?>
 					<div class="big_status">Уборка завершена</div>
+					<div class="add_title"><?php echo date('В H:i d.m.Y', $order_info['start_date'] + (3600 * $order_info['duration']))?></div>
+				<?php } elseif ($order_info['status'] == 3) {?>
+					<div class="big_status">Сделка отменена</div>
 					<div class="add_title"><?php echo date('В H:i d.m.Y', $order_info['start_date'] + (3600 * $order_info['duration']))?></div>
 				<?php }?>
 			</div>
@@ -50,16 +57,18 @@
 			</div>
 			<div class="col-sm-5 text-left info_block">
 				<?php if ($order_info['status'] == 0) {?>
-					<a href="<?php echo site_url('orders/reject/'.$order_info['id'])?>" class="black_link no_margin">Отказаться от сделки</a>
-				<?php } elseif ($order_info['status'] == 1) {?>
-					<a href="<?php echo site_url('orders/reject/'.$order_info['id'])?>" class="black_link no_margin">Отказаться от сделки</a>
+					<a href="<?php echo site_url('orders/cancel/'.$order_info['id'])?>" class="black_link no_margin">Отказаться от сделки</a>
+				<?php } elseif ($order_info['status'] == 1 && $order_info['start_date'] > 86400 + time()) {?>
+					<a href="<?php echo site_url('orders/cancel/'.$order_info['id'])?>" class="black_link no_margin">Отказаться от сделки</a>
 					<a href="<?php echo site_url('orders/pay/'.$order_info['id'])?>" class="big_status no_margin">Оплатить сделку</a>
 				<?php } elseif ($order_info['status'] == 2) {
 					if (($order_info['start_date'] + (3600 * $order_info['duration']) + 1800) < time()) {?>
-						<a href="#" class="btn btn-success">Уборкой доволен(а)</a>
+						<a href="<?php echo site_url('orders/positive_mark/'.$order_info['id'])?>" class="btn btn-success">Уборкой доволен(а)</a>
 						<br>
 						<br>
-						<a href="#" class="btn btn-danger">Уборкой не доволен(а)</a>
+						<a href="<?php echo site_url('orders/negative_mark/'.$order_info['id'])?>" class="btn btn-danger">Уборкой не доволен(а)</a>
+					<?php } elseif ($order_info['start_date'] > 86400 + time()) {?>
+						<a href="<?php echo site_url('orders/cancel/'.$order_info['id'])?>" class="black_link no_margin">Отказаться от сделки</a>
 					<?php } else {?>
 						<span class="black_link disabled">Отказаться от сделки</span>
 					<?php }?>

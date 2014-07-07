@@ -86,7 +86,7 @@ h4.title .right_link {float: right;color: #a94442;}
 .bottom_promo_block .promo_list p {color: #7b7b7b;}
 .bottom_promo_block .promo_sign {display: block;width: 52px;height: 52px;background: url(../img/promo_sign.png);margin: 15px auto;}
 
-.users_block {background: #008caa;text-align: center;color: #fff;margin-bottom: 25px;}
+.users_block {background: #008caa;text-align: center;color: #fff;margin-bottom: 25px;max-height: 410px;overflow: hidden;}
 .users_block h1 {color: #fff;font-size: 25px;}
 .users_block h3 {color: #81e9ff;font-size: 16px;margin-bottom: 25px;}
 .users_block img {border: 5px solid #fff;background: #fff;}

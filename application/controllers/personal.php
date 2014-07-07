@@ -440,6 +440,9 @@ class Personal extends CI_Controller {
 			redirect('', 'refresh');
 		}
 
+		$this->load->model('order_model');
+		$this->data['cleaners'] = $this->order_model->get_all_cleaners($this->input->post('zip'));
+
 		if (!isset($_POST['duration'])) {
 			$this->data['temp_post']['zip'] = $this->input->post('zip');
 			$_POST = array();
@@ -448,7 +451,6 @@ class Personal extends CI_Controller {
 
 
 		$this->data['title'] = $this->data['header'] = 'Создание заявки';
-		$this->load->model('order_model');
 		$this->data['center_block'] = $this->order_model->order_form();
 
 		if ($this->form_validation->run() == FALSE) {
@@ -509,6 +511,7 @@ class Personal extends CI_Controller {
 				'zip'             => $this->input->post('zip'),
 				'start_date'      => strtotime($this->input->post('start_date')),
 				'add_date'        => time(),
+				'last_mark'       => '',
 				'status'          => 0,
 			);
 			$this->db->trans_commit();

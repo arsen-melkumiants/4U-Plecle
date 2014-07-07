@@ -48,7 +48,7 @@ class Orders extends CI_Controller {
 				'Страна'    => $this->data['user_info']['country'],
 				'Город'     => $this->data['user_info']['city'],
 				'Адрес'     => $this->data['user_info']['address'],
-				'Индекс'    => $this->data['user_info']['zip'],
+				'Индекс'    => trim($this->data['user_info']['zip'], ','),
 			),
 		);
 
@@ -116,7 +116,7 @@ class Orders extends CI_Controller {
 			'2' => 'Завершенные сделки'
 		);
 
-		$result_html = $this->table
+		$this->table
 			->text('id', array(
 				'title' => 'Номер',
 				'width' => '30%',
@@ -130,6 +130,27 @@ class Orders extends CI_Controller {
 					return '<a href="'.site_url('orders/detail/'.$row['id']).'">Уборка '.date('d.m.Y в H:i', $row['start_date']).'</a>';
 				}
 		))
+			->text('comment', array(
+				'title' => 'Номер',
+				'width' => '30%',
+				'func'  => function($row, $params) {
+					if ($row['status'] == 3 && $row['last_mark'] == 'positive') {
+						return '<span class="text-success">Уборка успешно завершена</span>';
+					} elseif ($row['status'] == 3 && $row['last_mark'] == 'negative') {
+						return '<span class="text-danger">Плохое качество уборки</span>';
+					} elseif ($row['status'] == 4) {
+						return '<span class="text-danger">Сделка отменена</span>';
+					} elseif ($row['status'] == 5) {
+						return '<span class="text-danger">Сделка отменена</span>';
+					} elseif (in_array($row['status'], array(0,1)) && $row['start_date'] < 86400 + time()) {
+						return '<span class="text-danger">Сделка не состоялась</span>';
+					}
+					return false;
+				}
+		));
+
+
+		$result_html = $this->table
 			->create(function($CI) {
 				return $CI->order_model->get_all_orders($CI->data['status']);
 			}, array('no_header' => true, 'class' => 'list'));
@@ -139,7 +160,7 @@ class Orders extends CI_Controller {
 		return $result_html;
 	}
 
-	private function payment_table($order_id = 0) {
+	private function payment_table($order_id = false) {
 		$this->data['order_id'] = $order_id;
 		return $this->table
 			->date('add_date', array(
@@ -158,18 +179,19 @@ class Orders extends CI_Controller {
 			}, array('no_header' => true, 'class' => 'list'));
 	}
 
-	function pay($order_id) {
+	function pay($order_id = false) {
 		$order_id = intval($order_id);
 		if (empty($order_id)) {
 			custom_404();
 		}
 
-		$order_info = $this->order_model->get_user_order($order_id);
+		$order_info = $this->order_model->get_user_order($order_id, false, 'client');
 		if (empty($order_info)) {
 			custom_404();
 		}
 
-		if ($order_info['status'] == 1) {
+		$pay_time = ($order_info['start_time'] - 86400) > time();
+		if ($pay_time && ($order_info['status'] == 0 || $order_info['status'] == 1)) {
 			$this->db->trans_begin();
 			$this->db->where('id', $order_id)->update('orders', array('status' => 2));
 			$this->db->insert('payments', array(
@@ -182,8 +204,6 @@ class Orders extends CI_Controller {
 			));
 			$this->db->trans_commit();
 			$this->session->set_flashdata('success', 'Оплата успешно произведена');
-		} elseif ($order_info['status'] == 0) {
-			$this->session->set_flashdata('danger', 'У вас пока eще нет работника');
 		} elseif ($order_info['status'] == 2) {
 			$this->session->set_flashdata('danger', 'Оплата уже совершена');
 		} else {
@@ -192,4 +212,75 @@ class Orders extends CI_Controller {
 		redirect('orders/detail/'.$order_id, 'refresh');
 	}
 
+	function positive_mark($order_id = false) {
+		$this->mark($order_id, 'positive');
+	}
+
+	function negative_mark($order_id = false) {
+		$this->mark($order_id, 'negative');
+	}
+
+	private function mark($order_id = false, $sign = 'positive') {
+		$order_id = intval($order_id);
+		if (empty($order_id)) {
+			custom_404();
+		}
+
+		$order_info = $this->order_model->get_user_order($order_id, false, 'client');
+		if (empty($order_info)) {
+			custom_404();
+		}
+
+		$mark_time = ($order_info['start_date'] + (3600 * $order_info['duration']) + 1800) < time();
+		if ($order_info['status'] == 2 && $mark_time) {
+			$update_array = array('status' => 3);
+			if ($order_info['frequency'] == 'every_week') {
+				$update_array['status'] = 1;
+				$update_array['start_date'] = $order_info['start_date'] + 604800;
+			} elseif ($order_info['frequency'] == 'every_2_weeks') {
+				$update_array['status'] = 1;
+				$update_array['start_date'] = $order_info['start_date'] + 1209600;
+			}
+			$this->db->trans_begin();
+			$this->db->where('id', $order_id)->update('orders', $update_array);
+			$this->db->insert('marks', array(
+				'order_id' => $order_info['id'],
+				'mark'     => $sign,
+				'add_date' => time(),
+				'status'   => 1,
+			));
+			$this->db->trans_commit();
+			$this->session->set_flashdata('success', 'Сделка успешно завершена');
+		} else {
+			$this->session->set_flashdata('danger', 'Оценка не может быть произведена');
+		}
+		redirect('orders/detail/'.$order_id, 'refresh');
+	}
+
+	function cancel($order_id = false) {
+		$order_id = intval($order_id);
+		if (empty($order_id)) {
+			custom_404();
+		}
+
+		$order_info = $this->order_model->get_user_order($order_id);
+		if (empty($order_info)) {
+			custom_404();
+		}
+
+		$cancel_time = ($order_info['start_date'] > time() + 86400);
+		if (in_array($order_info['status'], array(0,1,2)) && $cancel_time) {
+			$update_array['cancel_time'] = time();
+			if ($order_info['status'] == 2) {
+				$update_array['status'] = 5;
+			} else {
+				$update_array['status'] = 4;
+			}
+			$this->db->where('id', $order_id)->update('orders', $update_array);
+			$this->session->set_flashdata('success', 'Сделка успешно отменена');
+		} else {
+			$this->session->set_flashdata('danger', 'Сделка не может быть отменена');
+		}
+		redirect('orders/detail/'.$order_id, 'refresh');
+	}
 }
