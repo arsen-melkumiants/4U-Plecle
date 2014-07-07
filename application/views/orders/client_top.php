@@ -21,7 +21,7 @@
 				<?php } elseif ($order_info['status'] == 1 || $order_info['status'] == 2) {?>
 					<div class="add_title">Начало уборки:</div>
 					<div class="big_status"><?php echo date('d.m.Y в H:i', $order_info['start_date'])?></div>
-					<?php if ($order_info['status'] == 1 && ($order_info['start_date'] - 86400 * 2) < time()) {
+					<?php if (in_array($order_info['status'], array(0,1)) && ($order_info['start_date'] - 86400 * 2) < time()) {
 					$time_left = $order_info['start_date'] - 86400 - time();
 						if ($time_left > 0) {?>
 						<div class="black_link no_margin">

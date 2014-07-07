@@ -80,7 +80,7 @@ class Orders extends CI_Controller {
 		$this->data['payment_history'] = $this->payment_table($order_id);
 		$this->data['center_block'] = $this->load->view('orders/order_info', $this->data, true);
 		$this->data['right_info']   = array(
-			'title'      => 'Информация',
+			'title'      => 'Детали заявки',
 			'info_array' => array(
 				'Индекс'          => $this->data['order_info']['zip'],
 				'Дата'            => date('d.m.Y', $this->data['order_info']['start_date']),

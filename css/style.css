@@ -115,6 +115,13 @@ h4.title .right_link {float: right;color: #a94442;}
 .cleaner_block .big_status {margin-top: 5px;font-size: 30px;}
 .cleaner_block .text-danger {color: #ff8196;}
 .cleaner_block .black_link {color: #000;font-size: 20px;}
+.cleaner_block .black_link.disabled {
+	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=30)";
+	filter: alpha(opacity=30);
+	-moz-opacity: 0.3;
+	-khtml-opacity: 0.3;
+	opacity: 0.3;
+}
 .cleaner_block .black_link:hover {color: #000;}
 
 .client_block {background: url(../img/middle_promo_bg.png);padding: 5px 15px 15px;border-top: 1px solid #007e99;color: #fff;margin-bottom: 25px;text-align: center;}
