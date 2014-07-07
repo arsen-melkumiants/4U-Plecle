@@ -80,7 +80,7 @@ class Orders extends CI_Controller {
 		$this->data['payment_history'] = $this->payment_table($order_id);
 		$this->data['center_block'] = $this->load->view('orders/order_info', $this->data, true);
 		$this->data['right_info']   = array(
-			'title'      => 'Ваш профиль',
+			'title'      => 'Информация',
 			'info_array' => array(
 				'Индекс'          => $this->data['order_info']['zip'],
 				'Дата'            => date('d.m.Y', $this->data['order_info']['start_date']),
@@ -270,7 +270,7 @@ class Orders extends CI_Controller {
 
 		$cancel_time = ($order_info['start_date'] > time() + 86400);
 		if (in_array($order_info['status'], array(0,1,2)) && $cancel_time) {
-			$update_array['cancel_time'] = time();
+			$update_array['cancel_date'] = time();
 			if ($order_info['status'] == 2) {
 				$update_array['status'] = 5;
 			} else {
