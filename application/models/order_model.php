@@ -36,9 +36,18 @@ class Order_model extends CI_Model {
 		if (empty($user_id) && !empty($this->data['user_info'])) {
 			$user_id = $this->data['user_info']['id'];
 		}
+
+		if ($user_type == 'no_cleaner') {
+			if (empty($this->data['user_info']['is_cleaner'])) {
+				return false;
+			}
+			$this->db->where('cleaner_id', 0);
+			$this->db->where('(status = 2 AND start_date > '.time().')');
+		} else {
+			$this->db->where($user_type.'_id', $user_id);
+		}
 		return $this->db
 			->where('id', $order_id)
-			->where($user_type.'_id', $user_id)
 			->order_by('id', 'desc')
 			->get('orders')
 			->row_array();
@@ -69,12 +78,18 @@ class Order_model extends CI_Model {
 			$this->db->where('start_date >', time() + 86400);
 		} elseif ($status == 1) {
 			$this->db->where('(status = 2 OR (status = 1 AND start_date > '.(time() + 86400).'))');
+		} elseif ($status == 3) {
+			$this->db->where('cleaner_id', 0);
+			$this->db->where('((status = 2 AND start_date > '.time().') OR (status IN (0,1) AND start_date > '.(time() + 86400).'))');
 		} else {
 			$this->db->where('(status > 2 OR (status IN (0,1) AND start_date < '.(time() + 86400).'))');
 		}
 
+		if ($status != 3) {
+			$this->db->where($user_type.'_id', $user_id);
+		}
+
 		return $this->db
-			->where($user_type.'_id', $user_id)
 			->order_by('id', 'desc')
 			->get('orders');
 	}

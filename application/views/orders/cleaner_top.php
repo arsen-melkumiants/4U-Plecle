@@ -20,7 +20,9 @@
 			</div>
 
 			<div class="col-sm-4 text-right">
-				<?php if ($active_deal) {?>
+				<?php if (!$order_info['cleaner_id'] && (($order_info['status'] == 2 && $order_info['start_date'] > time()))) {?>
+					<a href="<?php echo site_url('orders/accept/'.$order_info['id'])?>" class="big_link">Взяться!</a>
+				<?php } elseif ($active_deal) {?>
 					<div class="add_title">Начало уборки:</div>
 					<div class="big_status"><?php echo date('d.m.Y в H:i', $order_info['start_date'])?></div>
 					<a href="<?php echo site_url('orders/cancel/'.$order_info['id'])?>" class="black_link">Отказаться от сделки</a>
@@ -37,7 +39,6 @@
 					<div class="big_status">Сделка отменена</div>
 					<div class="add_title text-danger"><?php echo date('В H:i d.m.Y', $order_info['cancel_date'])?></div>
 				<?php }?>
-				<a href="#" class="big_link">Взяться!</a>
 			</div>
 		<?php }?>
 		</div>

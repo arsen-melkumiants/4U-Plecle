@@ -58,6 +58,7 @@ class Orders extends CI_Controller {
 
 		$this->load->view('header', $this->data);
 		if ($this->data['user_info']['is_cleaner']) {
+			$this->data['center_block'] .= $this->order_table(3);
 			$this->load->view('orders/cleaner_top', $this->data);
 		} else {
 			$this->load->view('orders/client_top', $this->data);
@@ -74,8 +75,13 @@ class Orders extends CI_Controller {
 
 		$this->data['order_info'] = $this->order_model->get_user_order($order_id);
 		if (empty($this->data['order_info'])) {
-			custom_404();
+			$this->data['order_info'] = $this->order_model->get_user_order($order_id, false, 'no_cleaner');
+			if (empty($this->data['order_info'])) {
+				custom_404();
+			}
 		}
+
+		$this->data['title'] = $this->data['header'] = 'Сделка #'.$order_id;
 
 		$this->data['payment_history'] = $this->payment_table($order_id);
 		$this->data['center_block'] = $this->load->view('orders/order_info', $this->data, true);
@@ -113,7 +119,8 @@ class Orders extends CI_Controller {
 		$status_labels = array(
 			'0' => 'Заявки на сделки',
 			'1' => 'Активные сделки',
-			'2' => 'Завершенные сделки'
+			'2' => 'Завершенные сделки',
+			'3' => 'Эти сделки должны Вас заинтересовать',
 		);
 
 		$this->table
@@ -133,7 +140,7 @@ class Orders extends CI_Controller {
 			->text('comment', array(
 				'title' => 'Номер',
 				'width' => '30%',
-				'func'  => function($row, $params) {
+				'func'  => function($row, $params, $that, $CI) {
 					if ($row['status'] == 3 && $row['last_mark'] == 'positive') {
 						return '<span class="text-success">Уборка успешно завершена</span>';
 					} elseif ($row['status'] == 3 && $row['last_mark'] == 'negative') {
@@ -144,6 +151,10 @@ class Orders extends CI_Controller {
 						return '<span class="text-danger">Сделка отменена</span>';
 					} elseif (in_array($row['status'], array(0,1)) && $row['start_date'] < 86400 + time()) {
 						return '<span class="text-danger">Сделка не состоялась</span>';
+					} elseif (!$row['cleaner_id'] && $row['status'] == 2 && $row['start_date'] > time() && $CI->data['user_info']['is_cleaner']) {
+						return '<a href="'.site_url('orders/accept/'.$row['id']).'" class="btn btn-primary">Взяться</a>';
+					} elseif (!$row['cleaner_id']) {
+						return '<span class="text-warning">Ожиданем горничную</span>';
 					}
 					return false;
 				}
@@ -281,6 +292,23 @@ class Orders extends CI_Controller {
 		} else {
 			$this->session->set_flashdata('danger', 'Сделка не может быть отменена');
 		}
+		redirect('orders/detail/'.$order_id, 'refresh');
+	}
+
+	function accept($order_id = false) {
+		$order_id = intval($order_id);
+		if (empty($order_id)) {
+			custom_404();
+		}
+
+		$order_info = $this->order_model->get_user_order($order_id, false, 'no_cleaner');
+		if (empty($order_info)) {
+			custom_404();
+		}
+
+		$update_array['cleaner_id'] = $this->data['user_info']['id'];
+		$this->db->where('id', $order_id)->update('orders', $update_array);
+		$this->session->set_flashdata('success', 'Сделка успешно заключена');
 		redirect('orders/detail/'.$order_id, 'refresh');
 	}
 }

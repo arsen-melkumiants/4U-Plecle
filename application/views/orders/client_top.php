@@ -12,7 +12,7 @@
 		<?php } else {?>
 		<div class="row">
 			<div class="col-sm-12">
-				<div class="big_status"><?php echo !empty($order_info['status']) ? 'Чистотой Вашего дома сейчас занимается' : 'Ищем работника для Вас'?></div>
+				<div class="big_status"><?php echo !empty($order_info['cleaner_id']) ? 'Чистотой Вашего дома сейчас занимается' : 'Ищем работника для Вас'?></div>
 			</div>
 			<div class="col-sm-5 text-right info_block">
 				<?php if ($order_info['status'] == 0) {?>
