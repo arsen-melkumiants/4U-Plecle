@@ -13,7 +13,7 @@
 			<?php $active_deal = $order_info['status'] == 2 || ($order_info['status'] == 1 && $order_info['start_date'] > time() + 86400); ?>
 			<div class="col-sm-6">
 				<?php if ($active_deal) {?>
-				<div class="big_status">Сделка Ваша!</div>
+				<div class="big_status"><?php echo $order_info['status'] != 2 ? 'Оплата не совершена' : 'Сделка Ваша!'?></div>
 				<?php }?>
 				<div class="title<?php echo $active_deal ? ' no_margin' : ''?>">Адрес клиента</div>
 				<div class="add_title"><?php echo $user_info['country'].', '.$user_info['city'].', '.$user_info['address']?></div>
