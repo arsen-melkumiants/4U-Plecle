@@ -11,6 +11,7 @@
 	<?php echo after_load('js');?>
 
 <script>
+
 var update_tree_struct = function(e) {
 	var tree = $('.tree_struct').nestable('serialize');
 	$.post('<?php echo current_url();?>',{tree : tree});
@@ -22,6 +23,10 @@ $(function(){
 		$('.selectpicker').selectpicker();
 	}	
 
+	$(".date_time").datetimepicker({language: 'ru', todayBtn: true});
+	$(document).on('focus', '.date_time', function(){
+		$(this).datetimepicker({language: 'ru', todayBtn: true});
+	});
 
 	$('.tree_struct').nestable().on('change', update_tree_struct);
 	$('.tree_btn_expand').on('click', function(e) {

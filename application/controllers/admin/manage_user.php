@@ -22,11 +22,11 @@ class Manage_user extends CI_Controller {
 			'header_descr' => 'Список пользователей',
 		),
 		'edit'             => array(
-			'header'       => 'Редактирование пользователя "%username"',
+			'header'       => 'Редактирование пользователя "%first_name %last_name"',
 			'header_descr' => 'Редактирование информации о пользователе',
 		),
 		'payment_accounts'             => array(
-			'header'       => 'Платежные счета пользователя "%username"',
+			'header'       => 'Платежные счета пользователя "%first_name %last_name"',
 			'header_descr' => 'Список всех платежных счетов пользователя',
 		),
 	);
@@ -50,11 +50,14 @@ class Manage_user extends CI_Controller {
 		$this->data['status'] = $status;
 
 		$this->load->library('table');
-		$this->load->model('shop_model');
 		$this->data['center_block'] = $this->table
-			->text('login', array(
-				'title' => 'Логин',
-				'width' => '20%',
+			->text('first_name', array(
+				'title' => 'Имя',
+				'width' => '10%',
+			))
+			->text('last_name', array(
+				'title' => 'Фамилия',
+				'width' => '10%',
 			))
 			->text('email', array(
 				'title' => 'Email',
@@ -65,11 +68,14 @@ class Manage_user extends CI_Controller {
 			->date('created_on', array(
 				'title' => 'Дата регистрации'
 			))
-			->text('id', array(
-				'title' => 'Баланс',
+			->text('is_cleaner', array(
+				'title' => 'Тип',
 				'func'  => function($row, $params, $that, $CI) {
-					$balance = $CI->shop_model->get_user_balance($row['id']);
-					return $balance[0]['amount'].' '.$balance[0]['symbol'];
+					if (!empty($row['is_cleaner'])) {
+						return '<span class="label label-info">Работник</span>';
+					} else {
+						return '<span class="label label-info">Клиент</span>';
+					}
 				}
 		))
 			->text('active', array(
@@ -83,7 +89,6 @@ class Manage_user extends CI_Controller {
 				}
 		))
 			->edit(array('link' => $this->MAIN_URL.'edit/%d'))
-			//->btn(array('link' => $this->MAIN_URL.'payment_accounts/%d', 'icon' => 'list', 'title' => 'Список платежных счетов пользователя'))
 			->btn(array(
 				'func' => function($row, $params, $html, $that, $CI) {
 					if (!$row['status']) {
@@ -143,18 +148,33 @@ class Manage_user extends CI_Controller {
 	}
 
 	private function edit_form($user_info = false) {
+		/*$special = array(
+			'english'                 => 'Я хорошо разговариваю по-английски',
+			'country_work_permission' => 'У меня есть право работать на территории РФ',
+			'passport'                => 'У меня есть паспорт, который я могу предоставить при собеседовании',
+			'not_agency'              => 'Я понимаю, что Plecle.com не агентство',
+			'experience'              => 'У меня есть минимум 6 месяц опыта работы горничной',
+			'reference'               => 'У меня есть 3 работодательские характеристики',
+			'bank_account'            => 'Я понимаю, что моя работа будет оплачена на банковский счет',
+			'mobile_phone'            => 'У меня есть мобильный телефон и я могу принимать и получать сообщения',
+		);*/
+
 		$this->load->library('form');
 		return $this->form
-			->text('username', array('value' => $user_info['username'], 'valid_rules' => 'required|trim|xss_clean|max_length[150]',  'label' => $this->lang->line('create_user_fname_label')))
-			->text('email', array('value' => $user_info['email'], 'valid_rules' => 'required|trim|xss_clean|max_length[150]|valid_email',  'label' => lang('create_user_email_label')))
-			->text('company', array('value' => $user_info['company'], 'valid_rules' => 'required|trim|xss_clean|max_length[100]',  'label' => lang('create_user_company_label')))
-			->text('address', array('value' => $user_info['address'], 'valid_rules' => 'required|trim|xss_clean|max_length[100]',  'label' => lang('create_user_address_label')))
-			->text('city', array('value' => $user_info['city'], 'valid_rules' => 'required|trim|xss_clean|max_length[100]',  'label' => lang('create_user_city_label')))
-			->text('state', array('value' => $user_info['state'], 'valid_rules' => 'required|trim|xss_clean|max_length[100]',  'label' => lang('create_user_state_label')))
-			->text('country', array('value' => $user_info['country'], 'valid_rules' => 'required|trim|xss_clean|max_length[100]',  'label' => lang('create_user_country_label')))
-			->text('zip', array('value' => $user_info['zip'], 'valid_rules' => 'required|trim|xss_clean|max_length[100]|is_natural',  'label' => lang('create_user_zip_label')))
-			->text('phone', array('value' => $user_info['phone'], 'valid_rules' => 'required|trim|xss_clean|max_length[100]|is_natural',  'label' => lang('create_user_phone_label')))
-			->text('url', array('value' => $user_info['url'], 'valid_rules' => 'trim|xss_clean|max_length[100]',  'label' => lang('create_user_url_label')))
+			/*->checkbox('special[]', array(
+				'valid_rules' => 'trim|xss_clean',
+				'label'       => 'Особые требования',
+				'inline'      => false,
+				'inputs'      => $special
+			))*/
+			->text('first_name', array('value' => $user_info['first_name'], 'valid_rules' => 'required|trim|xss_clean|max_length[150]',  'label' => lang('create_user_fname_label')))
+			->text('last_name', array('value' => $user_info['last_name'], 'valid_rules' => 'required|trim|xss_clean|max_length[150]',  'label' => lang('create_user_lname_label')))
+			->select('gender', array('value' => $user_info['gender'], 'options' => array('male' => 'Мужской', 'female' => 'Женский'), 'valid_rules' => 'required|trim|xss_clean',  'label' => lang('create_user_gender_label')))
+			->text('address', array('value' => $user_info['address'], 'valid_rules' => 'required|trim|xss_clean|max_length[100]', 'label' => lang('create_user_address_label')))
+			->text('city', array('value' => $user_info['city'], 'valid_rules' => 'required|trim|xss_clean|max_length[100]', 'label' => lang('create_user_city_label')))
+			->text('country', array('value' => $user_info['country'], 'valid_rules' => 'required|trim|xss_clean|max_length[100]', 'label' => lang('create_user_country_label')))
+			->text('zip', array('value' => trim($user_info['zip'], ','), 'valid_rules' => 'required|trim|xss_clean|max_length[100]', 'label' => lang('create_user_zip_label')))
+			->text('phone', array('value' => $user_info['phone'], 'valid_rules' => 'required|trim|xss_clean|max_length[100]|is_natural', 'label' => lang('create_user_phone_label')))
 			->btn(array('value' => 'Изменить'))
 			->create(array('action' => current_url()));
 	}
@@ -180,66 +200,4 @@ class Manage_user extends CI_Controller {
 		redirect($this->MAIN_URL, 'refresh');
 	}
 
-	public function payment_accounts($id = false) {
-		custom_404();
-		if (empty($id)) {
-			custom_404();
-		}
-
-		$user_info = $this->admin_user_model->get_user_info($id);
-
-		if (empty($user_info )) {
-			custom_404();
-		}
-		set_header_info($user_info);
-
-		$this->data['user_info'] = $user_info;
-
-		$this->load->library('table');
-		$this->data['center_block'] = $this->table
-			->text('name', array('title' => 'Название'))
-			->text('value', array('title' => 'Номер'))
-			->btn(array(
-				'func' => function($row, $params, $html, $that, $CI) {
-					if (!$row['status']) {
-						$params['title'] = 'Актиный';
-						$params['icon'] = 'ok';
-					} else {
-						$params['title'] = 'Неактивный';
-						$params['icon'] = 'ban-circle';
-					}
-					return '<a href="'.site_url($CI->MAIN_URL.'active_payment_account/'.$row['id']).'" title="'.$params['title'].'"><i class="icon-'.$params['icon'].'"></i> </a>';
-				}
-		))
-			->create(function($CI) {
-				return $CI->db
-					->where(array(
-						'user_id' => $CI->data['user_info']['id'],
-					))
-					->order_by('id', 'desc')
-					->get('user_payment_accounts');
-			});
-
-		load_admin_views();
-	}
-
-	public function active_payment_account($id = false) {
-		if (empty($id)) {
-			custom_404();
-		}
-
-		$account_info = $this->db->where('id', $id)->get('user_payment_accounts')->row_array();
-
-		if (empty($account_info )) {
-			custom_404();
-		}
-
-		if (!empty($account_info['id'])) {
-			$active = isset($account_info['status']) ? $account_info['status'] : 1;
-			$active = abs($active - 1);
-			$this->db->where('id', $account_info['id'])->update('user_payment_accounts', array('status' => $active));
-			$this->session->set_flashdata('success', 'Данные успешно обновлены');
-		}
-		redirect($this->MAIN_URL.'payment_accounts/'.$account_info['user_id'], 'refresh');
-	}
 }

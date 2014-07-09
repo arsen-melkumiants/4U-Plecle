@@ -110,9 +110,16 @@ class Admin_control_panel extends CI_Controller {
 		$this->MAIN_URL       = ADM_URL.'manage_user/';
 		$this->load->library('table');
 		$this->data['center_block'] = $this->table
-			->text('username', array(
-				'title'   => 'Имя',
-				'p_width' => 30
+			->text('first_name', array(
+				'title' => 'Имя',
+				'width' => '10%',
+			))
+			->text('last_name', array(
+				'title' => 'Фамилия',
+				'width' => '10%',
+			))
+			->text('email', array(
+				'title' => 'Email',
 			))
 			->date('last_login', array(
 				'title' => 'Дата последней авторизации',
@@ -120,6 +127,16 @@ class Admin_control_panel extends CI_Controller {
 			->date('created_on', array(
 				'title' => 'Дата регистрации'
 			))
+			->text('is_cleaner', array(
+				'title' => 'Тип',
+				'func'  => function($row, $params, $that, $CI) {
+					if (!empty($row['is_cleaner'])) {
+						return '<span class="label label-info">Работник</span>';
+					} else {
+						return '<span class="label label-info">Клиент</span>';
+					}
+				}
+		))
 			->text('active', array(
 				'title' => 'Статус',
 				'func'  => function($row, $params, $that, $CI) {

@@ -1,7 +1,7 @@
 body {position: relative;padding-top: 50px;}
-*, 
-*:hover, 
-*:focus, 
+*,
+*:hover,
+*:focus,
 *:active {outline: none !important;}
 
 @media (min-width: 768px) {
@@ -20,6 +20,9 @@ body {position: relative;padding-top: 50px;}
 .login_block .input-group-addon i.icon-user{padding: 1px;}
 .form_group .input-group {margin-bottom: 0px;}
 .input-group[class*=col-] {padding-left: 15px;padding-right: 15px;}
+
+label.radio,
+label.checkbox {font-weight: normal;cursor: pointer;}
 
 .main_block{margin-top: 10px;padding-bottom: 50px;}
 .header_block{padding-bottom: 30px;}

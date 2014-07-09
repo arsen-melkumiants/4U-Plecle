@@ -175,7 +175,7 @@ class Personal extends CI_Controller {
 			->text('country', array('valid_rules' => 'required|trim|xss_clean|max_length[100]',  'label' => lang('create_user_country_label'), 'width' => 12, 'group_class' => 'col-sm-6'))
 			->text('city', array('valid_rules' => 'required|trim|xss_clean|max_length[100]',  'label' => lang('create_user_city_label'), 'width' => 12, 'group_class' => 'col-sm-6'))
 			->text('address', array('valid_rules' => 'required|trim|xss_clean|max_length[100]',  'label' => lang('create_user_address_label'), 'width' => 12, 'group_class' => 'col-sm-6'))
-			->text('zip', array('valid_rules' => 'required|trim|xss_clean|max_length[100]|is_natural',  'label' => lang('create_user_zip_label'), 'width' => 12, 'group_class' => 'col-sm-6'))
+			->text('zip', array('valid_rules' => 'required|trim|xss_clean|max_length[100]',  'label' => lang('create_user_zip_label'), 'width' => 12, 'group_class' => 'col-sm-6'))
 			->create(array('error_inline' => true, 'no_form_tag' => true));
 
 		$this->data['confirm'] = $this->form
