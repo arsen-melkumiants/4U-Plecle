@@ -105,6 +105,15 @@ class Manage_order extends CI_Controller {
 		load_admin_views();
 	}
 
+	public function active() {
+		$this->index(0);
+	}
+
+	public function completed() {
+		$this->index(1);
+	}
+
+
 	public function edit($id = false) {
 		if (empty($id)) {
 			custom_404();
@@ -221,21 +230,7 @@ class Manage_order extends CI_Controller {
 		$this->delete($id, 'category');
 	}
 
-	public function active($id = false) {
-		if (empty($id)) {
-			custom_404();
-		}
-
-		$content_info = $this->admin_content_model->get_content_info($id);
-
-		if (empty($content_info)) {
-			custom_404();
-		}
-		set_header_info($content_info);
-		admin_method('active', $this->DB_TABLE, $content_info);
-	}
-
-	function categories() {
+	public function categories() {
 		$this->load->library('table');
 		$this->data['center_block'] = $this->table
 			->text('name', array(

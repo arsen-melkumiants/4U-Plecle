@@ -3,32 +3,37 @@
 class Admin_control_menu_model extends CI_Model
 {
 	var $menus = array();
-	
+
 	function __construct()
 	{
 		parent::__construct();
 		$this->load->database();
 
 		$this->menus = array(
-			'top'                                        => array(
-				'Сайт'                                   => array(
-					'global_settings'                    => 'Глобальные настройки',
-					'change_access'                      => 'Смена доступа в админ-панель',
-					'logout'                             => 'Выйти',
+			'top'                               => array(
+				'Сайт'                          => array(
+					'global_settings'           => 'Глобальные настройки',
+					'change_access'             => 'Смена доступа в админ-панель',
+					'logout'                    => 'Выйти',
 				),
-				'Меню'                                   => array(
-					'manage_menu/main'                   => 'Основное меню',
+				'Меню'                          => array(
+					'manage_menu/main'          => 'Основное меню',
 				),
-				'Контент'                                => array(
-					'manage_content'                     => 'Список контента',
-					'manage_content/add'                 => 'Добавить контент',
-					'1'                                  => '',
-					'manage_content/categories'          => 'Категории контента',
+				'Контент'                       => array(
+					'manage_content'            => 'Список контента',
+					'manage_content/add'        => 'Добавить контент',
+					'1'                         => '',
+					'manage_content/categories' => 'Категории контента',
 				),
-				'Пользователи'                           => array(
-					'manage_user'                        => 'Список всех пользователей',
-					'manage_user/activated'              => 'Список активированных пользователей',
-					'manage_user/inactivated'            => 'Список неактивированных пользователей',
+				'Сделки'                        => array(
+					'manage_order'              => 'Общий список сделок',
+					'manage_order/active'       => 'Список активных сделок',
+					'manage_order/completed'     => 'Список завершенных сделок',
+				),
+				'Пользователи'                  => array(
+					'manage_user'               => 'Список всех пользователей',
+					'manage_user/activated'     => 'Список активированных пользователей',
+					'manage_user/inactivated'   => 'Список неактивированных пользователей',
 				),
 				/*'История операций'                       => array(
 					'manage_history'                     => 'Все операции',
@@ -45,49 +50,49 @@ class Admin_control_menu_model extends CI_Model
 		);
 
 	}
-	
+
 	function get_control_menu($name = false){
 		if($name){
 			$current_menu = isset($this->menus[$name]) ? $this->menus[$name] : '';
-            if(empty($current_menu)){
+			if(empty($current_menu)){
 				return false;
 			}
-			
-            if($this->ion_auth->is_admin()){
+
+			if($this->ion_auth->is_admin()){
 				return $this->generate_html_menu($current_menu);
 			}
-		
-            
+
+
 		}
 	}
-	
-	
+
+
 	function generate_html_menu($menu = false){
 		if(empty($menu)){
 			return false;
 		}
-		
+
 		$html = '<header class="navbar navbar-default navbar-fixed-top">
-				<div class="container">
-					<div class="navbar-header">
-					  <button class="navbar-toggle" type="button" data-toggle="collapse" data-target=".general_menu">
-						<span class="sr-only">Toggle navigation</span>
-						<span class="icon-bar"></span>
-						<span class="icon-bar"></span>
-						<span class="icon-bar"></span>
-					  </button>
-					  <a href="'.base_url(ADM_URL).'" class="navbar-brand">4U</a>
-					</div>
-					<nav class="collapse navbar-collapse general_menu" role="navigation">
-					  <ul class="nav navbar-nav">';
+			<div class="container">
+			<div class="navbar-header">
+			<button class="navbar-toggle" type="button" data-toggle="collapse" data-target=".general_menu">
+			<span class="sr-only">Toggle navigation</span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			</button>
+			<a href="'.base_url(ADM_URL).'" class="navbar-brand">4U</a>
+			</div>
+			<nav class="collapse navbar-collapse general_menu" role="navigation">
+			<ul class="nav navbar-nav">';
 		foreach($menu as $name => $items){
 			if(empty($items)){
 				continue;
 			}
 			if(is_array($items)){
 				$html .= '<li class="dropdown">'."\n".
-				'<a href="#" class="dropdown-toggle" data-toggle="dropdown">'.$name.' <b class="caret"></b></a>'."\n".
-				'<ul class="dropdown-menu">';
+					'<a href="#" class="dropdown-toggle" data-toggle="dropdown">'.$name.' <b class="caret"></b></a>'."\n".
+					'<ul class="dropdown-menu">';
 				foreach($items as $link => $subname){
 					if(!empty($subname)){
 						$html .= '<li><a href="'.site_url(ADM_URL.$link).'">'.$subname.'</a></li>';
@@ -98,11 +103,11 @@ class Admin_control_menu_model extends CI_Model
 				$html .= '</ul></li>';
 			}
 		}
-				$html .= '</ul>
+		$html .= '</ul>
 			</nav>
-		  </div>
-		</header>';
-		
+			</div>
+			</header>';
+
 		return $html;
 	}
 }

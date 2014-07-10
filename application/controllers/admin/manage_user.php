@@ -25,7 +25,7 @@ class Manage_user extends CI_Controller {
 			'header'       => 'Редактирование пользователя "%first_name %last_name"',
 			'header_descr' => 'Редактирование информации о пользователе',
 		),
-		'payment_accounts'             => array(
+		'payment_accounts' => array(
 			'header'       => 'Платежные счета пользователя "%first_name %last_name"',
 			'header_descr' => 'Список всех платежных счетов пользователя',
 		),
@@ -170,11 +170,11 @@ class Manage_user extends CI_Controller {
 			->text('first_name', array('value' => $user_info['first_name'], 'valid_rules' => 'required|trim|xss_clean|max_length[150]',  'label' => lang('create_user_fname_label')))
 			->text('last_name', array('value' => $user_info['last_name'], 'valid_rules' => 'required|trim|xss_clean|max_length[150]',  'label' => lang('create_user_lname_label')))
 			->select('gender', array('value' => $user_info['gender'], 'options' => array('male' => 'Мужской', 'female' => 'Женский'), 'valid_rules' => 'required|trim|xss_clean',  'label' => lang('create_user_gender_label')))
+			->text('phone', array('value' => $user_info['phone'], 'valid_rules' => 'required|trim|xss_clean|max_length[100]|is_natural', 'label' => lang('create_user_phone_label')))
 			->text('address', array('value' => $user_info['address'], 'valid_rules' => 'required|trim|xss_clean|max_length[100]', 'label' => lang('create_user_address_label')))
 			->text('city', array('value' => $user_info['city'], 'valid_rules' => 'required|trim|xss_clean|max_length[100]', 'label' => lang('create_user_city_label')))
 			->text('country', array('value' => $user_info['country'], 'valid_rules' => 'required|trim|xss_clean|max_length[100]', 'label' => lang('create_user_country_label')))
 			->text('zip', array('value' => trim($user_info['zip'], ','), 'valid_rules' => 'required|trim|xss_clean|max_length[100]', 'label' => lang('create_user_zip_label')))
-			->text('phone', array('value' => $user_info['phone'], 'valid_rules' => 'required|trim|xss_clean|max_length[100]|is_natural', 'label' => lang('create_user_phone_label')))
 			->btn(array('value' => 'Изменить'))
 			->create(array('action' => current_url()));
 	}
