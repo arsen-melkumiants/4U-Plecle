@@ -6,13 +6,15 @@
 		<div class="row">
 			<?php foreach ($cleaners as $item) {?>
 			<div class="col-sm-2">
-				<img src="/img/no_photo.jpg" width="100" alt="<?php echo $item['first_name']?>" class="img-circle">
-				<div class="name"><?php echo $item['first_name']?></div>
+				<a data-toggle="modal" data-target="#ajaxModal" href="<?php echo site_url('personal/cleaner_profile/'.$item['id'])?>" data-original-title="" title="">
+					<img src="/img/no_photo.jpg" width="100" alt="<?php echo $item['first_name']?>" class="img-circle">
+					<div class="name"><?php echo $item['first_name']?></div>
+				</a>
 			</div>
-		<?php }} else {?>
-		<h1>В данный момент горничные отсутствуют</h1>
-		<h3>Оставьте Ваш запрос. Как только появится свободная горничная - Ваша завяка будет обработана</h3>
-		<?php }?>
+			<?php }} else {?>
+			<h1>В данный момент горничные отсутствуют</h1>
+			<h3>Оставьте Ваш запрос. Как только появится свободная горничная - Ваша завяка будет обработана</h3>
+			<?php }?>
 		</div>
 	</div>
 </div>

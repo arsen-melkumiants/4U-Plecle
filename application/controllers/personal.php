@@ -430,6 +430,20 @@ class Personal extends CI_Controller {
 		if (!$render) return $view_html;
 	}
 
+	function cleaner_profile($user_id = false) {
+		//$this->data['title'] = $this->data['header'] = 'Профиль работника';
+		$user_id = intval($user_id);
+		if (empty($user_id)) {
+			custom_404();
+		}
+
+		$this->data['cleaner_info'] = $this->ion_auth->user($user_id)->row_array();
+
+
+		$this->data['center_block'] = $this->load->view('orders/cleaner_profile', $this->data, true);
+		$this->load->view('ajax', $this->data);
+	}
+
 
 	function make_order() {
 		$this->data['user_info'] = $this->ion_auth->user()->row_array();
@@ -443,6 +457,7 @@ class Personal extends CI_Controller {
 		$this->load->model('order_model');
 		$this->data['cleaners'] = $this->order_model->get_all_cleaners($this->input->post('zip'));
 
+		print_r($this->data['cleaners']);
 		if (!isset($_POST['duration'])) {
 			$this->data['temp_post']['zip'] = $this->input->post('zip');
 			$_POST = array();

@@ -28,14 +28,17 @@ class Admin_control_menu_model extends CI_Model
 				'Сделки'                        => array(
 					'manage_order'              => 'Общий список сделок',
 					'manage_order/active'       => 'Список активных сделок',
-					'manage_order/completed'     => 'Список завершенных сделок',
+					'manage_order/completed'    => 'Список завершенных сделок',
+					'1'                         => '',
+					'manage_order/payments'     => 'Список выплат',
 				),
 				'Пользователи'                  => array(
 					'manage_user'               => 'Список всех пользователей',
 					'manage_user/activated'     => 'Список активированных пользователей',
 					'manage_user/inactivated'   => 'Список неактивированных пользователей',
 				),
-				/*'История операций'                       => array(
+				/*
+				'История операций'                       => array(
 					'manage_history'                     => 'Все операции',
 					'manage_history/refillng'            => 'Пополнения',
 					'manage_history/withdrawing'         => 'Снятия',

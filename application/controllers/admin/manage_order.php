@@ -25,6 +25,10 @@ class Manage_order extends CI_Controller {
 			'header'       => 'Редактирование сделки',
 			'header_descr' => 'Просмотр и редактирование сделки',
 		),
+		'payments'         => array(
+			'header'       => 'Список выплат',
+			'header_descr' => 'История платежей',
+		),
 	);
 
 	public $frequency = array(
@@ -136,11 +140,13 @@ class Manage_order extends CI_Controller {
 		set_header_info($order_info);
 
 		$this->data['center_block'] = $this->edit_form($order_info);
+		$this->data['center_block'] .= '<br><br><h3>История платежей</h3>';
+		$this->data['center_block'] .= $this->payment_table($order_info['id']);
 
 		if ($this->form_validation->run() == FALSE) {
 			load_admin_views();
 		} else {
-			$_POST['have_pets'] = $this->input->post('have_pets');
+			$_POST['have_pets']    = $this->input->post('have_pets');
 			$_POST['need_ironing'] = $this->input->post('need_ironing');
 			admin_method('edit', $this->DB_TABLE, array('id' => $id));
 		}
@@ -223,112 +229,56 @@ class Manage_order extends CI_Controller {
 			->create(array('action' => current_url()));
 	}
 
-	public function delete($id = false, $type = false) {
-		if (empty($id)) {
-			custom_404();
-		}
-
-		if ($type == 'category') {
-			$get_method = 'get_content_category_info';
-			$table      = 'content_categories';
-		} else {
-			$get_method = 'get_content_info';
-			$table      = 'content';
-		}
-
-		$content_info = $this->admin_content_model->$get_method($id);
-
-		if (empty($content_info)) {
-			custom_404();
-		}
-		set_header_info($content_info);
-
-		admin_method('delete', $table, $content_info);
-	}
-
-	public function delete_category($id) {
-		$this->delete($id, 'category');
-	}
-
-	public function categories() {
-		$this->load->library('table');
-		$this->data['center_block'] = $this->table
-			->text('name', array(
-				'title'   => 'Имя',
-				'p_width' => 50
-			))
-			->text('alias', array(
-				'title' => 'Ссылка',
-			))
-			->edit(array('link' => $this->MAIN_URL.'edit_category/%d', 'modal' => true))
-			->delete(array('link' => $this->MAIN_URL.'delete_category/%d', 'modal' => true))
-			->btn(array(
-				'link'   => $this->MAIN_URL.'add_category',
-				'name'   => 'Добавить',
-				'header' => true,
-				'modal'  => true,
-			))
-			->create(function($CI) {
-				return $CI->admin_content_model->get_content_categories(true);
-			});
+	public function payments($order_id = false) {
+		
+		$this->data['center_block'] = $this->payment_table();
 
 		load_admin_views();
 	}
 
-	public function edit_category($id = false) {
-		if (empty($id)) {
-			custom_404();
+	private function payment_table($order_id = false) {
+		$this->data['order_id'] = intval($order_id);
+		$this->load->library('table');
+		$this->table
+			->text('id', array(
+				'title' => 'Номер платежа',
+			));
+		if (empty($this->data['order_id'])) {
+			$this->table
+				->text('order_id', array(
+					'title' => 'Номер сделки',
+					'func'  => function($row, $params, $that, $CI) {
+						return '<a href="'.site_url($CI->MAIN_URL.'edit/'.$row['order_id']).'">#'.$row['order_id'].'</a>';
+					}
+			));
 		}
-		$category_info = $this->admin_content_model->get_content_category_info($id);
-
-		if (empty($category_info)) {
-			custom_404();
-		}
-		set_header_info($category_info);
-
-		if(!empty($_POST)){
-			$alias = !empty($_POST['alias']) ? $_POST['alias'] : $category_info['name'];
-			$_POST['alias'] = url_title(translitIt($alias), 'underscore', TRUE);
-		}
-
-		$this->data['center_block'] = $this->edit_category_form($category_info);
-
-		if ($this->form_validation->run() == FALSE) {
-			load_admin_views();
-		} else {
-			admin_method('edit', 'content_categories', array('id' => $id));
-		}
-	}
-
-	public function add_category() {
-		if(!empty($_POST)){
-			$alias = !empty($_POST['alias']) ? $_POST['alias'] : $_POST['name'];
-			$_POST['alias'] = url_title(translitIt($alias), 'underscore', TRUE);
-		}
-
-		$this->data['center_block'] = $this->edit_category_form();
-
-		if ($this->form_validation->run() == FALSE) {
-			load_admin_views();
-		} else {
-			admin_method('add', 'content_categories', array('except_fields' => array('add_date', 'author_id')));
-		}
-	}
-
-	private function edit_category_form($category_info = false) {
-		$this->load->library('form');
-		return $this->form
-			->text('name', array(
-				'value'       => $category_info['name'] ?: false,
-				'valid_rules' => 'required|trim|xss_clean',
-				'label'       => 'Имя',
+		return $this->table
+			->text('price_per_hour', array(
+				'title' => 'Цена за час уборки',
+				'func'  => function($row, $params) {
+					return $row['price_per_hour'].' рублей';
+				}
+		))
+			->text('detergent_price', array(
+				'title' => 'Цена моющих средств',
+				'func'  => function($row, $params) {
+					return $row['detergent_price'].' рублей';
+				}
+		))
+			->text('total_price', array(
+				'title' => 'Общая цена',
+				'func'  => function($row, $params) {
+					return $row['total_price'].' рублей';
+				}
+		))
+			->date('add_date', array(
+				'title' => 'Дата оплаты',
 			))
-			->text('alias', array(
-				'value'       => $category_info['alias'] ?: false,
-				'valid_rules' => 'required|trim|xss_clean|'.(!$category_info['id'] ? 'is_unique[content_categories.alias]' : 'is_unique_without[content_categories.alias.'.$category_info['id'].']'),
-				'label'       => 'Ссылка',
-			))
-			->btn(array('value' => empty($id) ? 'Добавить' : 'Изменить'))
-			->create(array('action' => current_url()));
+			->create(function($CI) {
+				return $CI->admin_order_model->get_payments($CI->data['order_id']);
+			});
+
 	}
+
+
 }

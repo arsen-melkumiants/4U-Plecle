@@ -90,6 +90,8 @@ h4.title .right_link {float: right;color: #a94442;}
 .users_block h1 {color: #fff;font-size: 25px;}
 .users_block h3 {color: #81e9ff;font-size: 16px;margin-bottom: 25px;}
 .users_block img {border: 5px solid #fff;background: #fff;}
+.users_block a {color: #fff;}
+.users_block a:hover {text-decoration: none;color: #fff;}
 .users_block .name {font-size: 14px;padding: 10px 0 40px;}
 
 .detail_block {margin-bottom: 40px;}
@@ -186,3 +188,6 @@ table .btn.btn-primary:hover {color: #fff;background-color: #005668;}
 .modal-body {padding: 20px 100px 0;}
 .modal-body .title {text-align: center;}
 .modal-content button.close {display: block;position: absolute;right: 20px;top: 15px;font-size: 26px;z-index: 3;}
+
+.cleaner_info {text-align: center;}
+.cleaner_info h2 {font-size: 26px;margin-top: 30px;}

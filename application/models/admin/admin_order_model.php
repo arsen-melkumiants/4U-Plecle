@@ -28,4 +28,15 @@ class Admin_order_model extends CI_Model {
 		return $this->db->where('id', $id)->get('orders')->row_array();
 	}
 
+	function get_payments($order_id) {
+		if (!empty($order_id)) {
+			$this->db->where('order_id', $order_id);
+		}
+
+		return $this->db
+			->where('status', 1)
+			->order_by('id', 'desc')
+			->get('payments');
+	}
+
 }

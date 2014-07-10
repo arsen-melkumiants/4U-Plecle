@@ -159,6 +159,10 @@ class Manage_user extends CI_Controller {
 			'mobile_phone'            => 'У меня есть мобильный телефон и я могу принимать и получать сообщения',
 		);*/
 
+		if (!empty($_POST['zip'])) {
+			$_POST['zip'] = ','.$_POST['zip'].',';
+		}
+
 		$this->load->library('form');
 		return $this->form
 			/*->checkbox('special[]', array(
