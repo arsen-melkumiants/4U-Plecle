@@ -108,7 +108,7 @@ class Form {
 
 		//radio-buttons
 		$input = '';
-		if ($type == 'radio' || $type == 'checkbox') {
+		if ($type == 'radio' || ($type == 'checkbox' && isset($params['inputs']) && is_array($params['inputs']))) {
 			if (isset($params['inputs']) && is_array($params['inputs'])) {
 				foreach ($params['inputs'] as $value => $info) {
 					if (is_array($info)) {
@@ -118,9 +118,18 @@ class Form {
 					}
 
 					if ($type == 'checkbox') {
-						$input_checked = set_checkbox($name, $value);
+						$name = $value;
+						$value = 1;
+						$input_checked = !empty($params['value'][$name]) && !isset($_POST[$name]) ? 'checked="checked"' : false;
+						if ($CI->input->post($name)) {
+							$input_checked = 'checked="checked"';
+						}
 					} else {
 						$input_checked = set_radio($name, $value);
+					}
+
+					if (empty($input_checked)) {
+						$input_checked = $value == $params['value'] ? ' checked="checked"' : false;
 					}
 
 					$input .= '<label class="'.$type.(isset($params['inline']) && !$params['inline'] ? '' : '-inline').'">'.PHP_EOL;

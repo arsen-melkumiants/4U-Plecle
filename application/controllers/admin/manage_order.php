@@ -40,6 +40,16 @@ class Manage_order extends CI_Controller {
 		'4' => '4 часа',
 	);
 
+	public $status = array(
+		'0' => 'Ожидание оплаты',
+		'1' => 'Ожидание повторной оплаты (если уборка не разовая)',
+		'2' => 'Сделка оплачена',
+		'3' => 'Уборка завершена',
+		'4' => 'Сделка отменена (не была оплачена)',
+		'5' => 'Сделка отменена (была уже оплачена)',
+		'6' => 'Сделка деактивирована',
+	);
+
 	public $special = array(
 		'need_ironing' => 'Нужна глажка',
 		'have_pets'    => 'Есть домашнее животное',
@@ -79,7 +89,7 @@ class Manage_order extends CI_Controller {
 				'func'  => function($row, $params, $that, $CI) {
 					if ($row['status'] == 3 && $row['last_mark'] == 'positive') {
 						return '<span class="text-success">Уборка успешно завершена</span>';
-					} elseif (in_array($row['status'], array(0,1))) {
+					} elseif (in_array($row['status'], array(0,1)) && $row['start_date'] > 86400 + time()) {
 						return '<span class="text-warning">Ожидаем оплаты</span>';
 					} elseif ($row['status'] == 3 && $row['last_mark'] == 'negative') {
 						return '<span class="text-danger">Плохое качество уборки</span>';
@@ -106,11 +116,11 @@ class Manage_order extends CI_Controller {
 	}
 
 	public function active() {
-		$this->index(0);
+		$this->index(1);
 	}
 
 	public function completed() {
-		$this->index(1);
+		$this->index(2);
 	}
 
 
@@ -130,6 +140,8 @@ class Manage_order extends CI_Controller {
 		if ($this->form_validation->run() == FALSE) {
 			load_admin_views();
 		} else {
+			$_POST['have_pets'] = $this->input->post('have_pets');
+			$_POST['need_ironing'] = $this->input->post('need_ironing');
 			admin_method('edit', $this->DB_TABLE, array('id' => $id));
 		}
 	}
@@ -177,7 +189,8 @@ class Manage_order extends CI_Controller {
 				'valid_rules' => 'trim|xss_clean',
 				'label'       => 'Особые требования',
 				'inline'      => false,
-				'inputs'      => $this->special
+				'inputs'      => $this->special,
+				'value'       => !empty($order_info) ? $order_info : false,
 			))
 			->text('country', array(
 				'valid_rules' => 'required|trim|xss_clean|max_length[100]',
@@ -198,6 +211,13 @@ class Manage_order extends CI_Controller {
 				'valid_rules' => 'required|trim|xss_clean|max_length[100]|is_natural',
 				'label'       => 'Индекс',
 				'value'       => !empty($order_info['zip']) ? trim($order_info['zip'], ',') : false
+			))
+			->radio('status', array(
+				'valid_rules' => 'required|trim|is_natural',
+				'label'       => 'Статус',
+				'inline'      => false,
+				'inputs'      => $this->status,
+				'value'       => $order_info['status'],
 			))
 			->btn(array('value' => 'Изменить'))
 			->create(array('action' => current_url()));
