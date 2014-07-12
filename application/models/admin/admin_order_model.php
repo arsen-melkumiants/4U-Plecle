@@ -39,4 +39,61 @@ class Admin_order_model extends CI_Model {
 			->get('payments');
 	}
 
+	function get_regions() {
+		return $this->db->order_by('id', 'desc')->get('regions');
+	}
+
+	function get_region_info($id) {
+		return $this->db->where('id', $id)->get('regions')->row_array();
+	}
+
+	function get_all_zips() {
+		$all_regions = $this->db->get('regions')->result_array();
+		if (empty($all_regions)) {
+			return array();
+		}
+		foreach ($all_regions as $item) {
+			$zips = explode(',', trim($item['zips'], ','));
+			if (empty($zips) || (count($zips)) == 1 && empty($zips[0])) {
+				continue;
+			}
+			foreach ($zips as $zip) {
+				$result_array[$zip] = $item['name'];
+			}
+		}
+
+		if (empty($result_array)) {
+			return array();
+		}
+		return $result_array;
+	}
+
+	function show_user_zips($user_zips) {
+		$zips = explode(',', trim($user_zips, ','));
+		if (empty($zips) || (count($zips)) == 1 && empty($zips[0])) {
+			return false;
+		}
+
+		foreach ($zips as $cur_zip) {
+			if (isset($this->zip[$cur_zip])) {
+				$result_array[$this->zip[$cur_zip]][] = $cur_zip;
+			} else {
+				$result_array['Неопределенные'][] = $cur_zip;
+			}
+		}
+
+		if (empty($result_array)) {
+			return false;
+		}
+
+		foreach ($result_array as $name => $zip) {
+			$result_array[$name] = implode(',', $result_array[$name]).' - ('.$name.')';
+		}
+
+
+
+		$result_string = implode(', ', $result_array);
+		return $result_string;
+	}
+
 }

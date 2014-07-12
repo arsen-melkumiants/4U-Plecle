@@ -30,6 +30,8 @@ class Admin_control_menu_model extends CI_Model
 					'manage_order/active'       => 'Список активных сделок',
 					'manage_order/completed'    => 'Список завершенных сделок',
 					'1'                         => '',
+					'manage_order/regions'     =>  'Список регионов',
+					'2'                         => '',
 					'manage_order/payments'     => 'Список выплат',
 				),
 				'Пользователи'                  => array(

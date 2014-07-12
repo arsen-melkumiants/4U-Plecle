@@ -31,7 +31,19 @@ class Manage_order extends CI_Controller {
 		),
 		'regions'          => array(
 			'header'       => 'Список регионов',
-			'header_descr' => '11',
+			'header_descr' => 'Список регионов для закрепления индексов за ними',
+		),
+		'add_region'       => array(
+			'header'       => 'Добавление региона',
+			'header_descr' => 'Добавление региона и индексов',
+		),
+		'edit_region'      => array(
+			'header'       => 'Редактирование региона "%name"',
+			'header_descr' => 'Редактирование региона и индексов',
+		),
+		'delete_region'       => array(
+			'header'       => 'Удаление региона "%name"',
+			'header_descr' => 'Добавление региона и индексов',
 		),
 	);
 
@@ -63,6 +75,8 @@ class Manage_order extends CI_Controller {
 		'have_pets'    => 'Есть домашнее животное',
 	);
 
+	public $zip = array();
+
 	function __construct() {
 		parent::__construct();
 		$this->config->set_item('sess_cookie_name', 'a_session');
@@ -75,6 +89,8 @@ class Manage_order extends CI_Controller {
 		$this->load->model(ADM_FOLDER.'admin_order_model');
 		$this->MAIN_URL = ADM_URL.strtolower(__CLASS__).'/';
 		admin_constructor();
+
+		$this->zip = $this->admin_order_model->get_all_zips();
 	}
 
 	public function index($status = false) {
@@ -83,12 +99,17 @@ class Manage_order extends CI_Controller {
 		$this->data['center_block'] = $this->table
 			->text('id', array(
 				'title' => 'Номер',
-				'width' => '30%',
 			))
 			->text('status', array(
 				'title' => 'Информация',
 				'func'  => function($row, $params) {
 					return 'Уборка '.date('d.m.Y в H:i', $row['start_date']);
+				}
+		))
+			->text('zip', array(
+				'title' => 'Индекс',
+				'func'  => function($row, $params, $that, $CI) {
+					return $row['zip'].(isset($CI->zip[$row['zip']]) ? ' ('.$CI->zip[$row['zip']].')' : '');
 				}
 		))
 			->text('comment', array(
@@ -144,8 +165,12 @@ class Manage_order extends CI_Controller {
 		set_header_info($order_info);
 
 		$this->data['center_block'] = $this->edit_form($order_info);
-		$this->data['center_block'] .= '<br><br><h3>История платежей</h3>';
-		$this->data['center_block'] .= $this->payment_table($order_info['id']);
+
+		$payments = $this->payment_table($order_info['id']);
+		if (!empty($payments)) {
+			$this->data['center_block'] .= '<br><br><h3>История платежей</h3>';
+			$this->data['center_block'] .= $this->payment_table($order_info['id']);
+		}
 
 		if ($this->form_validation->run() == FALSE) {
 			load_admin_views();
@@ -285,5 +310,98 @@ class Manage_order extends CI_Controller {
 
 	}
 
+	public function regions() {
+		$this->load->library('table');
+		$this->data['center_block'] = $this->table
+			->text('id', array(
+				'title' => 'Номер региона',
+			))
+			->text('name', array(
+				'title' => 'Название',
+			))
+			->text('zips', array(
+				'title' => 'Закрепленые индексы',
+				'func'  => function($row, $params) {
+					return trim($row['zips'], ',');
+				}
+		))
+			->edit(array('link' => $this->MAIN_URL.'edit_region/%d', 'modal' => 1))
+			->delete(array('link' => $this->MAIN_URL.'delete_region/%d', 'modal' => 1))
+			->btn(array(
+				'link'   => $this->MAIN_URL.'add_region',
+				'name'   => 'Добавить',
+				'header' => true,
+				'modal'  => 1,
+			))
+			->create(function($CI) {
+				return $CI->admin_order_model->get_regions();
+			});
 
+		load_admin_views();
+	}
+
+	public function add_region() {
+		$this->data['center_block'] = $this->edit_form_region();
+
+		if ($this->form_validation->run() == FALSE) {
+			load_admin_views();
+		} else {
+			$_POST['zips'] = ','.$this->input->post('zips').',';
+			$this->DB_TABLE = 'regions';
+			admin_method('add', $this->DB_TABLE, array('except_fields' => array('add_date', 'author_id')));
+		}
+	}
+
+	public function edit_region($id = false) {
+		if (empty($id)) {
+			custom_404();
+		}
+
+		$region_info = $this->admin_order_model->get_region_info($id);
+		if (empty($region_info )) {
+			custom_404();
+		}
+		set_header_info($region_info);
+
+		$this->data['center_block'] = $this->edit_form_region($region_info);
+
+		if ($this->form_validation->run() == FALSE) {
+			load_admin_views();
+		} else {
+			$_POST['zips'] = ','.$this->input->post('zips').',';
+			$this->DB_TABLE = 'regions';
+			admin_method('edit', $this->DB_TABLE, array('id' => $id));
+		}
+	}
+
+	private function edit_form_region($region_info = false) {
+		$this->load->library('form');
+		return $this->form
+			->text('name', array(
+				'value'       => $region_info['name'] ?: false,
+				'valid_rules' => 'required|trim|xss_clean',
+				'label'       => 'Название региона',
+			))
+			->text('zips', array(
+				'value'       => trim($region_info['zips'], ',') ?: false,
+				'valid_rules' => 'required|trim|xss_clean',
+				'label'       => 'Закрепленые индексы (Перечисляем через запятую)',
+			))
+			->btn(array('value' => empty($region_info) ? 'Добавить' : 'Изменить'))
+			->create(array('action' => current_url()));
+	}
+
+	public function delete_region($id = false, $type = false) {
+		if (empty($id)) {
+			custom_404();
+		}
+
+		$region_info = $this->admin_order_model->get_region_info($id);
+		if (empty($region_info)) {
+			custom_404();
+		}
+		set_header_info($region_info);
+		$this->DB_TABLE = 'regions';
+		admin_method('delete', $this->DB_TABLE, $region_info);
+	}
 }

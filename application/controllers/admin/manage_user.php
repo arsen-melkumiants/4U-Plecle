@@ -42,8 +42,11 @@ class Manage_user extends CI_Controller {
 		$this->lang->load('auth');
 
 		$this->load->model(ADM_FOLDER.'admin_user_model');
+		$this->load->model(ADM_FOLDER.'admin_order_model');
 		$this->MAIN_URL = ADM_URL.strtolower(__CLASS__).'/';
 		admin_constructor();
+
+		$this->zip = $this->admin_order_model->get_all_zips();
 	}
 
 	public function index($status = false) {
@@ -53,12 +56,10 @@ class Manage_user extends CI_Controller {
 		$this->data['center_block'] = $this->table
 			->text('first_name', array(
 				'title' => 'Имя',
-				'width' => '10%',
-			))
-			->text('last_name', array(
-				'title' => 'Фамилия',
-				'width' => '10%',
-			))
+				'func'  => function($row, $params, $that, $CI) {
+					return $row['first_name'].'&nbsp;'.$row['last_name'];
+				}
+		))
 			->text('email', array(
 				'title' => 'Email',
 			))
@@ -76,6 +77,12 @@ class Manage_user extends CI_Controller {
 					} else {
 						return '<span class="label label-info">Клиент</span>';
 					}
+				}
+		))
+			->text('zip', array(
+				'title' => 'Индекс',
+				'func'  => function($row, $params, $that, $CI) {
+					return $CI->admin_order_model->show_user_zips($row['zip']);
 				}
 		))
 			->text('active', array(
@@ -203,5 +210,4 @@ class Manage_user extends CI_Controller {
 		}
 		redirect($this->MAIN_URL, 'refresh');
 	}
-
 }
