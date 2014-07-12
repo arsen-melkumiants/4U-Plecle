@@ -35,7 +35,7 @@ class Admin_user_model extends CI_Model {
 		if (!$this->upload->do_upload('photo')) {
 			return $this->upload->display_errors();
 		} else {
-			unlink($upload_folder.$user_info['photo']);
+			@unlink($upload_folder.$user_info['photo']);
 			$this->load->library('image_lib');
 
 			$data = $this->upload->data();
