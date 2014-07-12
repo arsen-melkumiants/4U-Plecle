@@ -457,7 +457,6 @@ class Personal extends CI_Controller {
 		$this->load->model('order_model');
 		$this->data['cleaners'] = $this->order_model->get_all_cleaners($this->input->post('zip'));
 
-		print_r($this->data['cleaners']);
 		if (!isset($_POST['duration'])) {
 			$this->data['temp_post']['zip'] = $this->input->post('zip');
 			$_POST = array();

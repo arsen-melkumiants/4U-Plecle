@@ -89,9 +89,6 @@ class Admin_order_model extends CI_Model {
 		foreach ($result_array as $name => $zip) {
 			$result_array[$name] = implode(',', $result_array[$name]).' - ('.$name.')';
 		}
-
-
-
 		$result_string = implode(', ', $result_array);
 		return $result_string;
 	}

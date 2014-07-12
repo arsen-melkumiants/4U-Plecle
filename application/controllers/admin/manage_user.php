@@ -146,6 +146,7 @@ class Manage_user extends CI_Controller {
 		set_header_info($user_info);
 
 		$this->data['center_block'] = $this->edit_form($user_info);
+		$this->upload_photo($id, true);
 
 		if ($this->form_validation->run() == FALSE) {
 			load_admin_views();
@@ -209,5 +210,43 @@ class Manage_user extends CI_Controller {
 			$this->session->set_flashdata('success', 'Данные успешно обновлены');
 		}
 		redirect($this->MAIN_URL, 'refresh');
+	}
+
+	public function upload_photo($id = false, $is_called = false) {
+		if (empty($id)) {
+			custom_404();
+		}
+
+		$user_info = $this->admin_user_model->get_user_info($id);
+
+		if (empty($user_info )) {
+			custom_404();
+		}
+
+		$this->data['user_info'] = $user_info;
+		$this->load->library('form');
+		$this->data['upload_form'] = $this->form
+			->file('photo', array('label' => 'Фото'))
+			->hidden('x1')
+			->hidden('y1')
+			->hidden('re_width')
+			->hidden('re_height')
+			->hidden('height')
+			->hidden('width')
+			->btn(array('value' => 'Загрузить', 'class' => 'btn-primary'))
+			->create(array('upload' => true, 'action' => site_url($this->MAIN_URL.'upload_photo/'.$id)));
+		if (!empty($this->data['center_block'])) {
+			$this->data['center_block'] .= $this->load->view(ADM_FOLDER.'upload_js', $this->data, true);
+		}
+		$upload_info = $this->admin_user_model->upload_user_photo($this->data['user_info']);
+		if ($upload_info === true) {
+			$this->session->set_flashdata('success', 'Фото успешно добавлено');
+		} elseif (!empty($upload_info)) {
+			$this->session->set_flashdata('danger', $upload_info);
+		}
+
+		if (empty($is_called)) {
+			redirect($this->MAIN_URL.'edit/'.$id, 'refresh');
+		}
 	}
 }

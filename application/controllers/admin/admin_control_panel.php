@@ -105,6 +105,8 @@ class Admin_control_panel extends CI_Controller {
 	}
 
 	private function last_users($limit = 5) {
+		$this->load->model(ADM_FOLDER.'admin_order_model');
+		$this->zip = $this->admin_order_model->get_all_zips();
 		$this->data['header'] = 'Последние зарегистрированные пользователи';
 		$this->data['limit']  = $limit;
 		$this->MAIN_URL       = ADM_URL.'manage_user/';
@@ -112,12 +114,10 @@ class Admin_control_panel extends CI_Controller {
 		$this->data['center_block'] = $this->table
 			->text('first_name', array(
 				'title' => 'Имя',
-				'width' => '10%',
-			))
-			->text('last_name', array(
-				'title' => 'Фамилия',
-				'width' => '10%',
-			))
+				'func'  => function($row, $params, $that, $CI) {
+					return $row['first_name'].'&nbsp;'.$row['last_name'];
+				}
+		))
 			->text('email', array(
 				'title' => 'Email',
 			))
@@ -135,6 +135,12 @@ class Admin_control_panel extends CI_Controller {
 					} else {
 						return '<span class="label label-info">Клиент</span>';
 					}
+				}
+		))
+			->text('zip', array(
+				'title' => 'Индекс',
+				'func'  => function($row, $params, $that, $CI) {
+					return $CI->admin_order_model->show_user_zips($row['zip']);
 				}
 		))
 			->text('active', array(
