@@ -29,6 +29,10 @@ class Manage_order extends CI_Controller {
 			'header'       => 'Список выплат',
 			'header_descr' => 'История платежей',
 		),
+		'regions'          => array(
+			'header'       => 'Список регионов',
+			'header_descr' => '11',
+		),
 	);
 
 	public $frequency = array(
@@ -146,6 +150,7 @@ class Manage_order extends CI_Controller {
 		if ($this->form_validation->run() == FALSE) {
 			load_admin_views();
 		} else {
+			$_POST['start_date']   = strtotime($this->input->post('start_date'));
 			$_POST['have_pets']    = $this->input->post('have_pets');
 			$_POST['need_ironing'] = $this->input->post('need_ironing');
 			admin_method('edit', $this->DB_TABLE, array('id' => $id));
@@ -230,7 +235,7 @@ class Manage_order extends CI_Controller {
 	}
 
 	public function payments($order_id = false) {
-		
+
 		$this->data['center_block'] = $this->payment_table();
 
 		load_admin_views();
