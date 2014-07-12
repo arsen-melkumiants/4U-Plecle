@@ -2,7 +2,7 @@
 	<div class="container">
 		<div class="row">
 			<div class="col-sm-2">
-				<img src="/img/no_photo.jpg" width="100" class="img-circle">
+				<img src="<?php echo !empty($user_info['photo']) ? '/uploads/avatars/'.$user_info['photo'] : '/img/no_photo.jpg'?>" width="100" alt="<?php echo $user_info['first_name']?>" class="img-circle">
 			</div>
 		<?php if ($this->uri->segment(2) != 'detail') {?>
 			<div class="col-sm-6">

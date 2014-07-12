@@ -47,11 +47,11 @@
 			</div>
 			<div class="col-sm-2 text-center">
 				<?php if (!empty($cleaner_info)) {?>
-				<img src="/img/no_photo.jpg" width="100" class="img-circle">
+				<img src="<?php echo !empty($cleaner_info['photo']) ? '/uploads/avatars/'.$cleaner_info['photo'] : '/img/no_photo.jpg'?>" width="100" alt="<?php echo $cleaner_info['first_name']?>" class="img-circle">
 				<div class="name"><?php echo $cleaner_info['first_name']?></div>
 				<a href="<?php echo site_url('profile/'.$cleaner_info['id'])?>" class="label">Профиль</a>
 				<?php } else {?>
-				<img src="/img/no_photo.jpg" width="100" class="img-circle">
+				<img src="<?php echo !empty($cleaner_info['photo']) ? '/uploads/avatars/'.$cleaner_info['photo'] : '/img/no_photo.jpg'?>" width="100" alt="<?php echo $cleaner_info['first_name']?>" class="img-circle">
 				<div class="name">Неизвестно</div>
 				<?php }?>
 			</div>
