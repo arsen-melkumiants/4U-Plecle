@@ -1,6 +1,6 @@
 <div class="client_block">
 	<div class="container">
-		<?php if ($this->uri->segment(2) != 'detail') {?>
+		<?php if ($this->uri->segment(2) != 'detail' || $this->uri->segment(2) == 'edit_profile') {?>
 		<div class="row">
 			<div class="col-sm-12">
 				<div class="add_title">Появилась пыль? Нужно навести порядок?</div>

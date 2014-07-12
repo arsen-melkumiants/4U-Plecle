@@ -7,7 +7,7 @@
 		</div>
 		<div class="col-md-4">
 			<div class="detail_block">
-				<div class="title"><?php echo $right_info['title']?></div>
+			<div class="title"><?php echo $right_info['title']?><?php echo isset($user_info['is_cleaner']) && $user_info['is_cleaner'] == 0 ? '<a href="'.site_url('personal/edit_profile/'.$user_info['id']).'"><i class="icon-pencil"></i></a>' : ''?></div>
 				<div class="list">
 					<table class="table">
 						<tbody>

@@ -246,10 +246,10 @@ class Form {
 		return $this;
 	}
 
-	public function separator($text = '&nbsp;') {
+	public function separator($text = '&nbsp;', $params = false) {
 		$this->form_data[] = array(
-			'form' => $text,
-			'params' => false
+			'form'   => $text,
+			'params' => $params,
 		);
 		return $this;
 	}
@@ -341,7 +341,7 @@ class Form {
 			if (is_callable($item['form'])) {
 				$CI =& get_instance();
 				$html .= $item['form']($item['params'], $CI);
-			} elseif ($item['params']['type'] == 'hidden') {
+			} elseif (isset($item['params']['type']) && $item['params']['type'] == 'hidden') {
 				$html .= $item['form'].PHP_EOL;
 			} else {
 				$item['params']['id'] = !empty($item['params']['id']) ? ' id="'.$item['params']['id'].'"' : '';
@@ -356,7 +356,7 @@ class Form {
 			$html .= '<div class="form-group'.'"'.$item['params']['id'].'>'.PHP_EOL;
 
 			$params['btn_offset'] = isset($params['btn_offset']) ? $params['btn_offset'] : 3;
-			$params['class'] = !empty($params['btn_offset']) ? $this->grid_type.'-'.(12 - $params['btn_offset']).' '.$this->grid_type.'-offset-'.$params['btn_offset'] : $this->grid_type.'-12';
+			$params['class'] = !empty($params['btn_offset']) ? $this->grid_type.'-'.(!empty($params['btn_width']) ? $params['btn_width'] : (12 - $params['btn_offset'])).' '.$this->grid_type.'-offset-'.$params['btn_offset'] : $this->grid_type.'-12';
 
 			$html .= '<div class="'.$params['class'].'">'.PHP_EOL;;
 

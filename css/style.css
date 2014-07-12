@@ -103,6 +103,8 @@ h4.title .right_link {float: right;color: #a94442;}
 	border-top-left-radius: 3px;
 	border-top-right-radius: 3px;
 }
+.detail_block .title a {float: right;position: relative;right: 30px;color: #fff;}
+.detail_block .title a:hover {text-decoration: none;}
 .detail_block .list {padding: 15px;background: #f2f2f2;border: 1px solid #e3e3e3;}
 .detail_block table {margin: 0;}
 .detail_block tbody td {padding: 15px !important;border-color: #fff !important;}

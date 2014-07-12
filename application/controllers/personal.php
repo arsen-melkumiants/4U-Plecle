@@ -233,55 +233,95 @@ class Personal extends CI_Controller {
 			redirect('', 'refresh');
 		}
 
-		$this->data['left_block'] = $this->load->view('profile/menu', $this->data, true);
-
-		$user_info     = $this->ion_auth->user()->row_array();
+		$user_info = $this->ion_auth->user()->row_array();
+		if (!empty($user_info['is_cleaner'])) {
+			if ($this->input->is_ajax_request()) {
+				echo 'refresh';exit;
+			}
+			redirect('', 'refresh');
+		}
 		$id            = $user_info['id'];
 		$groups        = $this->ion_auth->groups()->result_array();
 		$currentGroups = $this->ion_auth->get_users_groups($id)->result();
 
-		$amount_list = array_flip(array('0','130','200','300','400','500','600','700','800','900','1000','1500','2000','2500','3000'));
-		foreach ($amount_list as $key => $value) {
-			$amount_list[$key] = $key.' $';
-		}
-
-		if (isset($_POST['payment_amount']) && !isset($amount_list[$_POST['payment_amount']])) {
-			$_POST['payment_amount'] = '';
-		}
+		$this->data['right_info'] = array(
+			'title'         => 'Ваш профиль',
+			'info_array'    => array(
+				'Имя'       => $user_info['first_name'],
+				'Фамилия'   => $user_info['last_name'],
+				'Мобильный' => $user_info['phone'],
+				'Email'     => $user_info['email'],
+				'Страна'    => $user_info['country'],
+				'Город'     => $user_info['city'],
+				'Адрес'     => $user_info['address'],
+				'Индекс'    => trim($user_info['zip'], ','),
+			),
+		);
 
 		$this->form
-			->text('username', array('value' => $user_info['username'], 'valid_rules' => 'required|trim|xss_clean|max_length[150]',  'label' => $this->lang->line('create_user_fname_label')))
-			->text('email', array('value' => $user_info['email'], 'valid_rules' => 'required|trim|xss_clean|max_length[150]|valid_email',  'label' => lang('create_user_email_label')))
-			->text('company', array('value' => $user_info['company'], 'valid_rules' => 'required|trim|xss_clean|max_length[100]',  'label' => lang('create_user_company_label')))
-			->text('address', array('value' => $user_info['address'], 'valid_rules' => 'required|trim|xss_clean|max_length[100]',  'label' => lang('create_user_address_label')))
-			->text('city', array('value' => $user_info['city'], 'valid_rules' => 'required|trim|xss_clean|max_length[100]',  'label' => lang('create_user_city_label')))
-			->text('state', array('value' => $user_info['state'], 'valid_rules' => 'required|trim|xss_clean|max_length[100]',  'label' => lang('create_user_state_label')))
-			->text('country', array('value' => $user_info['country'], 'valid_rules' => 'required|trim|xss_clean|max_length[100]',  'label' => lang('create_user_country_label')))
-			->text('zip', array('value' => $user_info['zip'], 'valid_rules' => 'required|trim|xss_clean|max_length[100]|is_natural',  'label' => lang('create_user_zip_label')))
-			->text('phone', array('value' => $user_info['phone'], 'valid_rules' => 'required|trim|xss_clean|max_length[100]|is_natural',  'label' => lang('create_user_phone_label')))
-			->text('url', array('value' => $user_info['url'], 'valid_rules' => 'trim|xss_clean|max_length[100]',  'label' => lang('create_user_url_label')))
-			->separator()
-			->password('password', array('label' => $this->lang->line('edit_user_password_label')))
-			->password('password_confirm', array('label' => $this->lang->line('edit_user_password_confirm_label')));
-
-		if ($user_info['is_seller']) {
-			$this->form
-				->separator('<h4>'.lang('finance_payment_info').'</h4>')
-				->select('payment_name', array(
-					'value'       => $user_info['payment_name'],
-					'valid_rules' => 'required|trim|xss_clean',
-					'label'       => lang('finance_account_name'),
-					'options'     => array('Webmoney' => 'Webmoney', 'Paxum' => 'Paxum'),
+			->text('first_name', array(
+				'value'       => $user_info['first_name'],
+				'valid_rules' => 'required|trim|xss_clean|max_length[150]',
+				'label'       => lang('create_user_fname_label'),
+				'width'       => 12, 'group_class' => 'col-sm-6'
+			))
+			->text('last_name', array(
+				'value'       => $user_info['last_name'],
+				'valid_rules' => 'required|trim|xss_clean|max_length[150]',
+				'label'       => lang('create_user_lname_label'),
+				'width'       => 12, 'group_class' => 'col-sm-6'
+			))
+			->text('phone', array(
+				'value'       => $user_info['phone'],
+				'valid_rules' => 'required|trim|xss_clean|max_length[100]|is_natural',
+				'label'       => lang('create_user_phone_label'),
+				'width'       => 12, 'group_class' => 'col-sm-6'
+			))
+			->select('gender', array(
+				'value'       => $user_info['gender'],
+				'options'     => array('male' => 'Мужской', 'female' => 'Женский'),
+				'valid_rules' => 'required|trim|xss_clean',
+				'label'       => lang('create_user_gender_label'),
+				'width'       => 12, 'group_class' => 'col-sm-6'
+			))
+			->func(function($params, $CI) {
+				$CI->data['params'] = $params;
+				return $CI->load->view('date_form', $CI->data, true);
+			}, array('value' => $user_info['birth'], 'label' => lang('create_user_birth_label')))
+				->separator('&nbsp;', array('width' => 12, 'group_class' => 'col-sm-6'))
+				->password('password', array(
+					'label' => $this->lang->line('edit_user_password_label'),
+					'width' => 12, 'group_class' => 'col-sm-6',
 				))
-				->text('payment_number', array('value' => $user_info['payment_number'], 'valid_rules' => 'required|trim|xss_clean|max_length[70]', 'label' => lang('finance_account_number')))
-				->select('payment_amount', array(
-					'value'       => $user_info['payment_amount'],
-					'valid_rules' => 'required|trim|xss_clean',
-					'label'       => lang('product_amount'),
-					'options'     => $amount_list,
+				->password('password_confirm', array(
+					'label' => $this->lang->line('edit_user_password_confirm_label'),
+					'width' => 12, 'group_class' => 'col-sm-6',
 				))
-				;
-		}
+				->separator()
+				->text('country', array(
+					'value'       => $user_info['country'],
+					'valid_rules' => 'required|trim|xss_clean|max_length[100]',
+					'label'       => lang('create_user_country_label'),
+					'width'       => 12, 'group_class' => 'col-sm-6'
+				))
+				->text('city', array(
+					'value'       => $user_info['city'],
+					'valid_rules' => 'required|trim|xss_clean|max_length[100]',
+					'label'       => lang('create_user_city_label'),
+					'width'       => 12, 'group_class' => 'col-sm-6'
+				))
+				->text('address', array(
+					'value'       => $user_info['address'],
+					'valid_rules' => 'required|trim|xss_clean|max_length[100]',
+					'label'       => lang('create_user_address_label'),
+					'width'       => 12, 'group_class' => 'col-sm-6'
+				))
+				->text('zip', array(
+					'value'       => trim($user_info['zip'], ','),
+					'valid_rules' => 'required|trim|xss_clean|max_length[100]',
+					'label'       => lang('create_user_zip_label'),
+					'width'       => 12, 'group_class' => 'col-sm-6'
+				));
 
 		if (isset($_POST) && !empty($_POST))
 		{
@@ -289,18 +329,22 @@ class Personal extends CI_Controller {
 			if ($this->_valid_csrf_nonce() === FALSE || $id != $this->input->post('id')) {
 				show_error($this->lang->line('error_csrf'));
 			}
+			$birth = strtotime(
+				intval($this->input->post('year')).'-'.
+				intval($this->input->post('month')).'-'.
+				intval($this->input->post('day'))
+			);
 
 			$data = array(
-				'username'       => $this->input->post('username'),
-				'email'          => $this->input->post('email'),
-				'company'        => $this->input->post('company'),
-				'address'        => $this->input->post('address'),
-				'city'           => $this->input->post('city'),
-				'state'          => $this->input->post('state'),
-				'country'        => $this->input->post('country'),
-				'zip'            => $this->input->post('zip'),
-				'phone'          => $this->input->post('phone'),
-				'url'            => $this->input->post('url'),
+				'first_name' => $this->input->post('first_name'),
+				'last_name'  => $this->input->post('last_name'),
+				'gender'     => $this->input->post('gender'),
+				'birth'      => $birth,
+				'country'    => $this->input->post('country'),
+				'city'       => $this->input->post('city'),
+				'address'    => $this->input->post('address'),
+				'zip'        => ','.$this->input->post('zip').',',
+				'phone'      => $this->input->post('phone'),
 			);
 
 			//Update the groups user belongs to
@@ -317,8 +361,8 @@ class Personal extends CI_Controller {
 				$this->form_validation->set_rules('password', $this->lang->line('edit_user_validation_password_label'), 'required|min_length[' . $this->config->item('min_password_length', 'ion_auth') . ']|max_length[' . $this->config->item('max_password_length', 'ion_auth') . ']|matches[password_confirm]');
 				$this->form_validation->set_rules('password_confirm', $this->lang->line('edit_user_validation_password_confirm_label'), 'required');
 				$this->form_validation->run();
-				$this->form->form_data[10]['params']['error'] = form_error('password');
-				$this->form->form_data[11]['params']['error'] = form_error('password_confirm');
+				$this->form->form_data[6]['params']['error'] = form_error('password');
+				$this->form->form_data[7]['params']['error'] = form_error('password_confirm');
 
 				$data['password'] = $this->input->post('password');
 			}
@@ -346,10 +390,18 @@ class Personal extends CI_Controller {
 		$this->data['currentGroups'] = $currentGroups;
 
 
-		$this->data['center_block'] = $this->form
-			->btn(array('value' => lang('edit_user_submit_btn')))
-			->create(array('action' => current_url(), 'error_inline' => 'true'));
-		load_views();
+		$this->data['center_block'] = '<h4 class="title">'.$this->data['header'].'</h4>';
+		$this->data['center_block'] .= $this->form
+			->btn(array(
+				'value' => lang('edit_user_submit_btn'),
+				'class' => 'btn btn-block btn-primary',
+			))
+			->create(array('error_inline' => true, 'btn_offset' => 3, 'btn_width' => 6));
+
+		$this->load->view('header', $this->data);
+		$this->load->view('orders/client_top', $this->data);
+		$this->load->view('orders/order_page', $this->data);
+		$this->load->view('footer', $this->data);
 	}
 
 	function forgot_password() {

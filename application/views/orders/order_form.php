@@ -58,7 +58,7 @@ window.onload = function () {
 	$('input').on('keyup', function() {
 		var input = $(this);
 		setTimeout(function() {
-			console.log(input.val());
+	//		console.log(input.val());
 			$('input[name="' + input.attr('name') + '"]').val(input.val());
 		}, 100);
 	});
