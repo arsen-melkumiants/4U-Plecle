@@ -130,7 +130,7 @@ class Personal extends CI_Controller {
 	}
 
 	function registration()	{
-		$this->data['title'] = $this->data['header'] = lang('create_user_heading');
+		$this->data['title'] = $this->data['header'] = 'Регистрация горничной';
 
 		if ($this->ion_auth->logged_in()) {
 			if ($this->input->is_ajax_request()) {
@@ -201,7 +201,7 @@ class Personal extends CI_Controller {
 				'country'    => $this->input->post('country'),
 				'city'       => $this->input->post('city'),
 				'address'    => $this->input->post('address'),
-				'zip'        => $this->input->post('zip'),
+				'zip'        => ','.$this->input->post('zip').',',
 				'phone'      => $this->input->post('phone'),
 				'extra'      => json_encode($this->data['result_options']),
 				'is_cleaner' => 1,
