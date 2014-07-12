@@ -438,7 +438,11 @@ class Personal extends CI_Controller {
 		}
 
 		$this->data['cleaner_info'] = $this->ion_auth->user($user_id)->row_array();
-
+		if (empty($this->data['cleaner_info'])) {
+			custom_404();
+		}
+		$this->load->model('order_model');
+		$this->data['deals'] = $this->order_model->get_deals_count($user_id);
 
 		$this->data['center_block'] = $this->load->view('orders/cleaner_profile', $this->data, true);
 		$this->load->view('ajax', $this->data);

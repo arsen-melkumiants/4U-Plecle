@@ -5,6 +5,10 @@
 		</div>
 		<div class="col-sm-8">
 			<h2><?php echo $cleaner_info['first_name'].' '.$cleaner_info['last_name']?></h2>
+			<h4>Завершенных сделок: <?php echo $deals?></h4>
 		</div>
 	</div>
+	<br>
+	<br>
+	<button class="btn btn-primary btn-block" data-dismiss="modal">Закрыть</button>
 </div>

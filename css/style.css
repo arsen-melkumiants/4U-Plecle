@@ -185,9 +185,10 @@ table .btn.btn-primary:hover {color: #fff;background-color: #005668;}
 .footer_block .menu li:before {content: "/";padding-right: 10px;}
 .footer_block .menu li:first-child:before {content: "";}
 
-.modal-body {padding: 20px 100px 0;}
-.modal-body .title {text-align: center;}
+.modal-content {border-radius: 0;}
 .modal-content button.close {display: block;position: absolute;right: 20px;top: 15px;font-size: 26px;z-index: 3;}
+.modal-body {padding: 20px 80px;}
+.modal-body .title {text-align: center;}
 
 .cleaner_info {text-align: center;}
 .cleaner_info h2 {font-size: 26px;margin-top: 30px;}

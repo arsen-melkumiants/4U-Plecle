@@ -105,6 +105,16 @@ class Order_model extends CI_Model {
 			->result_array();
 	}
 
+	function get_deals_count($cleaner_id) {
+		return $this->db
+			->select('m.id')
+			->from('orders as o')
+			->join('marks as m', 'o.id = m.order_id')
+			->where('o.cleaner_id', $cleaner_id)
+			->get()
+			->num_rows();
+	}
+
 	function order_form() {
 		if (!$this->ion_auth->logged_in()) {
 			//------------------------------------------
