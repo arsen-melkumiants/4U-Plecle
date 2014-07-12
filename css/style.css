@@ -44,6 +44,8 @@ h4.title .right_link {float: right;color: #a94442;}
 
 .main_page {padding-bottom: 280px;}
 
+.text_404 {text-align: center;font-size: 140px;margin: 130px 0;}
+.content_block .text_404{font-size: 130px;color: #6eb71f;margin: 0;}
 
 .btn-primary {background-color: #59c2e6;border-color: #59c2e6;}
 .btn-primary:hover,

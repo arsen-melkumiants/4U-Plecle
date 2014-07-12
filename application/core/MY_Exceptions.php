@@ -18,7 +18,7 @@ class MY_Exceptions extends CI_Exceptions {
 			'session',
 			'ion_auth',
 		));
-		$CI->data['main_menu']  = $CI->menu_model->get_menu('upper');
+		$CI->data['main_menu']  = $CI->menu_model->get_menu('main');
 		// do what you want here, even db stuff or just 
 		// load your template with a custom 404
 
@@ -28,7 +28,7 @@ class MY_Exceptions extends CI_Exceptions {
 		$CI->data['center_block'] = '<h1 class="text_404">404</h1>';
 
 		$out = $CI->load->view('header', $CI->data, true);
-		$out .= $CI->load->view('s_page', $CI->data, true);
+		$out .= $CI->load->view('content_page', $CI->data, true);
 		$out .= $CI->load->view('footer', $CI->data, true);
 		echo $out;
 	}
