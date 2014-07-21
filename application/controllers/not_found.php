@@ -15,11 +15,9 @@ class Not_found extends CI_Controller {
 
 		set_alert($this->session->flashdata('success'), false, 'success');
 		set_alert($this->session->flashdata('danger'), false, 'danger');
-		echo 'awdawdawdawd';
 	}
 
 	public function index() {
-		echo 'awd';
 		$this->data['title'] = $this->data['header'] = lang('page_doesnt_exist');
 		
 		$this->output->set_status_header('404');
