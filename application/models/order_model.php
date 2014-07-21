@@ -291,7 +291,7 @@ class Order_model extends CI_Model {
 		$this->email->from(SITE_EMAIL, SITE_NAME);
 		$this->email->to($email);
 		$this->email->cc(SITE_EMAIL);
-		$this->email->subject(lang($subject));
+		$this->email->subject($subject);
 		$this->email->message($this->load->view('email/'.$mail_view, $email_info ,true));
 		$this->email->send();
 	}
