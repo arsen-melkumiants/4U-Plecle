@@ -602,6 +602,7 @@ class Personal extends CI_Controller {
 				'auto_reg'  => $auto_reg,
 				'email'     => $user_data['order_info']['email'],
 			);
+			$this->order_model->send_mail($item['email'], 'Завяка успешно создана', 'create_order', $email_info);
 			$this->session->set_flashdata('success', 'Ваша завяка успешно создана');
 			redirect();
 		}
