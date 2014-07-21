@@ -607,9 +607,6 @@ class Personal extends CI_Controller {
 				'zip'       => $info['zip'],
 			);
 			$this->order_model->send_mail($user_email, 'Завяка успешно создана', 'create_order', $email_info);
-			echo $this->email->print_debugger();
-			echo 'awd';
-			exit;
 			$this->session->set_flashdata('success', 'Ваша завяка успешно создана');
 			redirect();
 		}
