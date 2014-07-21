@@ -551,6 +551,7 @@ class Personal extends CI_Controller {
 			$this->load->view('orders/order_page', $this->data);
 			$this->load->view('footer', $this->data);
 		} else {
+			$auto_reg = false;
 			if (!$this->ion_auth->logged_in()) {
 				$username = $this->input->post('first_name').'_'.$this->input->post('last_name');
 				$email    = strtolower($this->input->post('email'));
@@ -567,9 +568,11 @@ class Personal extends CI_Controller {
 					'is_cleaner' => 0,
 				);
 				$user_id = $this->ion_auth->register($username, $password, $email, $additional_data);
+				$user_email = $email;
 				$auto_reg = true;
 			} else {
 				$user_id = $this->ion_auth->user()->row()->id;
+				$user_email = $this->data['user_info']['email'];
 			}
 
 			$info = array(
@@ -600,9 +603,13 @@ class Personal extends CI_Controller {
 			$email_info = array(
 				'order_id'  => $order_id,
 				'auto_reg'  => $auto_reg,
-				'email'     => $user_data['order_info']['email'],
+				'email'     => $user_email,
+				'zip'       => $info['zip'],
 			);
-			$this->order_model->send_mail($user_data['order_info']['email'], 'Завяка успешно создана', 'create_order', $email_info);
+			$this->order_model->send_mail($user_email, 'Завяка успешно создана', 'create_order', $email_info);
+			echo $this->email->print_debugger();
+			echo 'awd';
+			exit;
 			$this->session->set_flashdata('success', 'Ваша завяка успешно создана');
 			redirect();
 		}
