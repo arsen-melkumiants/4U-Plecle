@@ -15,32 +15,24 @@ class Cli_tools extends CI_Controller {
 		return false;
 	}
 
-	public function make_zip_media() {
+	public function process_requests() {
 		$result = $this->db
-			->select('p.*')
-			->from('shop_products as p')
-			->join('shop_product_media_files as f', 'p.id = f.product_id')
-			->where('p.type', 'media')
-			->where('p.zip_date', 0)
-			->group_by('p.id')
-			->get()
+			->query('SELECT r.*
+			FROM order_requests AS r
+			JOIN users AS u ON u.zip LIKE CONCAT(\'%,\', r.zip ,\',%\')
+			WHERE u.is_cleaner =  1
+			AND u.active =  1
+			AND r.status =  0')
 			->result_array();
 		if (empty($result)) {
 			return false;
 		}
 
-		$media_folder = FCPATH.'media_files/';
+		$this->load->model('order_model');
+
 		foreach ($result as $item) {
-			$product_folder = $media_folder.$item['id'].'/';
-			$archive_name = $item['id'].'-'.url_title(translitIt($item['name']), 'underscore', TRUE).'.zip';
-			foreach (glob($product_folder.$item['id'].'-*.zip') as $exist_file) {
-				if(basename($exist_file) != $archive_name) {
-					unlink($exist_file);
-				}
-			}
-			$run = 'cd '.$product_folder.' && /usr/local/bin/zip -FSr '.$archive_name.' ./ -x "'.$archive_name.'" > /dev/null &';
-			shell_exec($run);
-			$this->db->where('id', $item['id'])->update('shop_products', array('zip_date' => time()));
+			$this->order_model->send_mail($item['email'], 'Горничные для Вас', 'confirm_request', $item);
+			$this->db->where('id', $item['id'])->update('order_requests', array('status' => 1, 'send_date' => time()));
 		}
 	}
 }

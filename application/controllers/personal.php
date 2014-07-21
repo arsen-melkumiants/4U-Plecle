@@ -507,11 +507,19 @@ class Personal extends CI_Controller {
 			if ($this->input->is_ajax_request()) {
 				echo 'refresh';exit;
 			}
-			redirect('', 'refresh');
+			redirect();
+		}
+
+		if (!$this->input->post('zip')) {
+			redirect();
 		}
 
 		$this->load->model('order_model');
 		$this->data['cleaners'] = $this->order_model->get_all_cleaners($this->input->post('zip'));
+
+		if (empty($this->data['cleaners'])) {
+			return $this->order_request($this->data['user_info']);
+		}
 
 		if (!isset($_POST['duration'])) {
 			$this->data['temp_post']['zip'] = $this->input->post('zip');
@@ -526,7 +534,7 @@ class Personal extends CI_Controller {
 		if ($this->form_validation->run() == FALSE) {
 
 			$this->data['right_info'] = array(
-				'title'       => 'Ваш профиль',
+				'title'       => 'Детали',
 				'info_array'  => array(
 					'Индекс'          => !empty($this->data['temp_post']['zip']) ? $this->data['temp_post']['zip'] : $this->input->post('zip'),
 					'Дата'            => date('d.m.Y'),
@@ -595,6 +603,43 @@ class Personal extends CI_Controller {
 				'email'     => $user_data['order_info']['email'],
 			);
 			$this->session->set_flashdata('success', 'Ваша завяка успешно создана');
+			redirect();
+		}
+	}
+
+	function order_request($user_info = false) {
+		if (!isset($_POST['email'])) {
+			$this->data['temp_post']['zip'] = $this->input->post('zip');
+			$_POST = array();
+		}
+		$this->data['title'] = $this->data['header'] = 'Запрос горничной по Вашему индексу';
+		$this->data['center_block'] = $this->order_model->request_form();
+
+		if ($this->form_validation->run() == FALSE) {
+			$this->load->view('header', $this->data);
+			$this->load->view('orders/cleaner_list', $this->data);
+			$this->load->view('orders/order_page', $this->data);
+			$this->load->view('footer', $this->data);
+		} else {
+			$info = array(
+				'email'    => $this->input->post('email'),
+				'zip'      => $this->input->post('zip'),
+				'add_date' => time(),
+				'status'   => 0,
+			);
+
+			$request_info = $this->db->where(array(
+				'email'  => $info['email'],
+				'zip'    => $info['zip'],
+				'status' => 0,
+			))->get('order_requests')->num_rows();
+			if (!empty($request_info)) {
+				$this->session->set_flashdata('success', 'Запрос по индексу "'.$info['zip'].'" с уведомлением на почту "'.$info['email'].'" уже отправлен. При появлении горничной мы немедленно оповестим Вас');
+				redirect();
+			}
+
+			$this->db->insert('order_requests', $info);
+			$this->session->set_flashdata('success', 'Ваш запрос принят. При появлении горничной по индексу "'.$info['zip'].'" Вам прийдет уведомление на почту "'.$info['email'].'"');
 			redirect();
 		}
 	}

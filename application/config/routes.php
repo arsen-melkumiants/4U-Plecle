@@ -65,6 +65,8 @@ $route['make_order'] = 'personal/make_order';
 
 $route['personal/(:any)'] = 'personal/$1';
 
+$route['cli_tools/(:any)'] = 'cli_tools/$1';
+
 $route['(:any)'] = 'main_controller/menu_content/$1';
 
 $route['default_controller'] = 'main_controller';

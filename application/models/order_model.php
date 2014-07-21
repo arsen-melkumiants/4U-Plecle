@@ -261,4 +261,38 @@ class Order_model extends CI_Model {
 
 		return $this->load->view('orders/order_form', $data, true);
 	}
+
+	function request_form() {
+		$user_info = $this->ion_auth->user()->row_array();
+		$html_form = '<h4 class="title">Форма запроса горничной</h4>';
+		$html_form .= $this->form
+			->text('email', array(
+				'value'       => !empty($user_info['email']) ? $user_info['email'] : false,
+				'valid_rules' => 'required|trim|xss_clean|max_length[150]|valid_email',
+				'label'       => lang('create_user_email_label'),
+				'width'       => 12, 'group_class' => 'col-sm-6',
+			))
+			->text('zip', array(
+				'value'       => !empty($this->data['temp_post']['zip']) ? $this->data['temp_post']['zip'] : (!empty($user_info['zip']) ? trim($user_info['zip'], ',') : false),
+				'valid_rules' => 'required|trim|xss_clean|max_length[50]',
+				'label'       => lang('create_user_zip_label'),
+				'width'       => 12, 'group_class' => 'col-sm-6'
+			))
+			->btn(array(
+				'value' => 'Отправить запрос',
+				'class' => 'btn btn-block btn-primary',
+			))
+			->create(array('error_inline' => true, 'btn_width' => 6));
+		return $html_form;
+	}
+
+	function send_mail($email, $subject, $mail_view, $email_info){
+		$this->load->library('email');
+		$this->email->from(SITE_EMAIL, SITE_NAME);
+		$this->email->to($email);
+		$this->email->cc(SITE_EMAIL);
+		$this->email->subject(lang($subject));
+		$this->email->message($this->load->view('email/'.$mail_view, $email_info ,true));
+		$this->email->send();
+	}
 }
