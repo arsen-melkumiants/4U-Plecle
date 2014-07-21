@@ -14,7 +14,7 @@
 | path to your installation.
 |
 */
-$config['base_url']	= 'plecle.mymind.pp.ua/';
+$config['base_url']	= 'http://plecle.mymind.pp.ua/';
 
 /*
 |--------------------------------------------------------------------------
