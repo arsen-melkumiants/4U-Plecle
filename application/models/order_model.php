@@ -287,7 +287,7 @@ class Order_model extends CI_Model {
 	}
 
 	function send_mail($email, $subject, $mail_view, $email_info){
-		$this->load->library('email');
+		$this->load->library('email', array('mailtype'  => 'html'));
 		$this->email->from(SITE_EMAIL, SITE_NAME);
 		$this->email->to($email);
 		$this->email->cc(SITE_EMAIL);
