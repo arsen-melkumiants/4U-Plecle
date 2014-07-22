@@ -203,7 +203,7 @@ class Orders extends CI_Controller {
 			custom_404();
 		}
 
-		$pay_time = ($order_info['start_time'] - 86400) > time();
+		$pay_time = ($order_info['start_date'] - 86400) > time();
 		if ($pay_time && ($order_info['status'] == 0 || $order_info['status'] == 1)) {
 			$this->db->trans_begin();
 			$this->db->where('id', $order_id)->update('orders', array('status' => 2));
