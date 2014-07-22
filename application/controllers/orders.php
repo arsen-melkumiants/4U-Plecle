@@ -145,10 +145,10 @@ class Orders extends CI_Controller {
 						return '<span class="text-danger">Сделка не состоялась</span>';
 					} elseif (!$row['cleaner_id'] && $row['status'] == 2 && $row['start_date'] > time() && $CI->data['user_info']['is_cleaner']) {
 						return '<a href="'.site_url('orders/accept/'.$row['id']).'" class="btn btn-primary">Взяться</a>';
-					} elseif (!$row['cleaner_id']) {
-						return '<span class="text-warning">Ожидаем горничную</span>';
 					} elseif (in_array($row['status'], array(0,1))) {
 						return '<span class="text-warning">Ожидаем оплаты</span>';
+					} elseif (!$row['cleaner_id']) {
+						return '<span class="text-warning">Ожидаем горничную</span>';
 					} elseif ($row['status'] == 3 && $row['last_mark'] == 'positive') {
 						return '<span class="text-success">Уборка успешно завершена</span>';
 					} elseif ($row['status'] == 3 && $row['last_mark'] == 'negative') {
