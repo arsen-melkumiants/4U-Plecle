@@ -216,6 +216,14 @@ class Orders extends CI_Controller {
 				'status'          => 1,
 			));
 			$this->db->trans_commit();
+			$email_info = array(
+				'order_id'   => $order_info['id'],
+				'start_date' => date('d.m.Y в H:i', $order_info['start_date']),
+			);
+			$this->order_model->send_mail($this->ion_auth->user($order_info['client_id'])->row()->email, 'Оплата успешно произведена', 'paid_order', $email_info);
+			if (!empty($order_info['cleaner_id'])) {
+				$this->order_model->send_mail($this->ion_auth->user($order_info['cleaner_id'])->row()->email, 'Оплата успешно произведена', 'paid_order', $email_info);
+			}
 			$this->session->set_flashdata('success', 'Оплата успешно произведена');
 		} elseif ($order_info['status'] == 2) {
 			$this->session->set_flashdata('danger', 'Оплата уже совершена');
@@ -263,7 +271,15 @@ class Orders extends CI_Controller {
 				'status'   => 1,
 			));
 			$this->db->trans_commit();
-			$this->session->set_flashdata('success', 'Сделка успешно завершена');
+			$this->session->set_flashdata('success', 'Сделка успешно выполнена');
+			$email_info = array(
+				'order_id'   => $order_info['id'],
+				'start_date' => date('d.m.Y в H:i', $order_info['start_date']),
+			);
+			$this->order_model->send_mail($this->ion_auth->user($order_info['client_id'])->row()->email, 'Сделка успешно выполнена', 'success_order', $email_info);
+			if (!empty($order_info['cleaner_id'])) {
+				$this->order_model->send_mail($this->ion_auth->user($order_info['cleaner_id'])->row()->email, 'Сделка успешно выполнена', 'success_order', $email_info);
+			}
 		} else {
 			$this->session->set_flashdata('danger', 'Оценка не может быть произведена');
 		}
@@ -291,6 +307,15 @@ class Orders extends CI_Controller {
 			}
 			$this->db->where('id', $order_id)->update('orders', $update_array);
 			$this->session->set_flashdata('success', 'Сделка успешно отменена');
+			$email_info = array(
+				'order_id'   => $order_info['id'],
+				'start_date' => date('d.m.Y в H:i', $order_info['start_date']),
+				'paid'       => $order_info['status'] == 2,
+			);
+			$this->order_model->send_mail($this->ion_auth->user($order_info['client_id'])->row()->email, 'Сделка отменена', 'cancel_order', $email_info);
+			if (!empty($order_info['cleaner_id'])) {
+				$this->order_model->send_mail($this->ion_auth->user($order_info['cleaner_id'])->row()->email, 'Сделка отменена', 'cancel_order', $email_info);
+			}
 		} else {
 			$this->session->set_flashdata('danger', 'Сделка не может быть отменена');
 		}
@@ -315,7 +340,10 @@ class Orders extends CI_Controller {
 			'order_id'   => $order_info['id'],
 			'start_date' => date('d.m.Y в H:i', $order_info['start_date']),
 		);
-		$this->order_model->send_mail($this->ion_auth->user($order_info['client_id'])->row()->email, 'Ваша заявка принята', 'accept_order', $email_info);
+		$this->order_model->send_mail($this->ion_auth->user($order_info['client_id'])->row()->email, 'Заявка успешно принята', 'accept_order', $email_info);
+		if (!empty($order_info['cleaner_id'])) {
+			$this->order_model->send_mail($this->ion_auth->user($order_info['cleaner_id'])->row()->email, 'Заявка успешно принята', 'accept_order', $email_info);
+		}
 		redirect('orders/detail/'.$order_id, 'refresh');
 	}
 }
