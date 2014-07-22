@@ -1,5 +1,5 @@
 <div class="d_block prices">
-	<img src="img/top_bg2.jpg" />
+	<img src="/img/top_bg2.jpg" />
 	<?php if (strpos(mb_strtolower($title), 'цены') !== false || strpos(mb_strtolower($title), 'цена') !== false) {?>
 	<div class="container">
 		<h2 class="text-left"><span>Фиксированная цена</span></h2>

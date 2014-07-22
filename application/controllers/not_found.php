@@ -23,6 +23,8 @@ class Not_found extends CI_Controller {
 		$this->output->set_status_header('404');
 		$this->data['center_block'] = '<h1 class="text_404">404</h1>';
 
-		load_views();
+		$this->load->view('header', $this->data, true);
+		$this->load->view('content_page', $this->data, true);
+		$this->load->view('footer', $this->data, true);
 	}
 }
