@@ -1,7 +1,5 @@
 		<script src="/dist/js/jquery-1.10.2.min.js"></script>
 		<script src="/dist/js/bootstrap.min.js"></script>
-		<script src="/js/notify/pnotify.custom.min.js"></script>
-		<link href="/js/notify/pnotify.custom.min.css" media="all" rel="stylesheet" type="text/css" />
 		<?php echo after_load('css');?>
 		<?php echo after_load('js');?>
 		<!-- The XDomainRequest Transport is included for cross-domain file deletion for IE 8 and IE 9 -->
