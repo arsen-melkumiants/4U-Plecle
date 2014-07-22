@@ -311,6 +311,11 @@ class Orders extends CI_Controller {
 		$update_array['cleaner_id'] = $this->data['user_info']['id'];
 		$this->db->where('id', $order_id)->update('orders', $update_array);
 		$this->session->set_flashdata('success', 'Сделка успешно заключена');
+		$email_info = array(
+			'order_id'   => $order_info['id'],
+			'start_date' => date('d.m.Y в H:i', $order_info['start_date']),
+		);
+		$this->order_model->send_mail($this->ion_auth->user($order_info['client_id'])->row()->email, 'Ваша заявка принята', 'accept_order', $email_info);
 		redirect('orders/detail/'.$order_id, 'refresh');
 	}
 }

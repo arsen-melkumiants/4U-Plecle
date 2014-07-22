@@ -1,7 +1,7 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 class Not_found extends CI_Controller {
-	
+
 	public function __construct(){
 		parent::__construct();
 		$this->load->model(array(
@@ -19,10 +19,10 @@ class Not_found extends CI_Controller {
 
 	public function index() {
 		$this->data['title'] = $this->data['header'] = lang('page_doesnt_exist');
-		
+
 		$this->output->set_status_header('404');
 		$this->data['center_block'] = '<h1 class="text_404">404</h1>';
-	
+
 		load_views();
 	}
 }
