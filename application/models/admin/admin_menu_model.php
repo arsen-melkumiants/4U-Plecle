@@ -30,7 +30,7 @@ class Admin_menu_model extends CI_Model {
 	}
 
 	function get_one_menu_item($item_id) {
-		return $this->db->select('m.name as menu_name, m.ru_name, i.*')
+		return $this->db->select('m.name as menu_name, m.ru_name, i.name_ru as name, i.*')
 			->from('menu_items as i')
 			->join('menu_names as m', 'm.id = i.menu_id', 'left')
 			->where('i.id', $item_id)
@@ -57,7 +57,7 @@ class Admin_menu_model extends CI_Model {
 					$icon = 'eye-close';
 				}
 				$text .= '<li class="dd-item dd3-item" data-id="'.$item['id'].'">
-					<div class="dd-handle dd3-handle">Drag</div><div class="dd3-content">'.$item['name_ru'].' ('.$item['name_en'].')
+					<div class="dd-handle dd3-handle">Drag</div><div class="dd3-content">'.$item['name_ru'].' 
 					<a href="'.site_url($url.$item['id'].'/active').'" title="'.$title.'"><i class="icon-'.$icon.'"></i></a>
 					<a data-toggle="modal" data-target="#ajaxModal" href="'.site_url($url.$item['id'].'/delete').'" title="Удалить"><i class="icon-trash"></i></a>
 					<a data-toggle="modal" data-target="#ajaxModal" href="'.site_url($url.$item['id'].'/edit').'" title="Редактировать"><i class="icon-pencil"></i></a>
@@ -141,7 +141,7 @@ class Admin_menu_model extends CI_Model {
 	function get_content_list() {
 		$list = array(
 			'content'         => $this->db->select('id, name_ru as name')->get('content')->result_array(),
-			'shop_categories' => $this->db->select('id, name_ru as name')->get('shop_categories')->result_array(),
+			//'shop_categories' => $this->db->select('id, name_ru as name')->get('shop_categories')->result_array(),
 			'auth'            => array(
 				array('id' => 'login', 'name' => 'Вход'),
 				array('id' => 'registration', 'name' => 'Регистрация'),
@@ -151,7 +151,7 @@ class Admin_menu_model extends CI_Model {
 			),
 		);
 
-		array_unshift($list['shop_categories'], array('id' => 0, 'name' => 'Все категории'));
+		//array_unshift($list['shop_categories'], array('id' => 0, 'name' => 'Все категории'));
 		
 		return $list;
 	}

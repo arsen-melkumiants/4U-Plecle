@@ -33,7 +33,7 @@ class Manage_menu extends CI_Controller {
 
 	public $TYPES = array(
 		'content'         => 'Контент',
-		'shop_categories' => 'Категории товаров',
+		//'shop_categories' => 'Категории товаров',
 		'external'        => 'Ссылка',
 		'auth'            => 'Пользовательские ссылки',
 	);
@@ -80,7 +80,7 @@ class Manage_menu extends CI_Controller {
 		}
 
 		if(!empty($_POST) && $_POST['type'] != 'external'){
-			$alias = !empty($_POST['alias']) ? $_POST['alias'] : $_POST['name_en'];
+			$alias = !empty($_POST['alias']) ? $_POST['alias'] : $_POST['name_ru'];
 			$_POST['alias'] = url_title(translitIt($alias), 'underscore', TRUE);
 			$_POST['menu_id'] = $menu_info['id'];
 		}
@@ -103,11 +103,11 @@ class Manage_menu extends CI_Controller {
 		if (empty($menu_info)) {
 			custom_404();
 		}
-		$menu_info['name'] = $menu_info['name_ru'].' ('.$menu_info['name_en'].')';
+		$menu_info['name'] = $menu_info['name_ru'];
 		set_header_info($menu_info);
 
 		if(!empty($_POST) && $_POST['type'] != 'external'){
-			$alias = !empty($_POST['alias']) ? $_POST['alias'] : $menu_info['name_en'];
+			$alias = !empty($_POST['alias']) ? $_POST['alias'] : $menu_info['name_ru'];
 			$_POST['alias'] = url_title(translitIt($alias), 'underscore', TRUE);
 		}
 
@@ -177,13 +177,13 @@ class Manage_menu extends CI_Controller {
 			->text('name_ru', array(
 				'value'       => $menu_info['name_ru'] ?: false,
 				'valid_rules' => 'required|trim|xss_clean',
-				'label'       => 'Название(RU)',
+				'label'       => 'Название',
 			))
-			->text('name_en', array(
+			/*->text('name_en', array(
 				'value'       => $menu_info['name_en'] ?: false,
 				'valid_rules' => 'required|trim|xss_clean',
 				'label'       => 'Название(EN)',
-			))
+			))*/
 			->text('alias', array(
 				'value'       => $menu_info['alias'] ?: false,
 				'valid_rules' => 'required|trim|xss_clean|'.(!$menu_info['id'] ? 'is_unique[menu_items.alias]' : 'is_unique_without[menu_items.alias.'.$menu_info['id'].']'),

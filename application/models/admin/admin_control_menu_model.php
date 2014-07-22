@@ -17,7 +17,9 @@ class Admin_control_menu_model extends CI_Model
 					'logout'                    => 'Выйти',
 				),
 				'Меню'                          => array(
-					'manage_menu/main'          => 'Основное меню',
+					'manage_menu/main'          => 'Главное меню',
+					'manage_menu/help'          => 'Справка',
+					'manage_menu/services'      => 'Услуги',
 				),
 				'Контент'                       => array(
 					'manage_content'            => 'Список контента',

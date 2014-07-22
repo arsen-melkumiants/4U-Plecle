@@ -11,7 +11,9 @@ class Main_controller extends CI_Controller {
 			'session',
 			'ion_auth',
 		));
-		$this->data['main_menu']  = $this->menu_model->get_menu('main');
+		$this->data['main_menu']     = $this->menu_model->get_menu('main');
+		$this->data['help_menu']     = $this->menu_model->get_menu('help');
+		$this->data['services_menu'] = $this->menu_model->get_menu('services');
 
 		set_alert($this->session->flashdata('success'), false, 'success');
 		set_alert($this->session->flashdata('danger'), false, 'danger');
@@ -24,6 +26,7 @@ class Main_controller extends CI_Controller {
 			$this->data['center_block'] .= $this->load->view('main_form', $this->data, true);
 		}
 		$this->data['center_block'] .= $this->load->view('promo_page', $this->data, true);
+		$this->data['regions'] = $this->db->get('regions')->result_array();
 
 		$this->load->view('header', $this->data);
 		$this->load->view('main_page', $this->data);

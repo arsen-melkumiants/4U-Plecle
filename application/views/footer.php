@@ -77,41 +77,24 @@
 					<div class="col-md-4">
 						<div class="menu">
 							<div class="title">Услуги</div>
-							<ul>
-								<li><a href="#">Ручная уборка</a></li>
-								<li><a href="#">Влажная уборка</a></li>
-								<li><a href="#">Послепраздничная уборка</a></li>
-								<li><a href="#">Уборка спальни</a></li>
-								<li><a href="#">Уборка кухни</a></li>
-								<li><a href="#">Вынос мусора</a></li>
-							</ul>
+							<?php echo $services_menu ?>
 						</div>				
 					</div>
 					<div class="col-md-4">
 						<div class="menu">
 							<div class="title">Районы</div>
 							<ul>
-								<li><a href="#">Жовтневый район</a></li>
-								<li><a href="#">Коммунарский район</a></li>
-								<li><a href="#">Ленинский район</a></li>
-								<li><a href="#">Орджоникидзевский район</a></li>
-								<li><a href="#">Хортицкий район</a></li>
-								<li><a href="#">Шевченковский район</a></li>
+								<?php if (!empty($regions)) {
+								foreach ($regions as $item) {?>
+								<li><?php echo $item['name']?></li>
+								<?php }}?>
 							</ul>
 						</div>				
 					</div>
 					<div class="col-md-4">
 						<div class="menu">
 							<div class="title">Справка</div>
-							<ul>
-								<li><a href="#">Как мы работаем</a></li>
-								<li><a href="#">Счастливые клиенты</a></li>
-								<li><a href="#">Наши цены</a></li>
-								<li><a href="#">Пресса</a></li>
-								<li><a href="#">FAQ</a></li>
-								<li><a href="#">Как стать горничной</a></li>
-								<li><a href="#">О компании</a></li>
-							</ul>
+							<?php echo $help_menu ?>
 						</div>				
 					</div>
 				</div>
