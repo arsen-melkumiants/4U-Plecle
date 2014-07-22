@@ -151,6 +151,7 @@ h4.title .right_link {float: right;color: #a94442;}
 
 .list.dl-horizontal dt {padding: 10px 0;font-weight: normal;width: 40%;text-align: left;}
 .list.dl-horizontal dd {padding: 10px 0;margin-left: 50%;}
+.list.dl-horizontal dd:first-letter {text-transform: uppercase;}
 table.list {width: 100%;margin-bottom: 15px;}
 .list td {padding: 10px 0;}
 .list a {color: #333;}

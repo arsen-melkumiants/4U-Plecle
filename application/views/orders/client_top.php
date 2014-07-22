@@ -15,10 +15,11 @@
 				<div class="big_status"><?php echo !empty($order_info['cleaner_id']) ? 'Чистотой Вашего дома сейчас занимается' : 'Ищем работника для Вас'?></div>
 			</div>
 			<div class="col-sm-5 text-right info_block">
-				<?php if ($order_info['status'] == 0) {?>
+				<?php /*if ($order_info['status'] == 0) {?>
 					<div class="big_status">Ожидание оплаты</div>
 					<div class="add_title"><?php echo $order_info['country'].', '.$order_info['city'].', '.$order_info['address']?></div>
-				<?php } elseif ($order_info['status'] == 1 || $order_info['status'] == 2) {?>
+				<?php } else*/
+					if (in_array($order_info['status'], array(0,1,2))) {?>
 					<div class="add_title">Начало уборки:</div>
 					<div class="big_status"><?php echo date('d.m.Y в H:i', $order_info['start_date'])?></div>
 					<?php if (in_array($order_info['status'], array(0,1)) && ($order_info['start_date'] - 86400 * 2) < time()) {
@@ -51,14 +52,12 @@
 				<div class="name"><?php echo $cleaner_info['first_name']?></div>
 				<a href="<?php echo site_url('profile/'.$cleaner_info['id'])?>" class="label">Профиль</a>
 				<?php } else {?>
-				<img src="<?php echo !empty($cleaner_info['photo']) ? '/uploads/avatars/'.$cleaner_info['photo'] : '/img/no_photo.jpg'?>" width="100" alt="<?php echo $cleaner_info['first_name']?>" class="img-circle">
+				<img src="/img/no_photo.jpg" width="100" class="img-circle">
 				<div class="name">Неизвестно</div>
 				<?php }?>
 			</div>
 			<div class="col-sm-5 text-left info_block">
-				<?php if ($order_info['status'] == 0) {?>
-					<a href="<?php echo site_url('orders/cancel/'.$order_info['id'])?>" class="black_link no_margin">Отказаться от сделки</a>
-				<?php } elseif ($order_info['status'] == 1 && $order_info['start_date'] > 86400 + time()) {?>
+				<?php if (in_array($order_info['status'], array(0,1)) && $order_info['start_date'] > 86400 + time()) {?>
 					<a href="<?php echo site_url('orders/cancel/'.$order_info['id'])?>" class="black_link no_margin">Отказаться от сделки</a>
 					<a href="<?php echo site_url('orders/pay/'.$order_info['id'])?>" class="big_status no_margin">Оплатить сделку</a>
 				<?php } elseif ($order_info['status'] == 2) {
@@ -72,6 +71,8 @@
 					<?php } else {?>
 						<span class="black_link disabled">Отказаться от сделки</span>
 					<?php }?>
+				<?php } else {?>
+					<span class="black_link disabled">Отказаться от сделки</span>
 				<?php }?>
 			</div>
 		</div>
