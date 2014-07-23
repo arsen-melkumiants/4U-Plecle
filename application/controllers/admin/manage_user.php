@@ -223,7 +223,8 @@ class Manage_user extends CI_Controller {
 			custom_404();
 		}
 
-		$this->data['user_info'] = $user_info;
+		$this->data['image_full_path'] = !empty($user_info['photo']) ? '/uploads/avatars/'.$user_info['photo'] : false;
+
 		$this->load->library('form');
 		$this->data['upload_form'] = $this->form
 			->file('photo', array('label' => 'Фото'))

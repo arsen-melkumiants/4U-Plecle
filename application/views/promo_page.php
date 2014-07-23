@@ -1,13 +1,19 @@
+<?php if (!empty($partners)) {?>
 <div class="main_block">
 	<div class="container">
 		<div class="row">
 			<div class="col-md-12 partners_block">
 				<div class="title">Возможно вы слышали о нас от:</div>
-				<img src="img/partners.jpg" />
+				<div class="inner">
+					<?php foreach ($partners as $item) {?>
+					<a href="<?php echo $item['link']?>"><img src="/uploads/partners/<?php echo $item['image']?>" alt="<?php echo $item['name']?>"/></a>
+					<?php }?>
+				</div>
 			</div>
 		</div>
 	</div>
 </div>
+<?php }?>
 <div class="top_promo_block">
 	<div class="container">
 		<div class="row">
@@ -34,7 +40,7 @@
 	</div>
 </div>
 <div class="middle_promo_block">
-	<h2>Оплатить онлайн просто. Цена всего 300 рублей/час</h2>
+<h2>Оплатить онлайн просто. Цена всего <?php echo PRICE_PER_HOUR?> рублей/час</h2>
 </div>
 <div class="container bottom_promo_block">
 	<div class="small_title">Идеальная чистота</div>

@@ -26,13 +26,13 @@ function admin_constructor() {
 	$CI->admin_methods->admin_constructor();
 }
 
-function admin_method($type = false, $table = false, $data = false) {
+function admin_method($type = false, $table = false, $data = false, $callback = false) {
 	$CI =& get_instance();
 	if (empty($CI->admin_methods)) {
 		$CI->load->library('admin_methods');
 	}
 	
-	$CI->admin_methods->{$type.'_method'}($table, $data);
+	$CI->admin_methods->{$type.'_method'}($table, $data, $callback);
 }
 
 function set_header_info($data = false) {

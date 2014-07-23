@@ -25,6 +25,7 @@ class Main_controller extends CI_Controller {
 		if (empty($this->ion_auth->user()->row()->is_cleaner)) {
 			$this->data['center_block'] .= $this->load->view('main_form', $this->data, true);
 		}
+		$this->data['partners'] = $this->db->where(array('status' => 1, 'image !=' => ''))->get('partners')->result_array();
 		$this->data['center_block'] .= $this->load->view('promo_page', $this->data, true);
 		$this->data['regions'] = $this->db->get('regions')->result_array();
 

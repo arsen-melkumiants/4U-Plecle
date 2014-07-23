@@ -1,7 +1,7 @@
 <div class="row">
 	<div class="col-md-4 col-md-offset-3" id="crop_image">
-		<?php if (!empty($user_info['photo'])) {?>
-		<img src="/uploads/avatars/<?php echo $user_info['photo']?>"/>
+		<?php if (!empty($image_full_path)) {?>
+		<img src="<?php echo $image_full_path?>"/>
 		<?php }?>
 	</div>
 </div>

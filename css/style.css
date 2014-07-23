@@ -68,7 +68,8 @@ h4.title .right_link {float: right;color: #a94442;}
 .main_form .form_body p {padding-bottom: 60px;background: #fff;}
 
 .partners_block {margin: 30px 0 40px;text-align: center;}
-.partners_block .title {font-size: 16px;}
+.partners_block .title {font-size: 16px;padding-bottom: 30px;}
+.partners_block img {max-height: 60px;margin: 0 15px;max-width: 150px;}
 
 .top_promo_block {background: #009dbf;padding: 30px 0 40px;text-align: center;color: #fff;}
 .top_promo_block .small_title {font-size: 16px;color: #3fddff;}

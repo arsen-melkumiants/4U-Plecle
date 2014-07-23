@@ -49,7 +49,10 @@ class Admin_methods {
 		if ($this->CI->IS_AJAX) {
 			echo 'refresh';
 		} else {
-			redirect($this->CI->MAIN_URL, 'refresh');
+			if (!empty($data['redirect_url'])) {
+				$data['redirect_url'] = is_callable($data['redirect_url']) ? $data['redirect_url']($this->CI) : $data['redirect_url'];
+			}
+			redirect(!empty($data['redirect_url']) ? $data['redirect_url'] : $this->CI->MAIN_URL, 'refresh');
 		}
 	}
 
@@ -74,7 +77,7 @@ class Admin_methods {
 		}
 	}
 
-	public function delete_method($table = false, $data = false) {
+	public function delete_method($table = false, $data = false, $callback = false) {
 		if (empty($table) || empty($data['id'])) {
 			if ($this->CI->IS_AJAX) {
 				echo 'refresh';
@@ -88,6 +91,9 @@ class Admin_methods {
 			if (isset($_POST['delete'])) {
 				$this->CI->db->where('id', $data['id'])->delete($table);
 				$this->CI->session->set_flashdata('danger', 'Удаление успешно выполено');
+				if (is_callable($callback)) {
+					$callback($data, $this->CI);
+				}
 				echo 'refresh';
 				exit;
 			} else {
@@ -101,6 +107,9 @@ class Admin_methods {
 		} else {
 			$this->CI->db->where('id', $data['id'])->delete($table);
 			$this->CI->session->set_flashdata('danger', 'Удаление успешно выполено');
+			if (is_callable($callback)) {
+				$callback($data, $this->CI);
+			}
 			redirect($this->CI->MAIN_URL, 'refresh');
 		}
 	}
