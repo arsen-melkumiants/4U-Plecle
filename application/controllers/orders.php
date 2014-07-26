@@ -259,10 +259,10 @@ class Orders extends CI_Controller {
 			$update_array = array('status' => 3);
 			if ($order_info['frequency'] == 'every_week') {
 				$update_array['status'] = 1;
-				$update_array['start_date'] = $order_info['start_date'] + 604800;
+				$update_array['start_date'] = $this->next_order_time($order_info['start_date'], 604800);
 			} elseif ($order_info['frequency'] == 'every_2_weeks') {
 				$update_array['status'] = 1;
-				$update_array['start_date'] = $order_info['start_date'] + 1209600;
+				$update_array['start_date'] = $this->next_order_time($order_info['start_date'], 1209600);
 			}
 			$this->db->trans_begin();
 			$this->db->where('id', $order_id)->update('orders', $update_array);
@@ -286,6 +286,14 @@ class Orders extends CI_Controller {
 			$this->session->set_flashdata('danger', 'Оценка не может быть произведена');
 		}
 		redirect('orders/detail/'.$order_id, 'refresh');
+	}
+
+	private function next_order_time($start_date, $step) {
+		$next_date = $start_date + $step;
+		if ($next_date + 86400 < time()) {
+			$next_date = $this->next_order_time($next_date, $step);
+		}
+		return $next_date;
 	}
 
 	function cancel($order_id = false) {

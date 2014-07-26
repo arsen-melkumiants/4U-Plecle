@@ -1,3 +1,30 @@
+<?php
+// your registration data
+$mrh_login = 'test';
+$mrh_pass1 = 'securepass1';
+// order properties
+$inv_id    = $order_info['id'];
+$inv_desc  = 'Оплата сделки на уборку #'.$order_info['id'];
+$out_summ  = $order_info['total_price'];
+// build CRC value
+$crc  = md5("$mrh_login:$out_summ:$inv_id:$mrh_pass1");
+$culture  = 'ru';
+$encoding = 'utf-8';
+
+// build URL
+$url_params = array(
+	'MerchantLogin=' .$mrh_login,
+	'OutSum='        .$out_summ,
+	'InvoiceID='     .$inv_id,
+	'Description='   .$inv_desc,
+	'SignatureValue='.$crc,
+	'Culture='       .$culture,
+	'Encoding='      .$encoding,
+);
+$pay_url = 'https://auth.robokassa.ru/Merchant/Index.aspx?'.implode('&', $url_params);
+
+$pay_url = site_url('orders/pay/'.$order_info['id']);
+?>
 <div class="client_block">
 	<div class="container">
 		<?php if ($this->uri->segment(2) != 'detail' || $this->uri->segment(2) == 'edit_profile') {?>
@@ -59,7 +86,7 @@
 			<div class="col-sm-5 text-left info_block">
 				<?php if (in_array($order_info['status'], array(0,1)) && $order_info['start_date'] > 86400 + time()) {?>
 					<a href="<?php echo site_url('orders/cancel/'.$order_info['id'])?>" class="black_link no_margin">Отказаться от сделки</a>
-					<a href="<?php echo site_url('orders/pay/'.$order_info['id'])?>" class="big_status no_margin">Оплатить сделку</a>
+					<a target="_blank" href="<?php echo $pay_url?>" class="big_status no_margin">Оплатить сделку</a>
 				<?php } elseif ($order_info['status'] == 2) {
 					if (($order_info['start_date'] + (3600 * $order_info['duration']) + 1800) < time()) {?>
 						<a href="<?php echo site_url('orders/positive_mark/'.$order_info['id'])?>" class="btn btn-success">Уборкой доволен(а)</a>
