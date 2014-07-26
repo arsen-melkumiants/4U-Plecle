@@ -149,6 +149,8 @@ class Orders extends CI_Controller {
 						return '<span class="text-warning">Ожидаем оплаты</span>';
 					} elseif (!$row['cleaner_id']) {
 						return '<span class="text-warning">Ожидаем горничную</span>';
+					} elseif ($row['status'] == 2 && $row['start_date'] + (3600 * $row['duration']) < time()) {
+						return '<span class="text-warning">Ожидаем оценку уборки</span>';
 					} elseif ($row['status'] == 3 && $row['last_mark'] == 'positive') {
 						return '<span class="text-success">Уборка успешно завершена</span>';
 					} elseif ($row['status'] == 3 && $row['last_mark'] == 'negative') {

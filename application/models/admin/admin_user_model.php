@@ -18,7 +18,7 @@ class Admin_user_model extends CI_Model {
 		return $this->db->where('id', $id)->get('users')->row_array();
 	}
 
-	public function upload_user_photo($user_info){
+	function upload_user_photo($user_info){
 		if(empty($_FILES['photo']['name'])){
 			return false;
 		}

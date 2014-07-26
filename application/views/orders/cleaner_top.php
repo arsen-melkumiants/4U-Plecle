@@ -22,6 +22,12 @@
 			<div class="col-sm-4 text-right">
 				<?php if (!$order_info['cleaner_id'] && (($order_info['status'] == 2 && $order_info['start_date'] > time()))) {?>
 					<a href="<?php echo site_url('orders/accept/'.$order_info['id'])?>" class="big_link">Взяться!</a>
+				<?php } elseif ($order_info['status'] == 2 && time() > $order_info['start_date'] && $order_info['start_date'] + (3600 * $order_info['duration']) > time()) {?>
+					<div class="big_status">Уборка идет</div>
+					<div class="add_title">Конец <?php echo date('d.m.Y в H:i', $order_info['start_date'] + (3600 * $order_info['duration']))?></div>
+				<?php } elseif ($order_info['status'] == 2 && $order_info['start_date'] + (3600 * $order_info['duration']) < time()) {?>
+					<div class="big_status">Ожидание оценки уборки</div>
+					<div class="add_title">Конец <?php echo date('d.m.Y в H:i', $order_info['start_date'] + (3600 * $order_info['duration']))?></div>
 				<?php } elseif ($active_deal) {?>
 					<div class="add_title">Начало уборки:</div>
 					<div class="big_status"><?php echo date('d.m.Y в H:i', $order_info['start_date'])?></div>
@@ -29,9 +35,6 @@
 				<?php } elseif (in_array($order_info['status'], array(0,1)) && $order_info['start_date'] < time() + 86400) {?>
 					<div class="big_status">Сделка не состоялась</div>
 					<div class="add_title text-danger"><?php echo date('В H:i d.m.Y', $order_info['start_date'])?></div>
-				<?php } elseif ($order_info['status'] == 2 && time() > $order_info['start_date'] && $order_info['start_date'] + (3600 * $order_info['duration']) > time()) {?>
-					<div class="big_status">Уборка идет</div>
-					<div class="add_title">Конец <?php echo date('d.m.Y в H:i', $order_info['start_date'] + (3600 * $order_info['duration']))?></div>
 				<?php } elseif ($order_info['status'] == 3) {?>
 					<div class="big_status">Уборка завершена</div>
 					<div class="add_title"><?php echo date('В H:i d.m.Y', $order_info['start_date'] + (3600 * $order_info['duration']))?></div>
