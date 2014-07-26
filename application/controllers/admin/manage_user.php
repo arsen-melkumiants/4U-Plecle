@@ -239,7 +239,7 @@ class Manage_user extends CI_Controller {
 		if (!empty($this->data['center_block'])) {
 			$this->data['center_block'] .= $this->load->view(ADM_FOLDER.'upload_js', $this->data, true);
 		}
-		$upload_info = $this->admin_user_model->upload_user_photo($this->data['user_info']);
+		$upload_info = $this->admin_user_model->upload_user_photo($user_info);
 		if ($upload_info === true) {
 			$this->session->set_flashdata('success', 'Фото успешно добавлено');
 		} elseif (!empty($upload_info)) {
