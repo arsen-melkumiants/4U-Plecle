@@ -21,6 +21,14 @@ class Manage_user extends CI_Controller {
 			'header'       => 'Неактивированные пользователи',
 			'header_descr' => 'Список пользователей',
 		),
+		'cleaners'         => array(
+			'header'       => 'Работники',
+			'header_descr' => 'Список работников',
+		),
+		'clients'      => array(
+			'header'       => 'Клиенты',
+			'header_descr' => 'Список клиентов',
+		),
 		'edit'             => array(
 			'header'       => 'Редактирование пользователя "%first_name %last_name"',
 			'header_descr' => 'Редактирование информации о пользователе',
@@ -49,8 +57,9 @@ class Manage_user extends CI_Controller {
 		$this->zip = $this->admin_order_model->get_all_zips();
 	}
 
-	public function index($status = false) {
+	public function index($status = false, $type = false) {
 		$this->data['status'] = $status;
+		$this->data['type']   = $type;
 
 		$this->load->library('table');
 		$this->data['center_block'] = $this->table
@@ -109,7 +118,7 @@ class Manage_user extends CI_Controller {
 				}
 		))
 			->create(function($CI) {
-				return $CI->admin_user_model->get_all_users($CI->data['status']);
+				return $CI->admin_user_model->get_all_users($CI->data['status'], $CI->data['type']);
 			});
 
 		load_admin_views();
@@ -121,6 +130,14 @@ class Manage_user extends CI_Controller {
 
 	public function activated() {
 		$this->index(1);
+	}
+
+	public function cleaners() {
+		$this->index(false, 1);
+	}
+
+	public function clients() {
+		$this->index(false, 0);
 	}
 
 	public function add() {

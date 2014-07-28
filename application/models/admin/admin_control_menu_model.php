@@ -39,9 +39,11 @@ class Admin_control_menu_model extends CI_Model
 					'manage_order/payments'     => 'Список выплат',
 				),
 				'Пользователи'                  => array(
-					'manage_user'               => 'Список всех пользователей',
-					'manage_user/activated'     => 'Список активированных пользователей',
-					'manage_user/inactivated'   => 'Список неактивированных пользователей',
+					'manage_user'               => 'Все пользователи',
+					'manage_user/cleaners'      => 'Работники',
+					'manage_user/clients'       => 'Клиенты',
+					'manage_user/activated'     => 'Активированные',
+					'manage_user/inactivated'   => 'Неактивированные',
 				),
 				/*
 				'История операций'                       => array(
