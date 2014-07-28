@@ -11,6 +11,7 @@
 		</div>
 	</div>
 	<div class="container">
+	<?php echo get_alerts();?>
 		<div class="row">
 			<form method="post">
 				<div class="col-md-8">

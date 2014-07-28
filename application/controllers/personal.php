@@ -158,24 +158,53 @@ class Personal extends CI_Controller {
 		}
 
 		$this->data['user_info_form'] = $this->form
-			->text('first_name', array('valid_rules' => 'required|trim|xss_clean|max_length[150]',  'label' => lang('create_user_fname_label'), 'width' => 12, 'group_class' => 'col-sm-6'))
-			->text('last_name', array('valid_rules' => 'required|trim|xss_clean|max_length[150]',  'label' => lang('create_user_lname_label'), 'width' => 12, 'group_class' => 'col-sm-6'))
-			->text('phone', array('valid_rules' => 'required|trim|xss_clean|max_length[100]|is_natural',  'label' => lang('create_user_phone_label'), 'width' => 12, 'group_class' => 'col-sm-6'))
-			->text('email', array('valid_rules' => 'required|trim|xss_clean|max_length[150]|valid_email|is_unique[users.email]',  'label' => lang('create_user_email_label'), 'width' => 12, 'group_class' => 'col-sm-6'))
-			->select('gender', array('options' => array('male' => 'Мужской', 'female' => 'Женский'), 'valid_rules' => 'required|trim|xss_clean',  'label' => lang('create_user_gender_label'), 'width' => 12, 'group_class' => 'col-sm-6'))
+			->text('first_name', array(
+				'valid_rules' => 'required|trim|xss_clean|max_length[150]',
+				'label'       => lang('create_user_fname_label'),
+				'width'       => 12, 'group_class' => 'col-sm-6'
+			))
+			->text('last_name', array(
+				'valid_rules' => 'required|trim|xss_clean|max_length[150]',
+				'label'       => lang('create_user_lname_label'),
+				'width'       => 12, 'group_class' => 'col-sm-6'
+			))
+			->text('phone', array(
+				'valid_rules' => 'required|trim|xss_clean|max_length[100]|is_natural',
+				'label'       => lang('create_user_phone_label'),
+				'width'       => 12, 'group_class' => 'col-sm-6'
+			))
+			->text('email', array(
+				'valid_rules' => 'required|trim|xss_clean|max_length[150]|valid_email|is_unique[users.email]',
+				'label'       => lang('create_user_email_label'),
+				'width'       => 12, 'group_class' => 'col-sm-6'
+			))
+			->select('gender', array(
+				'options'     => array('male' => 'Мужской', 'female' => 'Женский'),
+				'valid_rules' => 'required|trim|xss_clean',
+				'label'       => lang('create_user_gender_label'),
+				'width'       => 12, 'group_class' => 'col-sm-6'
+			))
 			->func(function($params, $CI) {
 				$CI->data['params'] = $params;
 				return $CI->load->view('date_form', $CI->data, true);
 			}, array('label' => lang('create_user_birth_label')))
-				->password('password', array('valid_rules' => 'required|min_length[' . $this->config->item('min_password_length', 'ion_auth') . ']|max_length[' . $this->config->item('max_password_length', 'ion_auth') . ']',  'label' => $this->lang->line('create_user_password_label'), 'width' => 12, 'group_class' => 'col-sm-6'))
-				->password('password_confirm', array('valid_rules' => 'required|matches[password]',  'label' => lang('create_user_password_confirm_label'), 'width' => 12, 'group_class' => 'col-sm-6'))
+				->password('password', array(
+					'valid_rules' => 'required|min_length['.$this->config->item('min_password_length', 'ion_auth').']|max_length['.$this->config->item('max_password_length', 'ion_auth').']',
+					'label'       => $this->lang->line('create_user_password_label'),
+					'width'       => 12, 'group_class' => 'col-sm-6'
+				))
+				->password('password_confirm', array(
+					'valid_rules' => 'required|matches[password]',
+					'label'       => lang('create_user_password_confirm_label'),
+					'width'       => 12, 'group_class' => 'col-sm-6'
+				))
 				->create(array('error_inline' => true, 'no_form_tag' => true));
 
 		$this->data['address_form'] = $this->form
 			->text('country', array('valid_rules' => 'required|trim|xss_clean|max_length[100]',  'label' => lang('create_user_country_label'), 'width' => 12, 'group_class' => 'col-sm-6'))
 			->text('city', array('valid_rules' => 'required|trim|xss_clean|max_length[100]',  'label' => lang('create_user_city_label'), 'width' => 12, 'group_class' => 'col-sm-6'))
-			->text('address', array('valid_rules' => 'required|trim|xss_clean|max_length[100]',  'label' => lang('create_user_address_label'), 'width' => 12, 'group_class' => 'col-sm-6'))
-			->text('zip', array('valid_rules' => 'required|trim|xss_clean|max_length[100]',  'label' => lang('create_user_zip_label'), 'width' => 12, 'group_class' => 'col-sm-6'))
+			->text('address', array('valid_rules' => 'required|trim|xss_clean|max_length[100]',  'label' => lang('create_user_address_label'), 'width' => 12, 'group_class' => 'col-sm-12'))
+			//->text('zip', array('valid_rules' => 'required|trim|xss_clean|max_length[100]',  'label' => lang('create_user_zip_label'), 'width' => 12, 'group_class' => 'col-sm-6'))
 			->create(array('error_inline' => true, 'no_form_tag' => true));
 
 		$this->data['confirm'] = $this->form
@@ -201,7 +230,7 @@ class Personal extends CI_Controller {
 				'country'    => $this->input->post('country'),
 				'city'       => $this->input->post('city'),
 				'address'    => $this->input->post('address'),
-				'zip'        => ','.$this->input->post('zip').',',
+				//'zip'        => ','.$this->input->post('zip').',',
 				'phone'      => $this->input->post('phone'),
 				'extra'      => json_encode($this->data['result_options']),
 				'is_cleaner' => 1,
@@ -213,9 +242,10 @@ class Personal extends CI_Controller {
 			if ($this->input->is_ajax_request()) {
 				echo 'refresh';exit;
 			}
-			redirect("", 'refresh');
+			redirect();
 		} else {
 			$this->data['message'] = (validation_errors() ? validation_errors() : ($this->ion_auth->errors() ? $this->ion_auth->errors() : $this->session->flashdata('message')));
+			set_alert($this->data['message'], false, 'danger');
 
 			$this->load->view('header', $this->data);
 			$this->load->view('reg_cleaners', $this->data);

@@ -475,11 +475,11 @@ class Ion_auth_model extends CI_Model
 		$this->db->update($this->tables['users'], $data, array('id' => $id));
 
 		$return = $this->db->affected_rows() == 1;
-		if ($return)
+		/*if ($return)
 			$this->set_message('deactivate_successful');
 		else
 			$this->set_error('deactivate_unsuccessful');
-
+		 */
 		return $return;
 	}
 
@@ -495,8 +495,8 @@ class Ion_auth_model extends CI_Model
 		if ($this->db->count_all_results($this->tables['users']) > 0)
 		{
 			$data = array(
-			    'forgotten_password_code' => NULL,
-			    'forgotten_password_time' => NULL
+				'forgotten_password_code' => NULL,
+				'forgotten_password_time' => NULL
 			);
 
 			$this->db->update($this->tables['users'], $data, array('forgotten_password_code' => $code));
