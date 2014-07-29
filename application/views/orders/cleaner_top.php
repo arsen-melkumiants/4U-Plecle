@@ -16,7 +16,7 @@
 				<div class="big_status"><?php echo $order_info['status'] != 2 ? 'Оплата не совершена' : 'Сделка Ваша!'?></div>
 				<?php }?>
 				<div class="title<?php echo $active_deal ? ' no_margin' : ''?>">Адрес клиента</div>
-				<div class="add_title"><?php echo $user_info['country'].', '.$user_info['city'].', '.$user_info['address']?></div>
+				<div class="add_title"><?php echo $order_info['country'].', '.$order_info['city'].', '.$order_info['address']?></div>
 			</div>
 
 			<div class="col-sm-4 text-right">

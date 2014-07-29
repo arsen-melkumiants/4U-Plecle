@@ -1,29 +1,31 @@
 <?php
-// your registration data
-$mrh_login = 'test';
-$mrh_pass1 = 'securepass1';
-// order properties
-$inv_id    = $order_info['id'];
-$inv_desc  = 'Оплата сделки на уборку #'.$order_info['id'];
-$out_summ  = $order_info['total_price'];
-// build CRC value
-$crc  = md5("$mrh_login:$out_summ:$inv_id:$mrh_pass1");
-$culture  = 'ru';
-$encoding = 'utf-8';
+if (!empty($order_info)) {
+	// your registration data
+	$mrh_login = 'test';
+	$mrh_pass1 = 'securepass1';
+	// order properties
+	$inv_id    = $order_info['id'];
+	$inv_desc  = 'Оплата сделки на уборку #'.$order_info['id'];
+	$out_summ  = $order_info['total_price'];
+	// build CRC value
+	$crc  = md5("$mrh_login:$out_summ:$inv_id:$mrh_pass1");
+	$culture  = 'ru';
+	$encoding = 'utf-8';
 
-// build URL
-$url_params = array(
-	'MerchantLogin=' .$mrh_login,
-	'OutSum='        .$out_summ,
-	'InvoiceID='     .$inv_id,
-	'Description='   .$inv_desc,
-	'SignatureValue='.$crc,
-	'Culture='       .$culture,
-	'Encoding='      .$encoding,
-);
-$pay_url = 'https://auth.robokassa.ru/Merchant/Index.aspx?'.implode('&', $url_params);
+	// build URL
+	$url_params = array(
+		'MerchantLogin=' .$mrh_login,
+		'OutSum='        .$out_summ,
+		'InvoiceID='     .$inv_id,
+		'Description='   .$inv_desc,
+		'SignatureValue='.$crc,
+		'Culture='       .$culture,
+		'Encoding='      .$encoding,
+	);
+	$pay_url = 'https://auth.robokassa.ru/Merchant/Index.aspx?'.implode('&', $url_params);
 
-$pay_url = site_url('orders/pay/'.$order_info['id']);
+	$pay_url = site_url('orders/pay/'.$order_info['id']);
+}
 ?>
 <div class="client_block">
 	<div class="container">
@@ -36,7 +38,7 @@ $pay_url = site_url('orders/pay/'.$order_info['id']);
 				<a href="<?php echo site_url('make_order')?>" class="big_link">Оформить заявку на уборку</a>
 			</div>
 		</div>
-		<?php } else {?>
+		<?php } elseif (!empty($order_info)) {?>
 		<div class="row">
 			<div class="col-sm-12">
 				<div class="big_status"><?php echo !empty($order_info['cleaner_id']) ? 'Чистотой Вашего дома сейчас занимается' : 'Ищем работника для Вас'?></div>

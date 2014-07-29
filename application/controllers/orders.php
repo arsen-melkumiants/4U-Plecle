@@ -264,6 +264,12 @@ class Orders extends CI_Controller {
 				$update_array['status'] = 1;
 				$update_array['start_date'] = $this->next_order_time($order_info['start_date'], 1209600);
 			}
+
+			if ($update_array['status'] === 1) {
+				$update_array['price_per_hour']  = PRICE_PER_HOUR;
+				$update_array['detergent_price'] = floatval($order_info['detergent_price']) ? DETERGENT_PRICE : 0;
+				$update_array['total_price']     = PRICE_PER_HOUR * $order_info['duration'] + floatval($update_array['detergent_price']);
+			}
 			$this->db->trans_begin();
 			$this->db->where('id', $order_id)->update('orders', $update_array);
 			$this->db->insert('marks', array(

@@ -195,7 +195,7 @@ class Order_model extends CI_Model {
 				'valid_rules' => 'required|trim|xss_clean|max_length[100]',
 				'label'       => lang('create_user_country_label'),
 				'width'       => 12, 'group_class' => 'col-sm-6',
-				'value'       => !empty($user_info['country']) ? $user_info['country'] : false,
+				'value'       => !empty($user_info['country']) ? $user_info['country'] : 'Россия',
 			))
 			->text('city', array(
 				'valid_rules' => 'required|trim|xss_clean|max_length[100]',

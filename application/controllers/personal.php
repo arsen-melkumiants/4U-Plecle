@@ -564,7 +564,7 @@ class Personal extends CI_Controller {
 		if ($this->form_validation->run() == FALSE) {
 
 			$this->data['right_info'] = array(
-				'title'       => 'Детали',
+				'title'       => 'Детали заявки',
 				'info_array'  => array(
 					'Индекс'          => !empty($this->data['temp_post']['zip']) ? $this->data['temp_post']['zip'] : $this->input->post('zip'),
 					'Дата'            => date('d.m.Y'),
