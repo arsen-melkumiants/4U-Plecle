@@ -267,7 +267,7 @@ class Orders extends CI_Controller {
 
 			if ($update_array['status'] === 1) {
 				$update_array['price_per_hour']  = PRICE_PER_HOUR;
-				$update_array['detergent_price'] = floatval($order_info['detergent_price']) ? DETERGENT_PRICE : 0;
+				$update_array['detergent_price'] = floatval($order_info['detergent_price']) ? DETERGENT_PRICE * $order_info['duration'] : 0;
 				$update_array['total_price']     = PRICE_PER_HOUR * $order_info['duration'] + floatval($update_array['detergent_price']);
 			}
 			$this->db->trans_begin();

@@ -557,7 +557,6 @@ class Personal extends CI_Controller {
 		}
 		$detergent_price = $this->input->post('detergents') ? DETERGENT_PRICE : 0;
 
-
 		$this->data['title'] = $this->data['header'] = 'Создание заявки';
 		$this->data['center_block'] = $this->order_model->order_form();
 
@@ -573,7 +572,7 @@ class Personal extends CI_Controller {
 					'Рабочие часы'    => isset($this->order_model->duration[$this->input->post('duration')]) ? $this->order_model->duration[$this->input->post('duration')] : false,
 					'Цена за час'     => PRICE_PER_HOUR,
 					'Моющие средства' => $detergent_price,
-					'<b>Итого</b>'    => '<b>'.(PRICE_PER_HOUR * $this->input->post('duration') + $detergent_price).'</b>'
+					'<b>Итого</b>'    => '<b>'.((PRICE_PER_HOUR * $this->input->post('duration')) + ($detergent_price * $this->input->post('duration'))).'</b>'
 				),
 			);
 			$this->load->view('header', $this->data);
@@ -608,8 +607,8 @@ class Personal extends CI_Controller {
 			$info = array(
 				'client_id'       => $user_id,
 				'price_per_hour'  => PRICE_PER_HOUR,
-				'detergent_price' => $detergent_price,
-				'total_price'     => PRICE_PER_HOUR * $this->input->post('duration') + $detergent_price,
+				'detergent_price' => $detergent_price * $this->input->post('duration'),
+				'total_price'     => (PRICE_PER_HOUR * $this->input->post('duration')) + ($detergent_price * $this->input->post('duration')),
 				'frequency'       => $this->input->post('frequency'),
 				'duration'        => $this->input->post('duration'),
 				'need_ironing'    => intval($this->input->post('need_ironing')),
