@@ -5,15 +5,18 @@
 				<img src="<?php echo !empty($user_info['photo']) ? '/uploads/avatars/'.$user_info['photo'] : '/img/no_photo.jpg'?>" width="100" alt="<?php echo $user_info['first_name']?>" class="img-circle">
 			</div>
 		<?php if ($this->uri->segment(2) != 'detail') {?>
-			<div class="col-sm-6">
+			<div class="col-sm-6" style="margin-left: -25px;">
 				<div class="title">Здравствуйте, <?php echo $user_info['first_name']?></div>
 				<div class="add_title">Скорее выбирайте заказ и за работу!</div>
 			</div>
 		<?php } else {?>
 			<?php $active_deal = $order_info['status'] == 2 || ($order_info['status'] == 1 && $order_info['start_date'] > time() + 86400); ?>
 			<div class="col-sm-6">
-				<?php if ($active_deal) {?>
+				<?php if ($active_deal && $order_info['cleaner_id'] == $user_info['id']) {?>
 				<div class="big_status"><?php echo $order_info['status'] != 2 ? 'Оплата не совершена' : 'Сделка Ваша!'?></div>
+				<?php } else {?>
+				<br>
+				<br>
 				<?php }?>
 				<div class="title<?php echo $active_deal ? ' no_margin' : ''?>">Адрес клиента</div>
 				<div class="add_title"><?php echo $order_info['country'].', '.$order_info['city'].', '.$order_info['address']?></div>

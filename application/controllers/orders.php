@@ -296,7 +296,7 @@ class Orders extends CI_Controller {
 
 	private function next_order_time($start_date, $step) {
 		$next_date = $start_date + $step;
-		if ($next_date + 86400 < time()) {
+		if ($next_date - 86400 < time()) {
 			$next_date = $this->next_order_time($next_date, $step);
 		}
 		return $next_date;

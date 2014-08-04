@@ -39,6 +39,18 @@ class Manage_user extends CI_Controller {
 		),
 	);
 
+	public $SPECIAL = array(
+		'english'                 => 'Я хорошо разговариваю по-английски',
+		'country_work_permission' => 'У меня есть право работать на территории РФ',
+		'passport'                => 'У меня есть паспорт, который я могу предоставить при собеседовании',
+		'not_agency'              => 'Я понимаю, что Plecle.com не агентство',
+		'experience'              => 'У меня есть минимум 6 месяц опыта работы горничной',
+		'reference'               => 'У меня есть 3 работодательские характеристики',
+		'bank_account'            => 'Я понимаю, что моя работа будет оплачена на банковский счет',
+		'mobile_phone'            => 'У меня есть мобильный телефон и я могу принимать и получать сообщения',
+	);
+
+
 	function __construct() {
 		parent::__construct();
 		$this->config->set_item('sess_cookie_name', 'a_session');
@@ -168,30 +180,49 @@ class Manage_user extends CI_Controller {
 		if ($this->form_validation->run() == FALSE) {
 			load_admin_views();
 		} else {
-			admin_method('edit', $this->DB_TABLE, array('id' => $id));
+			foreach ($this->SPECIAL as $key => $value) {
+				if (!empty($_POST[$key])) {
+					$special[$key] = $_POST[$key];
+				}
+				$except_fields[] = $key;
+			}
+
+			if (!empty($special)) {
+				$_POST['extra'] = json_encode($special);
+			}
+
+			admin_method('edit', $this->DB_TABLE, array(
+				'id'            => $id,
+				'except_fields' => $except_fields,
+			));
 		}
 	}
 
 	private function edit_form($user_info = false) {
-		$special = array(
-			'english'                 => 'Я хорошо разговариваю по-английски',
-			'country_work_permission' => 'У меня есть право работать на территории РФ',
-			'passport'                => 'У меня есть паспорт, который я могу предоставить при собеседовании',
-			'not_agency'              => 'Я понимаю, что Plecle.com не агентство',
-			'experience'              => 'У меня есть минимум 6 месяц опыта работы горничной',
-			'reference'               => 'У меня есть 3 работодательские характеристики',
-			'bank_account'            => 'Я понимаю, что моя работа будет оплачена на банковский счет',
-			'mobile_phone'            => 'У меня есть мобильный телефон и я могу принимать и получать сообщения',
-		);
-
+		$special = $this->SPECIAL;
 		$this->load->library('form');
+		if ($user_info['is_cleaner']) {
+			$options = json_decode($user_info['extra'], true);
+			if(empty($_POST)) {
+				$forced_post = true;
+				foreach ($special as $key => $item) {
+					if (!empty($options[$key])) {
+						$_POST[$key] = 1;
+					}
+				}
+			}
+			$this->form
+				->checkbox('special[]', array(
+					'valid_rules' => 'trim|xss_clean',
+					'label'       => 'Особые требования',
+					'inline'      => false,
+					'inputs'      => $special
+				));
+			if (!empty($forced_post)) {
+				$_POST = array();
+			}
+		}
 		return $this->form
-			->checkbox('special[]', array(
-				'valid_rules' => 'trim|xss_clean',
-				'label'       => 'Особые требования',
-				'inline'      => false,
-				'inputs'      => $special
-			))
 			->text('first_name', array('value' => $user_info['first_name'], 'valid_rules' => 'required|trim|xss_clean|max_length[150]',  'label' => lang('create_user_fname_label')))
 			->text('last_name', array('value' => $user_info['last_name'], 'valid_rules' => 'required|trim|xss_clean|max_length[150]',  'label' => lang('create_user_lname_label')))
 			->select('gender', array('value' => $user_info['gender'], 'options' => array('male' => 'Мужской', 'female' => 'Женский'), 'valid_rules' => 'required|trim|xss_clean',  'label' => lang('create_user_gender_label')))
