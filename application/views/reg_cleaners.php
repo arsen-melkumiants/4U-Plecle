@@ -4,7 +4,9 @@
 			<div class="row">
 				<div class="col-sm-12">
 					<div class="big_status">Станьте горничной на Plecle.com</div>
-					<h2>И зарабатывайте по 250 рублей в час</h2>
+					<?php if (defined('CLEANER_SALARY')) {?>
+					<h2>И зарабатывайте по <?php echo CLEANER_SALARY?> рублей в час</h2>
+					<?php }?>
 					<div class="add_title">Появилась пыль? Нужно навести порядок?</div>
 				</div>
 			</div>

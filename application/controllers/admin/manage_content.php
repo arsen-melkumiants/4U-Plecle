@@ -67,10 +67,11 @@ class Manage_content extends CI_Controller {
 				'width' => '50%',
 				'extra' => $content_categories ,
 				'func'  => function($row, $params) {
+					return $row['name_ru'];
 					return $row['name_ru'].' ('.$row['name_en'].')';
 				}
 		))
-			->text('cat_id', array(
+	/*		->text('cat_id', array(
 				'title' => 'Категория',
 				'extra' => $content_categories ,
 				'func'  => function($row, $params) {
@@ -80,7 +81,7 @@ class Manage_content extends CI_Controller {
 						return '<span class="label label-warning">Отсутствует</span>';
 					}
 				}
-		))
+		))*/
 			->date('add_date', array(
 				'title' => 'Дата создания'
 			))
@@ -147,9 +148,9 @@ class Manage_content extends CI_Controller {
 			->text('name_ru', array(
 				'value'       => $content_info['name_ru'] ?: false,
 				'valid_rules' => 'required|trim|xss_clean',
-				'label'       => 'Название(RU)',
+				'label'       => 'Название',
 			))
-			->text('name_en', array(
+			/*->text('name_en', array(
 				'value'       => $content_info['name_en'] ?: false,
 				'valid_rules' => 'required|trim|xss_clean',
 				'label'       => 'Название(EN)',
@@ -159,23 +160,23 @@ class Manage_content extends CI_Controller {
 				'valid_rules' => 'required|trim|xss_clean|'.(!$content_info['id'] ? 'is_unique[content.alias]' : 'is_unique_without[content.alias.'.$content_info['id'].']'),
 				'label'       => 'Ссылка',
 			))
-			->select('cat_id', array(
+			/*->select('cat_id', array(
 				'value'       => $content_info['cat_id'] ?: false,
 				'valid_rules' => 'trim|xss_clean',
 				'label'       => 'Категория',
 				'options'     => $content_categories,
 				'search'      => true,
-			))
+			))*/
 			->textarea('content_ru', array(
 				'value'       => $content_info['content_ru'] ?: false,
 				'valid_rules' => 'required|trim|xss_clean',
-				'label'       => 'Текст(RU)',
+				'label'       => 'Текст',
 			))
-			->textarea('content_en', array(
+			/*->textarea('content_en', array(
 				'value'       => $content_info['content_en'] ?: false,
 				'valid_rules' => 'required|trim|xss_clean',
 				'label'       => 'Текст(EN)',
-			))
+			))*/
 			->text('keywords', array(
 				'value'       => $content_info['keywords'] ?: false,
 				'valid_rules' => 'trim|xss_clean',

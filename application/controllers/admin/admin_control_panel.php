@@ -75,6 +75,13 @@ class Admin_control_panel extends CI_Controller {
 				'width'       => '2',
 				'symbol'      => 'руб',
 			))
+			->text('CLEANER_SALARY', array(
+				'value'       => (defined('CLEANER_SALARY') ? CLEANER_SALARY: ''),
+				'valid_rules' => 'required|trim|xss_clean|numeric',
+				'label'       => 'Цена за моющие средства',
+				'width'       => '2',
+				'symbol'      => 'руб',
+			))
 			->btn(array('offset' => 3, 'value' => 'Изменить'))
 			->create();
 
@@ -87,6 +94,7 @@ class Admin_control_panel extends CI_Controller {
 
 			$data['PRICE_PER_HOUR']   = abs(round($data['PRICE_PER_HOUR'], 2));
 			$data['DETERGENT_PRICE'] = abs(round($data['DETERGENT_PRICE'], 2));
+			$data['CLEANER_SALARY'] = abs(round($data['CLEANER_SALARY'], 2));
 
 			$add_sets = '';
 			foreach($data as $key => $row) {

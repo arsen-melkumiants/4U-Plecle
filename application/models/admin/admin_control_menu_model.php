@@ -25,8 +25,8 @@ class Admin_control_menu_model extends CI_Model
 					'manage_content'            => 'Список контента',
 					'manage_content/add'        => 'Добавить контент',
 					'1'                         => '',
-					'manage_content/categories' => 'Категории контента',
-					'2'                         => '',
+					/*'manage_content/categories' => 'Категории контента',
+					'2'                         => '',*/
 					'manage_partners'           => 'Партнеры',
 				),
 				'Сделки'                        => array(
