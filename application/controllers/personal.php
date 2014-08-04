@@ -555,12 +555,14 @@ class Personal extends CI_Controller {
 			$this->data['temp_post']['zip'] = $this->input->post('zip');
 			$_POST = array();
 		}
-		$detergent_price = $this->input->post('detergents') ? DETERGENT_PRICE : 0;
+		$detergent_price = $this->input->post('need_detergents') ? DETERGENT_PRICE : 0;
 
 		$this->data['title'] = $this->data['header'] = 'Создание заявки';
 		$this->data['center_block'] = $this->order_model->order_form();
 
-		if ($this->form_validation->run() == FALSE) {
+		$is_late = (!empty($_POST['start_date']) && time() > strtotime($_POST['start_date']) + 86400 * 2);
+
+		if ($this->form_validation->run() == FALSE || $is_late) {
 
 			$this->data['right_info'] = array(
 				'title'       => 'Детали заявки',

@@ -218,7 +218,7 @@ class Order_model extends CI_Model {
 			->create(array('error_inline' => true, 'no_form_tag' => true));
 
 		//------------------------------------------
-		$data['order_form'] = $this->form
+		$this->form
 			->radio('frequency', array(
 				'valid_rules' => 'required|trim',
 				'label'       => 'Как часто нужна горничная?',
@@ -243,8 +243,13 @@ class Order_model extends CI_Model {
 				'label'       => 'Особые требования',
 				'inline'      => false, 'group_class' => 'col-sm-12', 'label_width' => 6,
 				'inputs'      => $this->special
-			))
-			->create(array('error_inline' => true, 'no_form_tag' => true));
+			));
+
+		$is_late = (!empty($_POST['start_date']) && time() > strtotime($_POST['start_date']) + 86400 * 2);
+		if ($is_late) {
+			$this->form->form_data[2]['params']['error'] = 'Поздняя дата, выберите пожалуйста более раннюю';
+		}
+		$data['order_form'] = $this->form->create(array('error_inline' => true, 'no_form_tag' => true));
 
 		//------------------------------------------
 		$data['commnet_form'] = $this->form

@@ -199,6 +199,10 @@ class Manage_user extends CI_Controller {
 	}
 
 	private function edit_form($user_info = false) {
+		if (!empty($_POST['zip'])) {
+			$_POST['zip'] = ','.$_POST['zip'].',';
+		}
+
 		$special = $this->SPECIAL;
 		$this->load->library('form');
 		if ($user_info['is_cleaner']) {
