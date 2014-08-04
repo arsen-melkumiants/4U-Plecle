@@ -173,7 +173,7 @@ class Manage_user extends CI_Controller {
 	}
 
 	private function edit_form($user_info = false) {
-		/*$special = array(
+		$special = array(
 			'english'                 => 'Я хорошо разговариваю по-английски',
 			'country_work_permission' => 'У меня есть право работать на территории РФ',
 			'passport'                => 'У меня есть паспорт, который я могу предоставить при собеседовании',
@@ -182,20 +182,16 @@ class Manage_user extends CI_Controller {
 			'reference'               => 'У меня есть 3 работодательские характеристики',
 			'bank_account'            => 'Я понимаю, что моя работа будет оплачена на банковский счет',
 			'mobile_phone'            => 'У меня есть мобильный телефон и я могу принимать и получать сообщения',
-		);*/
-
-		if (!empty($_POST['zip'])) {
-			$_POST['zip'] = ','.$_POST['zip'].',';
-		}
+		);
 
 		$this->load->library('form');
 		return $this->form
-			/*->checkbox('special[]', array(
+			->checkbox('special[]', array(
 				'valid_rules' => 'trim|xss_clean',
 				'label'       => 'Особые требования',
 				'inline'      => false,
 				'inputs'      => $special
-			))*/
+			))
 			->text('first_name', array('value' => $user_info['first_name'], 'valid_rules' => 'required|trim|xss_clean|max_length[150]',  'label' => lang('create_user_fname_label')))
 			->text('last_name', array('value' => $user_info['last_name'], 'valid_rules' => 'required|trim|xss_clean|max_length[150]',  'label' => lang('create_user_lname_label')))
 			->select('gender', array('value' => $user_info['gender'], 'options' => array('male' => 'Мужской', 'female' => 'Женский'), 'valid_rules' => 'required|trim|xss_clean',  'label' => lang('create_user_gender_label')))

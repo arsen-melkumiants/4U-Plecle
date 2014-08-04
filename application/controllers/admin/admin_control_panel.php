@@ -78,7 +78,7 @@ class Admin_control_panel extends CI_Controller {
 			->text('CLEANER_SALARY', array(
 				'value'       => (defined('CLEANER_SALARY') ? CLEANER_SALARY: ''),
 				'valid_rules' => 'required|trim|xss_clean|numeric',
-				'label'       => 'Цена за моющие средства',
+				'label'       => 'Зарплата горинчной',
 				'width'       => '2',
 				'symbol'      => 'руб',
 			))
