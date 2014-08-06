@@ -8,7 +8,6 @@
 		<meta name="keywords" content="<?php echo !empty($site_keywords) ? $site_keywords : SITE_KEYWORDS?>">
 		<meta name="author" content="">
 		<link href="/dist/css/bootstrap.min.css" rel="stylesheet">
-		<!--<link href="/dist/css/bootstrap-theme.min.css" rel="stylesheet">-->
 		<link href="/css/style.css" rel="stylesheet">
 
 		<link rel="stylesheet" href="/dist/fonts/font-awesome/css/font-awesome.min.css">

@@ -53,7 +53,7 @@ h4.title .right_link {float: right;color: #a94442;}
 .btn-primary:active {background-color: #3abae5;border-color: #3abae5;}
 
 .top_block {border-top: 7px solid #009dbf;}
-.top_block .logo {display: block;font-size: 34px;color: #009dbf;margin: 20px 0;}
+.top_block .logo {display: block;font-size: /*34px*/0;color: #009dbf;margin: 10px 0 0;background: url('../img/logo.png') no-repeat;height: 90px;width: 325px;}
 .top_block .logo:hover {text-decoration: none;}
 
 .top_block .menu {padding: 0;float: right;margin: 40px 0 20px;}
