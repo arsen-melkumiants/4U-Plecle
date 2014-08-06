@@ -47,13 +47,16 @@ h4.title .right_link {float: right;color: #a94442;}
 .text_404 {text-align: center;font-size: 140px;margin: 130px 0;}
 .content_block .text_404{font-size: 130px;color: #6eb71f;margin: 0;}
 
+body .bootstrap-datetimepicker-widget td span {display: inline-block;float: none;}
+.bootstrap-datetimepicker-widget .btn:active, .btn.active {outline: 0;background-image: none;-webkit-box-shadow: none;box-shadow: none;}
+
 .btn-primary {background-color: #59c2e6;border-color: #59c2e6;}
 .btn-primary:hover,
 .btn-primary:focus,
 .btn-primary:active {background-color: #3abae5;border-color: #3abae5;}
 
 .top_block {border-top: 7px solid #009dbf;}
-.top_block .logo {display: block;font-size: /*34px*/0;color: #009dbf;margin: 10px 0 0;background: url('../img/logo.png') no-repeat;height: 90px;width: 325px;}
+.top_block .logo {display: block;font-size: /*34px*/0;color: #009dbf;margin: 10px 0 15px;background: url('../img/logo.png') no-repeat;height: 90px;width: 325px;}
 .top_block .logo:hover {text-decoration: none;}
 
 .top_block .menu {padding: 0;float: right;margin: 40px 0 20px;}

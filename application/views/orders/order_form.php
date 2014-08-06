@@ -50,9 +50,9 @@
 <script>
 window.onload = function () {
 
-	$(".date_time").datetimepicker({language: 'ru', todayBtn: true});
+	$(".date_time").datetimepicker({language: 'ru', todayBtn: true, minuteStepping: 30});
 	$(document).on('focus', '.date_time', function(){
-		$(this).datetimepicker({language: 'ru', todayBtn: true});
+		$(this).datetimepicker({language: 'ru', todayBtn: true, minuteStepping: 30});
 	});
 
 	$('input').on('keyup', function() {
