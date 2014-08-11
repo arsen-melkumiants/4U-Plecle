@@ -82,6 +82,13 @@ class Admin_control_panel extends CI_Controller {
 				'width'       => '2',
 				'symbol'      => 'руб',
 			))
+			->text('FINE_PRICE', array(
+				'value'       => (defined('FINE_PRICE') ? FINE_PRICE : ''),
+				'valid_rules' => 'required|trim|xss_clean|numeric',
+				'label'       => 'Зарплата горинчной',
+				'width'       => '2',
+				'symbol'      => 'руб',
+			))
 			->btn(array('offset' => 3, 'value' => 'Изменить'))
 			->create();
 
@@ -92,9 +99,10 @@ class Admin_control_panel extends CI_Controller {
 		} else {
 			$data = $this->input->post();
 
-			$data['PRICE_PER_HOUR']   = abs(round($data['PRICE_PER_HOUR'], 2));
+			$data['PRICE_PER_HOUR']  = abs(round($data['PRICE_PER_HOUR'], 2));
 			$data['DETERGENT_PRICE'] = abs(round($data['DETERGENT_PRICE'], 2));
-			$data['CLEANER_SALARY'] = abs(round($data['CLEANER_SALARY'], 2));
+			$data['CLEANER_SALARY']  = abs(round($data['CLEANER_SALARY'], 2));
+			$data['FINE_PRICE']      = abs(round($data['FINE_PRICE'], 2));
 
 			$add_sets = '';
 			foreach($data as $key => $row) {

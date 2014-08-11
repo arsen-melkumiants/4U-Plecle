@@ -34,7 +34,7 @@
 				<?php } elseif ($active_deal) {?>
 					<div class="add_title">Начало уборки:</div>
 					<div class="big_status"><?php echo date('d.m.Y в H:i', $order_info['start_date'])?></div>
-					<a href="<?php echo site_url('orders/cancel/'.$order_info['id'])?>" class="black_link">Отказаться от сделки</a>
+					<a data-toggle="modal" data-target="#ajaxModal" class="black_link" href="<?php echo site_url('orders/cancel/'.$order_info['id'])?>">Отказаться от сделки</a>
 				<?php } elseif (in_array($order_info['status'], array(0,1)) && $order_info['start_date'] < time() + 86400) {?>
 					<div class="big_status">Сделка не состоялась</div>
 					<div class="add_title text-danger"><?php echo date('В H:i d.m.Y', $order_info['start_date'])?></div>

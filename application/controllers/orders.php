@@ -313,29 +313,42 @@ class Orders extends CI_Controller {
 			custom_404();
 		}
 
-		$cancel_time = ($order_info['start_date'] > time() + 86400);
-		if (in_array($order_info['status'], array(0,1,2)) && $cancel_time) {
-			$update_array['cancel_date'] = time();
-			if ($order_info['status'] == 2) {
-				$update_array['status'] = 5;
+		if ($this->input->is_ajax_request()) {
+			if (isset($_POST['delete'])) {
+				$cancel_time = ($order_info['start_date'] > time() + 86400);
+				if (in_array($order_info['status'], array(0,1,2)) && $cancel_time) {
+					$update_array['cancel_date'] = time();
+					if ($order_info['status'] == 2) {
+						$update_array['status'] = 5;
+					} else {
+						$update_array['status'] = 4;
+					}
+					$this->db->where('id', $order_id)->update('orders', $update_array);
+					$this->session->set_flashdata('success', 'Сделка успешно отменена');
+					$email_info = array(
+						'order_id'   => $order_info['id'],
+						'start_date' => date('d.m.Y в H:i', $order_info['start_date']),
+						'paid'       => $order_info['status'] == 2,
+					);
+					$this->order_model->send_mail($this->ion_auth->user($order_info['client_id'])->row()->email, 'Сделка отменена', 'cancel_order', $email_info);
+					if (!empty($order_info['cleaner_id'])) {
+						$this->order_model->send_mail($this->ion_auth->user($order_info['cleaner_id'])->row()->email, 'Сделка отменена', 'cancel_order', $email_info);
+					}
+				} else {
+					$this->session->set_flashdata('danger', 'Сделка не может быть отменена');
+				}
+				echo 'refresh';
 			} else {
-				$update_array['status'] = 4;
+				$this->load->library('form');
+				$this->data['title'] = $this->data['header'] = 'Отмена сделки';
+				$this->data['center_block'] = $this->form
+					->btn(array('name' => 'cancel', 'value' => 'Отмена', 'class' => 'btn-default', 'modal' => 'close'))
+					->btn(array('name' => 'delete', 'value' => 'Да, отказаться от сделки', 'class' => 'btn-primary'))
+					->create(array('action' => current_url(), 'btn_offset' => 2));
+				echo $this->load->view('ajax', $this->data, true);
 			}
-			$this->db->where('id', $order_id)->update('orders', $update_array);
-			$this->session->set_flashdata('success', 'Сделка успешно отменена');
-			$email_info = array(
-				'order_id'   => $order_info['id'],
-				'start_date' => date('d.m.Y в H:i', $order_info['start_date']),
-				'paid'       => $order_info['status'] == 2,
-			);
-			$this->order_model->send_mail($this->ion_auth->user($order_info['client_id'])->row()->email, 'Сделка отменена', 'cancel_order', $email_info);
-			if (!empty($order_info['cleaner_id'])) {
-				$this->order_model->send_mail($this->ion_auth->user($order_info['cleaner_id'])->row()->email, 'Сделка отменена', 'cancel_order', $email_info);
-			}
-		} else {
-			$this->session->set_flashdata('danger', 'Сделка не может быть отменена');
 		}
-		redirect('orders/detail/'.$order_id, 'refresh');
+
 	}
 
 	function accept($order_id = false) {
