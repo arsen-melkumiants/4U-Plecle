@@ -5,7 +5,7 @@ class Manage_menu extends CI_Controller {
 	public $MAIN_URL = '';
 
 	public $IS_AJAX = false;
-	
+
 	public $DB_TABLE = 'menu_items';
 
 	public $PAGE_INFO = array(
@@ -79,9 +79,11 @@ class Manage_menu extends CI_Controller {
 			custom_404();
 		}
 
-		if(!empty($_POST) && $_POST['type'] != 'external'){
-			$alias = !empty($_POST['alias']) ? $_POST['alias'] : $_POST['name_ru'];
-			$_POST['alias'] = url_title(translitIt($alias), 'underscore', TRUE);
+		if(!empty($_POST)) {
+			if ($_POST['type'] != 'external') {
+				$alias = !empty($_POST['alias']) ? $_POST['alias'] : $_POST['name_ru'];
+				$_POST['alias'] = url_title(translitIt($alias), 'underscore', TRUE);
+			}
 			$_POST['menu_id'] = $menu_info['id'];
 		}
 
@@ -151,7 +153,7 @@ class Manage_menu extends CI_Controller {
 			redirect(($menu_name ? $this->MAIN_URL.$menu_name : ADM_URL), 'refresh');
 		}
 	}
-	
+
 	public function active($id = false) {
 		if (empty($id)) {
 			custom_404();
@@ -164,7 +166,7 @@ class Manage_menu extends CI_Controller {
 
 		$this->MAIN_URL .= $menu_info['menu_name'];
 		set_header_info($menu_info);
-		
+
 		admin_method('active', $this->DB_TABLE, $menu_info);
 	}
 
@@ -226,7 +228,7 @@ class Manage_menu extends CI_Controller {
 				'valid_rules' => 'trim|xss_clean',
 				'label'       => 'Свободное поле',
 			))*/
-			->btn(array('value' => 'Изменить'))
+			->btn(array('value' => !empty($menu_info) ? 'Изменить' : 'Добавить'))
 			->create(array('action' => current_url()));
 
 		$html .= $this->load->view(ADM_FOLDER.'menu_js', $this->data, true);
