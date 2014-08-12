@@ -84,7 +84,9 @@ class Menu_model extends CI_Model {
 					} elseif ($link == '/' && $this->config->item('lang_abbr') == 'en') {
 						$link = base_url();
 					} else {
-						$link = site_url($link);
+						if (strripos($link, 'http') === false) {
+							$link = site_url($link);
+						}
 					}
 				}
 
