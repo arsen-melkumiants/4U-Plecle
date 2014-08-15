@@ -2,6 +2,10 @@
 
 class Order_model extends CI_Model {
 
+	private $mrh_pass1 = 'evsY7kHJWTCWtTXTdk';
+
+	private $mrh_pass2 = 'ayk75VeIlIBwFp2XrH';
+
 	public $frequency = array(
 		'once'          => 'Только один раз',
 		'every_week'    => 'Еженедельно',
@@ -303,5 +307,67 @@ class Order_model extends CI_Model {
 		$this->email->subject($subject);
 		$this->email->message($this->load->view('email/'.$mail_view, $email_info ,true));
 		$this->email->send();
+	}
+
+	function make_payment_url($order_info = false) {
+		if (empty($order_info) || !is_array($order_info)) {
+			return false;
+		}
+
+		$pay_time = ($order_info['start_date'] - 86400) > time();
+		if ($pay_time && ($order_info['status'] == 0 || $order_info['status'] == 1)) {
+			$payment_info = $this->db->where(array('order_id' => $order_info['id'], 'status' => 0))->get('payments')->row_array();
+			if (empty($payment_info)) {
+				$this->db->insert('payments', array(
+					'order_id'        => $order_info['id'],
+					'price_per_hour'  => $order_info['price_per_hour'],
+					'detergent_price' => $order_info['detergent_price'],
+					'total_price'     => $order_info['total_price'],
+					'add_date'        => time(),
+					'status'          => 0,
+				));
+				$payment_id = $this->db->insert_id();
+			} else {
+				$this->db->where('id', $payment_info['id'])->update('payments', array(
+					'order_id'        => $order_info['id'],
+					'price_per_hour'  => $order_info['price_per_hour'],
+					'detergent_price' => $order_info['detergent_price'],
+					'total_price'     => $order_info['total_price'],
+					'add_date'        => time(),
+					'status'          => 0,
+				));
+				$payment_id = $payment_info['id'];
+			}
+			// your registration data
+			$mrh_login = 'admin';
+			$mrh_pass1 = 'evsY7kHJWTCWtTXTdk';
+			// order properties
+			$inv_id    = $payment_id;
+			$inv_desc  = 'Оплата сделки на уборку #'.$order_info['id'];
+			$out_summ  = $order_info['total_price'];
+			// build CRC value
+			$crc  = md5("$mrh_login:$out_summ:$inv_id:$mrh_pass1");
+			$culture  = 'ru';
+			$encoding = 'utf-8';
+
+			// build URL
+			$url_params = array(
+				'MerchantLogin=' .$mrh_login,
+				'OutSum='        .$out_summ,
+				'InvoiceID='     .$inv_id,
+				'Description='   .$inv_desc,
+				'SignatureValue='.$crc,
+				'Culture='       .$culture,
+				'Encoding='      .$encoding,
+			);
+			$pay_url = 'https://auth.robokassa.ru/Merchant/Index.aspx?'.implode('&', $url_params);
+			//$pay_url = site_url('orders/pay/'.$order_info['id']);
+			return $pay_url;
+		} elseif ($order_info['status'] == 2) {
+			//$this->session->set_flashdata('danger', 'Оплата уже совершена');
+		} else {
+			//$this->session->set_flashdata('danger', 'Оплата не может быть произведена');
+		}
+		return false;
 	}
 }

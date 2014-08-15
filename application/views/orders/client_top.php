@@ -1,30 +1,6 @@
 <?php
 if (!empty($order_info)) {
-	// your registration data
-	$mrh_login = 'test';
-	$mrh_pass1 = 'securepass1';
-	// order properties
-	$inv_id    = $order_info['id'];
-	$inv_desc  = 'Оплата сделки на уборку #'.$order_info['id'];
-	$out_summ  = $order_info['total_price'];
-	// build CRC value
-	$crc  = md5("$mrh_login:$out_summ:$inv_id:$mrh_pass1");
-	$culture  = 'ru';
-	$encoding = 'utf-8';
-
-	// build URL
-	$url_params = array(
-		'MerchantLogin=' .$mrh_login,
-		'OutSum='        .$out_summ,
-		'InvoiceID='     .$inv_id,
-		'Description='   .$inv_desc,
-		'SignatureValue='.$crc,
-		'Culture='       .$culture,
-		'Encoding='      .$encoding,
-	);
-	$pay_url = 'https://auth.robokassa.ru/Merchant/Index.aspx?'.implode('&', $url_params);
-
-	$pay_url = site_url('orders/pay/'.$order_info['id']);
+	$pay_url = $this->order_model->make_payment_url($order_info);
 }
 ?>
 <div class="client_block">
