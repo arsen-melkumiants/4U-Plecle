@@ -339,7 +339,7 @@ class Order_model extends CI_Model {
 				$payment_id = $payment_info['id'];
 			}
 			// your registration data
-			$mrh_login = 'admin';
+			$mrh_login = 'plecle';
 			$mrh_pass1 = 'evsY7kHJWTCWtTXTdk';
 			// order properties
 			$inv_id    = $payment_id;

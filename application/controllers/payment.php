@@ -29,18 +29,15 @@ class payment extends CI_Controller {
 	}
 
 	function result() {
-
-
 		$mrh_pass2 = $this->mrh_pass2;
 
 		$out_summ = $_REQUEST['OutSum'];
 		$inv_id   = $_REQUEST['InvId'];
-		$shp_item = $_REQUEST['Shp_item'];
 		$crc      = $_REQUEST['SignatureValue'];
 
 		$crc = strtoupper($crc);
 
-		$my_crc = strtoupper(md5("$out_summ:$inv_id:$mrh_pass2:Shp_item=$shp_item"));
+		$my_crc = strtoupper(md5("$out_summ:$inv_id:$mrh_pass2"));
 
 		// проверка корректности подписи
 		// check signature
@@ -75,10 +72,35 @@ class payment extends CI_Controller {
 	}
 
 	function success() {
+		// your registration data
 
+		$mrh_pass1 = "securepass1";  // merchant pass1 here
+
+		// HTTP parameters:
+		$out_summ = $_REQUEST["OutSum"];
+		$inv_id   = $_REQUEST["InvId"];
+		$crc      = $_REQUEST["SignatureValue"];
+
+		$crc = strtoupper($crc);  // force uppercase
+
+		// build own CRC
+		$my_crc = strtoupper(md5("$out_summ:$inv_id:$mrh_pass1"));
+
+		if (strtoupper($my_crc) != strtoupper($crc)) {
+			return redirect();
+		}
+
+		$payment_info = $this->db->where(array('id' =>  $inv_id, 'status' => 0))->get('payments')->row_array();
+		if (empty($payment_info)) {
+			return redirect();
+		}
+
+		$this->session->set_flashdata('success', 'Оплата успешно совершена');
+		return redirect();
 	}
 
 	function fail() {
-
+		$this->session->set_flashdata('danger', 'Вы отказались от оплаты. Заказ #'.$_REQUEST["InvId"]);
+		return redirect();
 	}
 }
