@@ -199,5 +199,9 @@ table .btn.btn-primary:hover {color: #fff;background-color: #005668;}
 .modal-body {padding: 20px 80px;}
 .modal-body .title {text-align: center;color: #005668;margin-bottom: 25px;}
 
+.cancel_info {margin: -15px 0 15px;}
+.cancel_info,
+.cancel_info * {font-size: 18px;}
+
 .cleaner_info {text-align: center;}
 .cleaner_info h2 {font-size: 26px;margin-top: 30px;}

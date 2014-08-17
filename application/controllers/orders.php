@@ -334,14 +334,41 @@ class Orders extends CI_Controller {
 					if (!empty($order_info['cleaner_id'])) {
 						$this->order_model->send_mail($this->ion_auth->user($order_info['cleaner_id'])->row()->email, 'Сделка отменена', 'cancel_order', $email_info);
 					}
+				} elseif (in_array($order_info['status'], array(2)) && ($order_info['start_date'] > time() + 360)) {
+					$update_array['cancel_date'] = time();
+					$update_array['status']      = 5;
+					if (defined('FINE_PRICE')) {
+						$update_array['fine_price'] = FINE_PRICE;
+					}
+					$this->db->where('id', $order_id)->update('orders', $update_array);
+					$this->session->set_flashdata('success', 'Сделка успешно отменена');
+					$email_info = array(
+						'order_id'   => $order_info['id'],
+						'start_date' => date('d.m.Y в H:i', $order_info['start_date']),
+						'paid'       => $order_info['status'] == 2,
+					);
+					$this->order_model->send_mail($this->ion_auth->user($order_info['client_id'])->row()->email, 'Сделка отменена', 'cancel_order', $email_info);
+					if (!empty($order_info['cleaner_id'])) {
+						$this->order_model->send_mail($this->ion_auth->user($order_info['cleaner_id'])->row()->email, 'Сделка отменена', 'cancel_order', $email_info);
+					}
 				} else {
 					$this->session->set_flashdata('danger', 'Сделка не может быть отменена');
 				}
 				echo 'refresh';
 			} else {
 				$this->load->library('form');
-				$this->data['title'] = $this->data['header'] = 'Отмена сделки';
-				$this->data['center_block'] = $this->form
+				$this->data['center_block'] = '';
+				if (in_array($order_info['status'], array(2)) && ($order_info['start_date'] < time() + 86400) && ($order_info['start_date'] > time() + 360)) {
+					$this->data['title']         = $this->data['header'] = 'Внимание!';
+					$this->data['center_block'] .= '<div class="cancel_info">';
+					$this->data['center_block'] .= 'До начало уборки осталось <span class="text-danger">менее 24 часов</span>.<br>';
+					$this->data['center_block'] .= 'С вас будет списан штраф в <b>'.FINE_PRICE.' рублей</b>!<br>';
+					$this->data['center_block'] .= 'Все равно хотите продолжить?';
+					$this->data['center_block'] .= '</div>';
+				} else {
+					$this->data['title'] = $this->data['header'] = 'Отмена сделки';
+				}
+				$this->data['center_block'] .= $this->form
 					->btn(array('name' => 'cancel', 'value' => 'Отмена', 'class' => 'btn-default', 'modal' => 'close'))
 					->btn(array('name' => 'delete', 'value' => 'Да, отказаться от сделки', 'class' => 'btn-primary'))
 					->create(array('action' => current_url(), 'btn_offset' => 2));

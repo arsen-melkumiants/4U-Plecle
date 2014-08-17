@@ -85,7 +85,7 @@ class Admin_control_panel extends CI_Controller {
 			->text('FINE_PRICE', array(
 				'value'       => (defined('FINE_PRICE') ? FINE_PRICE : ''),
 				'valid_rules' => 'required|trim|xss_clean|numeric',
-				'label'       => 'Зарплата горинчной',
+				'label'       => 'Штраф за отмену сделки менее чем за 24 часа до начала',
 				'width'       => '2',
 				'symbol'      => 'руб',
 			))

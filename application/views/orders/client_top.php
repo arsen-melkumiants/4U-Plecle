@@ -62,9 +62,11 @@ if (!empty($order_info)) {
 				<?php }?>
 			</div>
 			<div class="col-sm-5 text-left info_block">
-				<?php if (in_array($order_info['status'], array(0,1)) && $order_info['start_date'] > 86400 + time()) {?>
-					<a href="<?php echo site_url('orders/cancel/'.$order_info['id'])?>" class="black_link no_margin">Отказаться от сделки</a>
+				<?php if (in_array($order_info['status'], array(0,1,2)) && $order_info['start_date'] > 360 + time()) {?>
+					<a data-toggle="modal" data-target="#ajaxModal" class="black_link no_margin" href="<?php echo site_url('orders/cancel/'.$order_info['id'])?>">Отказаться от сделки</a>
+					<?php if (in_array($order_info['status'], array(0,1))) {?>
 					<a target="_blank" href="<?php echo $pay_url?>" class="big_status no_margin">Оплатить сделку</a>
+					<?php }?>
 				<?php } elseif ($order_info['status'] == 2) {
 					if (($order_info['start_date'] + (3600 * $order_info['duration']) + 1800) < time()) {?>
 						<a href="<?php echo site_url('orders/positive_mark/'.$order_info['id'])?>" class="btn btn-success">Уборкой доволен(а)</a>

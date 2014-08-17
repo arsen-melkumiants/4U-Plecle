@@ -125,7 +125,7 @@ class Manage_order extends CI_Controller {
 					} elseif ($row['status'] == 4) {
 						return '<span class="text-danger">Сделка отменена</span>';
 					} elseif ($row['status'] == 5) {
-						return '<span class="text-danger">Сделка отменена</span>';
+						return '<span class="text-danger">Сделка отменена'.(!empty($row['fine_price']) ? ' (Штраф: '.$row['fine_price'].' рублей)' : '').'</span>';
 					} elseif (in_array($row['status'], array(0,1)) && $row['start_date'] < 86400 + time()) {
 						return '<span class="text-danger">Сделка не состоялась</span>';
 					} elseif (!$row['cleaner_id'] && $row['status'] == 2 && $row['start_date'] > time() && $CI->data['user_info']['is_cleaner']) {
@@ -247,6 +247,14 @@ class Manage_order extends CI_Controller {
 				'valid_rules' => 'required|trim|xss_clean|max_length[100]|is_natural',
 				'label'       => 'Индекс',
 				'value'       => !empty($order_info['zip']) ? trim($order_info['zip'], ',') : false
+			))
+			->text('FINE_PRICE', array(
+				'value'       => (defined('FINE_PRICE') ? FINE_PRICE : ''),
+				'valid_rules' => 'required|trim|xss_clean|numeric',
+				'label'       => 'Штраф за отмену сделки менее чем за 24 часа до начала',
+				'width'       => '2',
+				'symbol'      => 'руб',
+				'readonly'    => true,
 			))
 			->radio('status', array(
 				'valid_rules' => 'required|trim|is_natural',
