@@ -192,7 +192,7 @@ class Manage_content extends CI_Controller {
 				'valid_rules' => 'trim|xss_clean',
 				'label'       => 'Описание',
 			))
-			->btn(array('value' => empty($id) ? 'Добавить' : 'Изменить'))
+			->btn(array('value' => empty($content_info) ? 'Добавить' : 'Изменить'))
 			->create(array('action' => current_url()));
 	}
 

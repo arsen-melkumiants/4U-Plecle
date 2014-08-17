@@ -304,6 +304,7 @@ class Form {
 		//js editor for textarea
 		if (file_exists(FCPATH.'dist/ckeditor/ckeditor.js') && $this->load_editor && $this->load_editor !== 'exists') {
 			$this->load_editor = 'exists';
+			echo '<script>window.onload = function(){CKEDITOR.config.allowedContent = true;};</script>';
 			after_load('js', '/dist/ckeditor/ckeditor.js');
 		}
 
