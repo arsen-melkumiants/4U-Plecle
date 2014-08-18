@@ -1,3 +1,20 @@
+<?php 
+$inner_menu = array(
+	'orders'    => 'Сделки',
+	'statistics' => 'Статистика',
+	'favorites' => 'Избранные',
+);
+$inner_menu_html = '<div class="inner_menu"><ul>';
+foreach ($inner_menu as $link => $item) {
+	if ($link == $this->uri->segment(1)) {
+		$inner_menu_html .= '<li>'.$item.'</li>';
+	} else {
+		$inner_menu_html .= '<li><a href="'.site_url($link).'">'.$item.'</a></li>';
+	}
+}
+$inner_menu_html .= '</ul></div><div class="clear"></div>';
+$center_block = $inner_menu_html.$center_block;
+?>
 <div class="container">
 	<?php echo get_alerts();?>
 	<div class="row">

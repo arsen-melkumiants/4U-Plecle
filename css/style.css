@@ -205,3 +205,10 @@ table .btn.btn-primary:hover {color: #fff;background-color: #005668;}
 
 .cleaner_info {text-align: center;}
 .cleaner_info h2 {font-size: 26px;margin-top: 30px;}
+
+.inner_menu ul {list-style: none;padding-left: 0;}
+.inner_menu li {float: left;margin-right: 10px;font-size: 18px;color: #999;}
+.inner_menu li:before {content: "/";padding: 0 10px;}
+.inner_menu li:first-child:before {content: "";padding: 0;}
+.inner_menu a {font-size: 18px;color: #333;text-decoration: none;}
+.inner_menu a:hover {text-decoration: underline;color: #009dbf;}
