@@ -2,7 +2,7 @@
 	<img src="img/top_bg.jpg" />
 	<div>
 		<h1>Закажите проверенную горничную за 60 секунд</h1>
-		<h3>Потому, что есть спопобы лучше провести выходные!</h3>
+		<h3>Потому, что есть споcобы лучше провести выходные!</h3>
 		<div class="container">
 			<div class="row">
 				<div class="col-sm-offset-4 col-sm-4 form_body">
