@@ -524,7 +524,7 @@ class Personal extends CI_Controller {
 			custom_404();
 		}
 		$this->load->model('order_model');
-		$this->data['deals'] = $this->order_model->get_deals_count($user_id);
+		$this->data['marks'] = $this->order_model->get_completed_orders('cleaner', $user_id);
 
 		$this->data['center_block'] = $this->load->view('orders/cleaner_profile', $this->data, true);
 		$this->load->view('ajax', $this->data);

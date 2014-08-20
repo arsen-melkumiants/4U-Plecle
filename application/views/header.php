@@ -27,10 +27,10 @@
 		<div class="top_block">
 			<div class="container">
 				<div class="row">
-					<div class="col-md-3">
+					<div class="col-md-4">
 						<a href="/" class="logo">Plecle.com</a>
 					</div>
-					<div class="col-md-9">
+					<div class="col-md-8">
 						<div class="menu">
 							<?php echo !empty($main_menu) ? $main_menu : '';?>
 							<div class="clear"></div>

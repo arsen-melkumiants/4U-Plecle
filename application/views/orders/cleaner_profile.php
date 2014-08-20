@@ -3,10 +3,33 @@
 		<div class="col-sm-4">
 			<img src="<?php echo !empty($cleaner_info['photo']) ? '/uploads/avatars/'.$cleaner_info['photo'] : '/img/no_photo.jpg'?>" width="100" alt="<?php echo $cleaner_info['first_name']?>" class="img-circle">
 		</div>
-		<div class="col-sm-8">
+		<div class="col-sm-8 text-left">
 			<h2><?php echo $cleaner_info['first_name'].' '.$cleaner_info['last_name']?></h2>
-			<?php /*<h4>Завершенных сделок: <?php echo $deals?></h4>*/?>
+			<p>Отзывов: <?php echo $marks['total'].' (<span class="text-success">'.$marks['success'].'</span> / <span class="text-danger">'.$marks['fail'].'</span>)'?></p>
+			<?php if ($this->ion_auth->logged_in()) {?>
+			<form action="<?php echo site_url('favorites/add')?>" method="post">
+				<input type="hidden" name="user_id" value="<?php echo $cleaner_info['id']?>" />
+				<button type="submit">Добавить в избранное</button>
+			</form>
+			<?php }?>
 		</div>
+	</div>
+	<div class="reviews">
+		<h4 class="title">Отзывы</h4>
+		<ul>
+			<li>
+			<div class="name">Alex</div>
+			<div class="text">Test Test Test</div>
+			</li>
+			<li>
+			<div class="name">Alex</div>
+			<div class="text">Test Test Test</div>
+			</li>
+			<li>
+			<div class="name">Alex</div>
+			<div class="text">Test Test Test</div>
+			</li>
+		</ul>
 	</div>
 	<br>
 	<br>

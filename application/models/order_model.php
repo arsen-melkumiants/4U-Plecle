@@ -116,16 +116,6 @@ class Order_model extends CI_Model {
 			->result_array();
 	}
 
-	function get_deals_count($cleaner_id) {
-		return $this->db
-			->select('m.id')
-			->from('orders as o')
-			->join('marks as m', 'o.id = m.order_id')
-			->where('o.cleaner_id', $cleaner_id)
-			->get()
-			->num_rows();
-	}
-
 	function order_form() {
 		if (!$this->ion_auth->logged_in()) {
 			//------------------------------------------
@@ -406,12 +396,17 @@ class Order_model extends CI_Model {
 		return $total_sum;
 	}
 
-	function get_completed_orders($user_type = false) {
-		if ($user_type == 'client') {
-			$this->db->where('o.client_id', $this->data['user_info']['id']);
-		} elseif ($user_type == 'cleaner') {
-			$this->db->where('o.cleaner_id', $this->data['user_info']['id']);
+	function get_completed_orders($user_type = false, $user_id = false) {
+		if (empty($user_id)) {
+			$user_id = $this->data['user_info']['id'];
 		}
+
+		if ($user_type == 'client') {
+			$this->db->where('o.client_id', $user_id);
+		} elseif ($user_type == 'cleaner') {
+			$this->db->where('o.cleaner_id', $user_id);
+		}
+
 
 		$result_array = array(
 			'total'   => 0,
