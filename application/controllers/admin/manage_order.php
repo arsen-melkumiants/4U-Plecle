@@ -116,22 +116,24 @@ class Manage_order extends CI_Controller {
 				'title' => 'Статус',
 				'width' => '30%',
 				'func'  => function($row, $params, $that, $CI) {
-					if ($row['status'] == 3 && $row['last_mark'] == 'positive') {
-						return '<span class="text-success">Уборка успешно завершена</span>';
-					} elseif (in_array($row['status'], array(0,1)) && $row['start_date'] > 86400 + time()) {
-						return '<span class="text-warning">Ожидаем оплаты</span>';
-					} elseif ($row['status'] == 3 && $row['last_mark'] == 'negative') {
-						return '<span class="text-danger">Плохое качество уборки</span>';
-					} elseif ($row['status'] == 4) {
-						return '<span class="text-danger">Сделка отменена</span>';
-					} elseif ($row['status'] == 5) {
-						return '<span class="text-danger">Сделка отменена'.(!empty($row['fine_price']) ? ' (Штраф: '.$row['fine_price'].' рублей)' : '').'</span>';
-					} elseif (in_array($row['status'], array(0,1)) && $row['start_date'] < 86400 + time()) {
+					if (in_array($row['status'], array(0,1)) && $row['start_date'] < 86400 + time()) {
 						return '<span class="text-danger">Сделка не состоялась</span>';
+					} elseif (in_array($row['status'], array(4,5))) {
+						return '<span class="text-danger">Сделка отменена</span>';
 					} elseif (!$row['cleaner_id'] && $row['status'] == 2 && $row['start_date'] > time() && $CI->data['user_info']['is_cleaner']) {
 						return '<a href="'.site_url('orders/accept/'.$row['id']).'" class="btn btn-primary">Взяться</a>';
+					} elseif (!$row['cleaner_id'] && $row['status'] == 2 && $row['start_date'] < time()) {
+						return '<span class="text-danger">Сделка отменена (отсутствует горничная)</span>';
+					} elseif (in_array($row['status'], array(0,1))) {
+						return '<span class="text-warning">Ожидаем оплаты</span>';
 					} elseif (!$row['cleaner_id']) {
 						return '<span class="text-warning">Ожидаем горничную</span>';
+					} elseif ($row['status'] == 2 && $row['start_date'] + (3600 * $row['duration']) < time()) {
+						return '<span class="text-warning">Ожидаем оценку уборки</span>';
+					} elseif ($row['status'] == 3 && $row['last_mark'] == 'positive') {
+						return '<span class="text-success">Уборка успешно завершена</span>';
+					} elseif ($row['status'] == 3 && $row['last_mark'] == 'negative') {
+						return '<span class="text-danger">Плохое качество уборки</span>';
 					}
 					return false;
 				}

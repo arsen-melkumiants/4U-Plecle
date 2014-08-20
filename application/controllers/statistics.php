@@ -51,10 +51,14 @@ class Statistics extends CI_Controller {
 			),
 		);
 
+		$type = $this->data['user_info']['is_cleaner'] ? 'cleaner' : 'client';
+		$this->data['stats'] = array(
+			'month_payment'  => $this->order_model->get_total_payments('month', $type),
+			'year_payment'   => $this->order_model->get_total_payments('year', $type),
+			//'custom_payment' => $this->order_model->get_total_payments(),
+			'order_count'    => $this->order_model->get_completed_orders($type),
+		);
 		$this->data['center_block'] = $this->load->view('orders/statistics', $this->data, true);
-		/*$this->stats = array(
-			'month_payment' => 
-		);*/
 
 		$this->load->view('header', $this->data);
 		if ($this->data['user_info']['is_cleaner']) {

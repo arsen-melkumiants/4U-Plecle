@@ -42,6 +42,10 @@ if (!empty($order_info)) {
 							Заказ не оплачен!<br />Сделка отменена!
 						</div>
 						<?php }?>
+					<?php } elseif (!$order_info['cleaner_id'] && $order_info['status'] == 2 && $order_info['start_date'] < time()) {?>
+						<div class="add_title text-danger no_margin">
+							Горничная не найдена<br />Сделка отменена!
+						</div>
 					<?php }?>
 				<?php } elseif ($order_info['status'] == 3) {?>
 					<div class="big_status">Уборка завершена</div>
@@ -67,14 +71,14 @@ if (!empty($order_info)) {
 					<?php if (in_array($order_info['status'], array(0,1))) {?>
 					<a target="_blank" href="<?php echo $pay_url?>" class="big_status no_margin">Оплатить сделку</a>
 					<?php }?>
-				<?php } elseif ($order_info['status'] == 2) {
+				<?php } elseif ($order_info['status'] == 2 && !empty($order_info['cleaner_id'])) {
 					if (($order_info['start_date'] + (3600 * $order_info['duration']) + 1800) < time()) {?>
 						<a href="<?php echo site_url('orders/positive_mark/'.$order_info['id'])?>" class="btn btn-success">Уборкой доволен(а)</a>
 						<br>
 						<br>
 						<a href="<?php echo site_url('orders/negative_mark/'.$order_info['id'])?>" class="btn btn-danger">Уборкой не доволен(а)</a>
 					<?php } elseif ($order_info['start_date'] > 3600 + time()) {?>
-						<a href="<?php echo site_url('orders/cancel/'.$order_info['id'])?>" class="black_link no_margin">Отказаться от сделки</a>
+						<a data-toggle="modal" data-target="#ajaxModal" class="black_link no_margin" href="<?php echo site_url('orders/cancel/'.$order_info['id'])?>">Отказаться от сделки</a>
 					<?php } else {?>
 						<span class="black_link disabled">Отказаться от сделки</span>
 					<?php }?>

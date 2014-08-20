@@ -87,12 +87,13 @@ class Order_model extends CI_Model {
 			$this->db->where('status', 0);
 			$this->db->where('start_date >', time() + 86400);
 		} elseif ($status == 1) {
+			$this->db->where('cleaner_id !=', 0);
 			$this->db->where('(status = 2 OR (status = 1 AND start_date > '.(time() + 86400).'))');
 		} elseif ($status == 3) {
 			$this->db->where('cleaner_id', 0);
-			$this->db->where('((status = 2 AND start_date > '.time().') OR (status IN (1) AND start_date > '.(time() + 86400).'))');
+			$this->db->where('((status = 2 AND start_date > '.time().') OR (status IN (1) AND start_date > '.(time() + 86400).') )');
 		} else {
-			$this->db->where('(status > 2 OR (status IN (0,1) AND start_date < '.(time() + 86400).'))');
+			$this->db->where('(status > 2 OR (status IN (0,1) AND start_date < '.(time() + 86400).') OR (status = 2 AND start_date < '.time().' AND cleaner_id = 0))');
 		}
 
 		if ($status != 3) {
@@ -363,7 +364,7 @@ class Order_model extends CI_Model {
 				'Encoding='      .$encoding,
 			);
 			$pay_url = 'https://auth.robokassa.ru/Merchant/Index.aspx?'.implode('&', $url_params);
-			//$pay_url = site_url('orders/pay/'.$order_info['id']);
+			$pay_url = site_url('orders/pay/'.$order_info['id']);
 			return $pay_url;
 		} elseif ($order_info['status'] == 2) {
 			//$this->session->set_flashdata('danger', 'Оплата уже совершена');
@@ -371,5 +372,67 @@ class Order_model extends CI_Model {
 			//$this->session->set_flashdata('danger', 'Оплата не может быть произведена');
 		}
 		return false;
+	}
+
+	function get_total_payments($type = false, $user_type = false) {
+		if ($type == 'month') {
+			$this->db->where('p.add_date >= '.(time() - 2592000));
+		} elseif ($type == 'year') {
+			$this->db->where('p.add_date >= '.(time() - 2592000 * 12));
+		}
+
+		if ($user_type == 'client') {
+			$this->db->where('o.client_id', $this->data['user_info']['id']);
+		} elseif ($user_type == 'cleaner') {
+			$this->db->where('o.cleaner_id', $this->data['user_info']['id']);
+		}
+
+		$payment_info = $this->db->select('SUM(p.total_price) as total_price, o.fine_price')
+			->from('payments AS p')
+			->join('orders AS o', 'o.id = p.order_id')
+			->where('p.status', 1)
+			->group_by('o.id')
+			->get()
+			->result_array()
+			;
+		if(empty($payment_info)) {
+			return 0;
+		}
+
+		$total_sum = 0;
+		foreach ($payment_info as $item) {
+			$total_sum += floatval($item['total_price']) - floatval($item['fine_price']);
+		}
+		return $total_sum;
+	}
+
+	function get_completed_orders($user_type = false) {
+		if ($user_type == 'client') {
+			$this->db->where('o.client_id', $this->data['user_info']['id']);
+		} elseif ($user_type == 'cleaner') {
+			$this->db->where('o.cleaner_id', $this->data['user_info']['id']);
+		}
+
+		$orders_info = $this->db->select('SUM(p.total_price) as total_price, o.fine_price')
+			->from('payments AS p')
+			->join('orders AS o', 'o.id = p.order_id')
+			->where('p.status', 1)
+			->group_by('o.id')
+			->get()
+			->result_array()
+			;
+		if(empty($orders_info)) {
+			return array(
+				'total'   => 0,
+				'success' => 0,
+				'fail'    => 0,
+			);
+		}
+
+		$total_sum = 0;
+		foreach ($payment_info as $item) {
+			$total_sum += floatval($item['total_price']) - floatval($item['fine_price']);
+		}
+		return $total_sum;
 	}
 }

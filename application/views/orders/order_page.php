@@ -6,7 +6,7 @@ $inner_menu = array(
 );
 $inner_menu_html = '<div class="inner_menu"><ul>';
 foreach ($inner_menu as $link => $item) {
-	if ($link == $this->uri->segment(1)) {
+	if ($link == $this->uri->segment(1) && !$this->uri->segment(2)) {
 		$inner_menu_html .= '<li>'.$item.'</li>';
 	} else {
 		$inner_menu_html .= '<li><a href="'.site_url($link).'">'.$item.'</a></li>';
