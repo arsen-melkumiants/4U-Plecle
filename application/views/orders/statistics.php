@@ -10,14 +10,17 @@
 <h4 class="title">Общее</h4>
 <dl class="dl-horizontal list">
 	<dt>Завершено сделок</dt>
-	<dd><?php echo 'awd'?></dd>
+	<dd><?php echo $stats['order_count']['total'].' (<span class="text-success">'.$stats['order_count']['success'].'</span> / <span class="text-danger">'.$stats['order_count']['fail'].'</span>)'?></dd>
 	<dt>Написано отзывов</dt>
-	<dd><?php echo 'awd'?></dd>
+	<dd><?php echo 'в разработке'?></dd>
 	<dt>На сайте</dt>
-	<dd><?php echo 'awd'?></dd>
+	<dd class="parse_time"><?php echo date('m-d-Y', $user_info['created_on'])?></dd>
 </dl>
-
-<?php if (!empty($payment_history)) {?>
-<h4 class="title">История оплат</h4>
-<?php echo $payment_history?>
-<?php }?>
+<?php after_load('js', '/dist/js/moment-with-langs.min.js')?>
+<script>
+window.onload = function() {
+	moment.lang('ru');
+	moment($('.parse_time').text());
+	$('.parse_time').text(moment($('.parse_time').text()).fromNow(true));
+};
+</script>

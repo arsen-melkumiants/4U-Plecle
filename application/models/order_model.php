@@ -413,26 +413,30 @@ class Order_model extends CI_Model {
 			$this->db->where('o.cleaner_id', $this->data['user_info']['id']);
 		}
 
-		$orders_info = $this->db->select('SUM(p.total_price) as total_price, o.fine_price')
-			->from('payments AS p')
-			->join('orders AS o', 'o.id = p.order_id')
-			->where('p.status', 1)
-			->group_by('o.id')
+		$result_array = array(
+			'total'   => 0,
+			'success' => 0,
+			'fail'    => 0,
+		);
+
+		$marks_info = $this->db->select('m.*')
+			->from('marks AS m')
+			->join('orders AS o', 'o.id = m.order_id')
+			->where('m.status', 1)
 			->get()
-			->result_array()
-			;
-		if(empty($orders_info)) {
-			return array(
-				'total'   => 0,
-				'success' => 0,
-				'fail'    => 0,
-			);
+			->result_array();
+		if (empty($marks_info)) {
+			return $result_array;
 		}
 
-		$total_sum = 0;
-		foreach ($payment_info as $item) {
-			$total_sum += floatval($item['total_price']) - floatval($item['fine_price']);
+		foreach ($marks_info as $item) {
+			$result_array['total']++;
+			if ($item['mark'] == 'positive') {
+				$result_array['success']++;
+			} else {
+				$result_array['fail']++;
+			}
 		}
-		return $total_sum;
+		return $result_array;
 	}
 }
