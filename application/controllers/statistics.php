@@ -34,7 +34,6 @@ class Statistics extends CI_Controller {
 		set_alert($this->session->flashdata('danger'), false, 'danger');
 	}
 
-	//redirect if needed, otherwise display the user list
 	function index() {
 		$this->data['title'] = $this->data['header'] = 'Список сделок';
 
@@ -52,7 +51,10 @@ class Statistics extends CI_Controller {
 			),
 		);
 
-		$this->data['center_block'] = '';
+		$this->data['center_block'] = $this->load->view('orders/statistics', $this->data, true);
+		/*$this->stats = array(
+			'month_payment' => 
+		);*/
 
 		$this->load->view('header', $this->data);
 		if ($this->data['user_info']['is_cleaner']) {

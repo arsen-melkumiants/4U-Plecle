@@ -2,9 +2,11 @@
 
 class Order_model extends CI_Model {
 
-	private $mrh_pass1 = 'evsY7kHJWTCWtTXTdk';
+	public $mrh_login = 'plecle';
 
-	private $mrh_pass2 = 'ayk75VeIlIBwFp2XrH';
+	public $mrh_pass1 = 'evsY7kHJWTCWtTXTdk';
+
+	public $mrh_pass2 = 'ayk75VeIlIBwFp2XrH';
 
 	public $frequency = array(
 		'once'          => 'Только один раз',
@@ -253,9 +255,9 @@ class Order_model extends CI_Model {
 				'inputs'      => $this->special
 			));
 
-		$is_late = (!empty($_POST['start_date']) && time() > strtotime($_POST['start_date']) + 86400 * 2);
+		$is_late = (!empty($_POST['start_date']) && time() + (86400 * 2) > strtotime($_POST['start_date']));
 		if ($is_late) {
-			$this->form->form_data[2]['params']['error'] = 'Поздняя дата, выберите пожалуйста более раннюю';
+			$this->form->form_data[2]['params']['error'] = 'Поздняя дата, выберите пожалуйста более раннюю (минимум за два дня)';
 		}
 		$data['order_form'] = $this->form->create(array('error_inline' => true, 'no_form_tag' => true));
 
@@ -339,8 +341,8 @@ class Order_model extends CI_Model {
 				$payment_id = $payment_info['id'];
 			}
 			// your registration data
-			$mrh_login = 'plecle';
-			$mrh_pass1 = 'evsY7kHJWTCWtTXTdk';
+			$mrh_login = $this->mrh_login;
+			$mrh_pass1 = $this->mrh_pass1;
 			// order properties
 			$inv_id    = $payment_id;
 			$inv_desc  = 'Оплата сделки на уборку #'.$order_info['id'];

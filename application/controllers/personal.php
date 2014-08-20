@@ -560,7 +560,7 @@ class Personal extends CI_Controller {
 		$this->data['title'] = $this->data['header'] = 'Создание заявки';
 		$this->data['center_block'] = $this->order_model->order_form();
 
-		$is_late = (!empty($_POST['start_date']) && time() > strtotime($_POST['start_date']) + 86400 * 2);
+		$is_late = (!empty($_POST['start_date']) && time() + (86400 * 2) > strtotime($_POST['start_date']));
 
 		if ($this->form_validation->run() == FALSE || $is_late) {
 

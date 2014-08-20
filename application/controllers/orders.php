@@ -34,7 +34,6 @@ class Orders extends CI_Controller {
 		set_alert($this->session->flashdata('danger'), false, 'danger');
 	}
 
-	//redirect if needed, otherwise display the user list
 	function index() {
 		$this->data['title'] = $this->data['header'] = 'Список сделок';
 
@@ -335,7 +334,7 @@ class Orders extends CI_Controller {
 					if (!empty($order_info['cleaner_id'])) {
 						$this->order_model->send_mail($this->ion_auth->user($order_info['cleaner_id'])->row()->email, 'Сделка отменена', 'cancel_order', $email_info);
 					}
-				} elseif (in_array($order_info['status'], array(2)) && ($order_info['start_date'] > time() + 360)) {
+				} elseif (in_array($order_info['status'], array(2)) && ($order_info['start_date'] > time() + 3600) && ($order_info['start_date'] < time() + 86400) && $order_info['client_id'] == $this->data['user_info']['id']) {
 					$update_array['cancel_date'] = time();
 					$update_array['status']      = 5;
 					if (defined('FINE_PRICE')) {
