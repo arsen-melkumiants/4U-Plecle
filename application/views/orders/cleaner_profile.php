@@ -6,10 +6,9 @@
 		<div class="col-sm-8 text-left">
 			<h2><?php echo $cleaner_info['first_name'].' '.$cleaner_info['last_name']?></h2>
 			<p>Отзывов: <?php echo $marks['total'].' (<span class="text-success">'.$marks['success'].'</span> / <span class="text-danger">'.$marks['fail'].'</span>)'?></p>
-			<?php if ($this->ion_auth->logged_in()) {?>
-			<form action="<?php echo site_url('favorites/add')?>" method="post">
-				<input type="hidden" name="user_id" value="<?php echo $cleaner_info['id']?>" />
-				<button type="submit">Добавить в избранное</button>
+			<?php if ($this->ion_auth->logged_in() && !$is_favorite) {?>
+			<form action="<?php echo site_url('personal/cleaner_profile/'.$cleaner_info['id'])?>" method="post">
+				<button name="add_favorite" type="submit">Добавить в избранное</button>
 			</form>
 			<?php }?>
 		</div>

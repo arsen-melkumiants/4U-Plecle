@@ -211,6 +211,7 @@ table .btn.btn-primary:hover {color: #fff;background-color: #005668;}
 .cleaner_info .reviews li {padding: 15px 0;border-bottom: 1px dashed #ddd;}
 .cleaner_info .reviews .name {color: #000;}
 .cleaner_info .reviews .text {color: #777;}
+.cleaner_info form button {display: inline;background: transparent;border: 0;padding: 0;color: #FFA044;font-weight: bold;}
 
 .inner_menu ul {list-style: none;padding-left: 0;}
 .inner_menu li {float: left;margin-right: 10px;font-size: 18px;color: #999;}

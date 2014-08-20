@@ -513,7 +513,6 @@ class Personal extends CI_Controller {
 	}
 
 	function cleaner_profile($user_id = false) {
-		//$this->data['title'] = $this->data['header'] = 'Профиль работника';
 		$user_id = intval($user_id);
 		if (empty($user_id)) {
 			custom_404();
@@ -523,6 +522,20 @@ class Personal extends CI_Controller {
 		if (empty($this->data['cleaner_info'])) {
 			custom_404();
 		}
+
+		$is_favorite = false;
+		if ($this->ion_auth->logged_in()) {
+			$user_info = $this->ion_auth->user()->row_array();
+			$is_favorite = $this->db->where(array('user_id' => $user_id, 'owner_id' => $user_info['id']))->get('favorites')->row_array();
+
+			if (isset($_POST['add_favorite']) && !$is_favorite) {
+				$this->db->insert('favorites', array('user_id' => $user_id, 'owner_id' => $user_info['id']));
+				$is_favorite = true;
+				set_alert('Успешно добавлено в избранное', false, 'success');
+			}
+		}
+		$this->data['is_favorite'] = $is_favorite;
+
 		$this->load->model('order_model');
 		$this->data['marks'] = $this->order_model->get_completed_orders('cleaner', $user_id);
 

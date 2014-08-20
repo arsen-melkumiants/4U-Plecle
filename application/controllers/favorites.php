@@ -34,7 +34,6 @@ class Favorites extends CI_Controller {
 		set_alert($this->session->flashdata('danger'), false, 'danger');
 	}
 
-	//redirect if needed, otherwise display the user list
 	function index() {
 		$this->data['title'] = $this->data['header'] = 'Список сделок';
 

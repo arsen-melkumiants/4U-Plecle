@@ -31,7 +31,7 @@ $options = implode(', ', $options) ?: '&nbsp;';
 	<dd><?php echo $order_info['detergent_price'] * $order_info['need_detergents']?> рублей</dd>
 	<dt><b>Итого</b></dt>
 	<dd><b><?php echo floatval($order_info['total_price'])?> рублей</b></dd>
-	<?php if (!empty($order_info['fine_price'])) {?>
+	<?php if (floatval($order_info['fine_price'])) {?>
 	<dt><b class="text-danger">Штраф</b></dt>
 	<dd><b class="text-danger"><?php echo floatval($order_info['fine_price'])?> рублей</b></dd>
 	<?php }?>
