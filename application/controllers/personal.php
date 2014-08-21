@@ -607,7 +607,7 @@ class Personal extends CI_Controller {
 					'country'    => $this->input->post('country'),
 					'city'       => $this->input->post('city'),
 					'address'    => $this->input->post('address'),
-					'zip'        => $this->input->post('zip'),
+					'zip'        => ','.$this->input->post('zip').',',
 					'phone'      => $this->input->post('phone'),
 					'is_cleaner' => 0,
 				);

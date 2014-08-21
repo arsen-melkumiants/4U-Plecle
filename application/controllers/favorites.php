@@ -71,10 +71,17 @@ class Favorites extends CI_Controller {
 				}
 			))
 			->text('info', array(
+				'width' => '40%',
 				'title' => 'Заметка',
 				'func'  => function($row, $params) {
-					return '<textarea>Test</textarea>';
+					return '<div class="text_edit">'.$row['info'].'</div>
+						<button data-id="'.$row['id'].'" data-loading-text="Сохранение..." class="btn btn-default btn-xs text_save">Сохранить</button>
+						<small class="text-danger">До 250 символов</small>';
 				}
+			))
+			->btn(array(
+				'link' => 'favorites/delete/%d',
+				'icon' => 'remove',
 			))
 			->create(function($CI) {
 				return $CI->special_model->get_favorite_users($CI->data['user_info']['id']);
@@ -88,7 +95,34 @@ class Favorites extends CI_Controller {
 			$this->load->view('orders/client_top', $this->data);
 		}
 		$this->load->view('orders/order_page', $this->data);
+		$this->load->view('profile/favorites_js', $this->data);
 		$this->load->view('footer', $this->data);
+	}
+
+	function edit($id = false) {
+		$id = intval($id);
+		$favorite_info = $this->db->where(array('id' => $id, 'owner_id' => $this->data['user_info']['id']))->get('favorites')->row_array();
+		if (empty($favorite_info)) {
+			custom_404();
+		}
+
+		$this->load->library('form_validation');
+		$this->form_validation->set_rules('info', 'Заметка', 'required|max_length[250]|trim');
+		if ($this->form_validation->run() == true) {
+			$this->db->where('id', $id)->update('favorites', array('info' => $this->input->post('info')));
+		}
+	}
+
+	function delete($id) {
+		$id = intval($id);
+		$favorite_info = $this->db->where(array('id' => $id, 'owner_id' => $this->data['user_info']['id']))->get('favorites')->row_array();
+		if (empty($favorite_info)) {
+			custom_404();
+		}
+
+		$this->db->where('id', $id)->delete('favorites');
+		$this->session->set_flashdata('success', 'Удаление успешно выполнено');
+		redirect('favorites', 'refresh');
 	}
 
 }

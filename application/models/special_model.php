@@ -21,7 +21,7 @@ class Special_model extends CI_Model {
 	}
 
 	function get_favorite_users($user_id = false) {
-		return $this->db->select('*')
+		return $this->db->select('f.*, u.first_name, u.last_name, u.photo')
 			->from('favorites AS f')
 			->join('users AS u', 'u.id = f.user_id')
 			->where('f.owner_id', $user_id)
