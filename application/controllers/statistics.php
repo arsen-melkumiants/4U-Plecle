@@ -35,7 +35,7 @@ class Statistics extends CI_Controller {
 	}
 
 	function index() {
-		$this->data['title'] = $this->data['header'] = 'Список сделок';
+		$this->data['title'] = $this->data['header'] = 'Статистика';
 
 		$this->data['right_info'] = array(
 			'title'         => 'Ваш профиль',

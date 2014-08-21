@@ -38,7 +38,7 @@ class Favorites extends CI_Controller {
 		if ($this->data['user_info']['is_cleaner']) {
 			custom_404();
 		}
-		$this->data['title'] = $this->data['header'] = 'Список сделок';
+		$this->data['title'] = $this->data['header'] = 'Избранные горничные';
 
 		$this->data['right_info'] = array(
 			'title'         => 'Ваш профиль',
@@ -54,7 +54,32 @@ class Favorites extends CI_Controller {
 			),
 		);
 
-		$this->data['center_block'] = '';
+		$result_html = '<h4 class="title">'.$this->data['header'].'</h4>';
+		$result_html .= $this->table
+			->text('id', array(
+				'title' => 'Номер',
+				'width' => '20%',
+				'func'  => function($row, $params) {
+					return '<img src="'.(!empty($row['photo']) ? '/uploads/avatars/'.$row['photo'] : '/img/no_photo.jpg').'" width="100" class="img-circle">';
+				}
+			))
+			->text('first_name', array(
+				'title' => 'Информация',
+				'width' => '30%',
+				'func'  => function($row, $params) {
+					return '<h4>'.$row['first_name'].'</h4>';
+				}
+			))
+			->text('info', array(
+				'title' => 'Заметка',
+				'func'  => function($row, $params) {
+					return '<textarea>Test</textarea>';
+				}
+			))
+			->create(function($CI) {
+				return $CI->special_model->get_favorite_users($CI->data['user_info']['id']);
+			}, array('no_header' => true, 'class' => 'list cleaners'));
+		$this->data['center_block'] = $result_html;
 
 		$this->load->view('header', $this->data);
 		if ($this->data['user_info']['is_cleaner']) {

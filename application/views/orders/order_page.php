@@ -12,7 +12,7 @@ foreach ($inner_menu as $link => $item) {
 		$inner_menu_html .= '<li><a href="'.site_url($link).'">'.$item.'</a></li>';
 	}
 }
-$inner_menu_html .= '</ul></div><div class="clear"></div>';
+$inner_menu_html .= '</ul><div class="clear"></div></div>';
 $center_block = $inner_menu_html.$center_block;
 ?>
 <div class="container">

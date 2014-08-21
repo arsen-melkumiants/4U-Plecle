@@ -19,4 +19,14 @@ class Special_model extends CI_Model {
 		}
 		return $this->parser->parse_string($info['content'], (array)$data, true);
 	}
+
+	function get_favorite_users($user_id = false) {
+		return $this->db->select('*')
+			->from('favorites AS f')
+			->join('users AS u', 'u.id = f.user_id')
+			->where('f.owner_id', $user_id)
+			->group_by('u.id')
+			->get()
+			;
+	}
 }
