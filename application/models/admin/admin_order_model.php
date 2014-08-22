@@ -93,4 +93,25 @@ class Admin_order_model extends CI_Model {
 		return $result_string;
 	}
 
+	function get_all_reviews() {
+		return $this->db
+			->select('m.*, u.first_name as client_first_name, u.last_name as client_last_name, c.first_name as cleaner_first_name, c.last_name as cleaner_last_name, u.id as client_id')
+			->from('marks as m')
+			->join('orders as o', 'o.id = m.order_id')
+			->join('users as u', 'u.id = o.client_id')
+			->join('users as c', 'c.id = m.cleaner_id')
+			->order_by('m.add_date', 'desc')
+			->get();
+	}
+
+	function get_review_info($id = false) {
+		return $this->db
+			->select('m.*, u.id as client_id')
+			->from('marks as m')
+			->join('orders as o', 'o.id = m.order_id')
+			->join('users as u', 'u.id = o.client_id')
+			->where('m.id', $id)
+			->get()
+			->row_array();
+	}
 }

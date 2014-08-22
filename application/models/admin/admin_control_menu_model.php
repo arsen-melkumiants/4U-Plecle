@@ -37,6 +37,8 @@ class Admin_control_menu_model extends CI_Model
 					'manage_order/regions'      => 'Список регионов',
 					'2'                         => '',
 					'manage_order/payments'     => 'Список выплат',
+					'3'                         => '',
+					'manage_order/reviews'      => 'Отзывы',
 				),
 				'Пользователи'                  => array(
 					'manage_user'               => 'Все пользователи',

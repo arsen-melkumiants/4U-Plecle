@@ -45,6 +45,14 @@ class Manage_order extends CI_Controller {
 			'header'       => 'Удаление региона "%name"',
 			'header_descr' => 'Добавление региона и индексов',
 		),
+		'reviews'          => array(
+			'header'       => 'Отзывы',
+			'header_descr' => 'Список отзывов пользователей',
+		),
+		'edit_review'      => array(
+			'header'       => 'Редактирование отзыва #%id',
+			'header_descr' => 'Редактирование отзыва',
+		),
 	);
 
 	public $frequency = array(
@@ -418,5 +426,116 @@ class Manage_order extends CI_Controller {
 		set_header_info($region_info);
 		$this->DB_TABLE = 'regions';
 		admin_method('delete', $this->DB_TABLE, $region_info);
+	}
+
+	public function reviews() {
+		$this->load->library('table');
+		$this->data['center_block'] = $this->table
+			->text('id', array(
+				'title' => 'Номер',
+			))
+			->text('order_id', array(
+				'title' => 'Сделка',
+				'func'  => function($row, $params, $that, $CI) {
+					return '<a href="'.site_url($CI->MAIN_URL.'edit/'.$row['order_id']).'">#'.$row['order_id'].'</a>';
+				}
+			))
+			->text('client_id', array(
+				'title' => 'Горничная',
+				'func'  => function($row, $params) {
+					return '<a href="'.site_url(ADM_URL.'manage_user/edit/'.$row['cleaner_id']).'">'.$row['cleaner_first_name'].' '.$row['cleaner_last_name'].'</a>';
+				}
+			))
+			->text('client_id', array(
+				'title' => 'Клиент',
+				'func'  => function($row, $params) {
+					return '<a href="'.site_url(ADM_URL.'manage_user/edit/'.$row['client_id']).'">'.$row['client_first_name'].' '.$row['client_last_name'].'</a>';
+				}
+			))
+			->text('mark', array(
+				'title' => 'Оценка',
+				'func'  => function($row, $params, $that, $CI) {
+					$info = '('.$row['amount'].')';
+					if ($row['mark'] == 'positive') {
+						return '<span class="label label-success">Положительная '.$info.'</span>';
+					} else {
+						return '<span class="label label-danger">Отрицательная '.$info.'</span>';
+					}
+				}
+		))
+			->date('add_date')
+			->edit(array('link' => $this->MAIN_URL.'edit_review/%d'))
+			->create(function($CI) {
+				return $CI->admin_order_model->get_all_reviews();
+			});
+
+		load_admin_views();
+	}
+
+	public function edit_review($id = false) {
+		if (empty($id)) {
+			custom_404();
+		}
+
+		$review_info = $this->admin_order_model->get_review_info($id);
+		if (empty($review_info)) {
+			custom_404();
+		}
+		set_header_info($review_info);
+
+		$this->data['center_block'] = $this->edit_form_review($review_info);
+
+		if ($this->form_validation->run() == FALSE) {
+			load_admin_views();
+		} else {
+			$sign = $_POST['mark'] == 'positive' ? 1 : -1;
+			$_POST['amount'] = abs($_POST['amount']) * $sign;
+			$this->DB_TABLE = 'marks';
+			admin_method('edit', $this->DB_TABLE, array('id' => $id, 'except_fields' => array('client', 'cleaner')));
+		}
+	}
+
+	private function edit_form_review($review_info = false) {
+		$client = $this->db->select('id, CONCAT(first_name, \' \',last_name, \' - \', email) as name', false)->where('id', $review_info['client_id'])->get('users')->row_array();
+		$cleaner = $this->db->select('id, CONCAT(first_name, \' \',last_name, \' - \', email) as name', false)->where('id', $review_info['cleaner_id'])->get('users')->row_array();
+
+		$sign = 1;
+		for ($i = 1;$i <= 10;$i++) {
+			$inputs[$i * $sign] = $i * $sign;
+		}
+
+		$sign = $review_info['mark'] == 'positive' ? 1 : -1;
+
+		$this->load->library('form');
+		return $this->form
+			->text('client', array(
+				'value'       => $client['name'],
+				'label'       => 'Клиент',
+				'readonly'    => true,
+			))
+			->text('cleaner', array(
+				'value'       => $cleaner['name'],
+				'label'       => 'Работник',
+				'readonly'    => true,
+			))
+			->select('mark', array(
+				'valid_rules' => 'required|trim',
+				'label'       => 'Оценка',
+				'options'     => array('positive' => 'Положительная', 'negative' => 'Отрицательная'),
+				'value'       => !empty($review_info['mark']) ? $review_info['mark'] : false,
+			))
+			->radio('amount', array(
+				'valid_rules' => 'required|trim',
+				'inputs'      => $inputs,
+				'btn_view'    => true,
+				'label'       => 'Количество',
+				'value'       => $review_info['amount'] * $sign
+			))
+			->textarea('review', array(
+				'label' => 'Отзыв',
+				'value' => $review_info['review'],
+			))
+			->btn(array('value' => 'Изменить'))
+			->create(array('action' => current_url()));
 	}
 }
