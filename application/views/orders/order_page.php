@@ -1,9 +1,16 @@
-<?php 
-$inner_menu = array(
-	'orders'    => 'Сделки',
-	'statistics' => 'Статистика',
-	'favorites' => 'Избранные',
-);
+<?php
+if (!empty($user_info['is_cleaner'])) {
+	$inner_menu = array(
+		'orders'  => 'Сделки',
+		'reviews' => 'Отзывы',
+	);
+} else {
+	$inner_menu = array(
+		'orders'     => 'Сделки',
+		'statistics' => 'Статистика',
+		'favorites'  => 'Избранные',
+	);
+}
 $inner_menu_html = '<div class="inner_menu"><ul>';
 foreach ($inner_menu as $link => $item) {
 	if ($link == $this->uri->segment(1) && !$this->uri->segment(2)) {
@@ -13,7 +20,9 @@ foreach ($inner_menu as $link => $item) {
 	}
 }
 $inner_menu_html .= '</ul><div class="clear"></div></div>';
-$center_block = $inner_menu_html.$center_block;
+if ($this->uri->segment(1) != 'make_order') {
+	$center_block = $inner_menu_html.$center_block;
+}
 ?>
 <div class="container">
 	<?php echo get_alerts();?>

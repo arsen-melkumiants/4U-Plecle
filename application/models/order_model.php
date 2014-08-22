@@ -437,22 +437,21 @@ class Order_model extends CI_Model {
 		return $result_array;
 	}
 
-	function get_cleaner_reviews($user_id = false, $limit = false) {
-		if (!empty($limit)) {
-			$this->db->limit($limit);
-		}
-		$reviews_info = $this->db->select('m.*, u.first_name, u.last_name, u.photo')
+	function get_all_reviews($user_id = false) {
+		return $this->db->select('m.*, u.first_name, u.last_name, u.photo')
 			->from('marks AS m')
 			->join('orders AS o', 'o.id = m.order_id')
 			->join('users AS u', 'u.id = o.client_id')
 			->where('m.status', 1)
+			->where('o.cleaner_id', $user_id)
 			->order_by('m.add_date', 'desc')
-			->get()
-			->result_array();
-		if (empty($reviews_info)) {
-			return false;
-		}
+			->get();
+	}
 
-		return $reviews_info;
+	function get_cleaner_reviews($user_id = false, $limit = false) {
+		if (!empty($limit)) {
+			$this->db->limit($limit);
+		}
+		return $this->get_all_reviews($user_id)->result_array();
 	}
 }

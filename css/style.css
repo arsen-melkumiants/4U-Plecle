@@ -172,6 +172,11 @@ table.cleaners .active_block {text-align: center;}
 table.cleaners .active_block a:hover {text-decoration: none;}
 table.cleaners .active_block i {font-size: 18px;color: #C91313;}
 
+table.reviews * {font-size: 12px;}
+table.reviews .name {font-size: 18px;}
+table.reviews .negative {color: #C91313;}
+table.reviews .positive .name {color: #4f5f6f;}
+
 .d_block {text-align: center;position: relative;overflow: hidden;padding-top: 30px;height: 300px;}
 .d_block > img {min-width: 100%;min-height: 100%;position: absolute;top: 0;display: block;z-index: -1;}
 .d_block h1 * {font-size: 50px;background: url(../img/opacity.png);color: #004857;padding: 5px 15px;}

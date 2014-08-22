@@ -56,12 +56,12 @@ $route[$admin_url.'(:any)']        = $admin_folder.'$1';
 
 #User routes
 
-$route['profile']        = 'profile';
-$route['profile/(:any)'] = 'profile/$1';
+$route['profile']           = 'profile';
+$route['profile/(:any)']    = 'profile/$1';
 
-$route['orders']        = 'orders';
-$route['orders/(:any)'] = 'orders/$1';
-$route['make_order']    = 'personal/make_order';
+$route['orders']            = 'orders';
+$route['orders/(:any)']     = 'orders/$1';
+$route['make_order']        = 'personal/make_order';
 
 $route['personal/(:any)']   = 'personal/$1';
 $route['payment/(:any)']    = 'payment/$1';
@@ -69,6 +69,7 @@ $route['statistics']        = 'statistics';
 $route['statistics/(:any)'] = 'statistics/$1';
 $route['favorites']         = 'favorites';
 $route['favorites/(:any)']  = 'favorites/$1';
+$route['reviews']           = 'reviews';
 
 $route['cli_tools/(:any)'] = 'cli_tools/$1';
 
