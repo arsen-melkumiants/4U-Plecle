@@ -120,8 +120,6 @@ class Manage_order extends CI_Controller {
 						return '<span class="text-danger">Сделка не состоялась</span>';
 					} elseif (in_array($row['status'], array(4,5))) {
 						return '<span class="text-danger">Сделка отменена</span>';
-					} elseif (!$row['cleaner_id'] && $row['status'] == 2 && $row['start_date'] > time() && $CI->data['user_info']['is_cleaner']) {
-						return '<a href="'.site_url('orders/accept/'.$row['id']).'" class="btn btn-primary">Взяться</a>';
 					} elseif (!$row['cleaner_id'] && $row['status'] == 2 && $row['start_date'] < time()) {
 						return '<span class="text-danger">Сделка отменена (отсутствует горничная)</span>';
 					} elseif (in_array($row['status'], array(0,1))) {
