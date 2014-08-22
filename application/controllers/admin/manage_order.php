@@ -132,6 +132,8 @@ class Manage_order extends CI_Controller {
 						return '<span class="text-success">Уборка успешно завершена</span>';
 					} elseif ($row['status'] == 3 && $row['last_mark'] == 'negative') {
 						return '<span class="text-danger">Плохое качество уборки</span>';
+					} elseif ($row['status'] == 3) {
+						return '<span class="text-info">Уборка завершена</span>';
 					}
 					return false;
 				}
@@ -186,6 +188,9 @@ class Manage_order extends CI_Controller {
 		$clients = $this->db->select('id, CONCAT(first_name, \' \',last_name, \' - \', email) as name', false)->where('is_cleaner != 1')->get('users')->result_array();
 		$cleaners = $this->db->select('id, CONCAT(first_name, \' \',last_name, \' - \', email) as name', false)->where('is_cleaner = 1')->get('users')->result_array();
 
+		$clients = array_merge(array(array('id' => 0, 'name' => 'Клиент не выбран')), $clients);
+		$cleaners = array_merge(array(array('id' => 0, 'name' => 'Работник не выбран')), $cleaners);
+
 		$this->load->library('form');
 		return $this->form
 			->select('client_id', array(
@@ -195,7 +200,7 @@ class Manage_order extends CI_Controller {
 				'options'     => $clients,
 				'search'      => true,
 			))
-			->select('client_id', array(
+			->select('cleaner_id', array(
 				'value'       => !empty($order_info['cleaner_id']) ? $order_info['cleaner_id'] : false,
 				'valid_rules' => 'trim|xss_clean|required',
 				'label'       => 'Работник',
@@ -249,7 +254,7 @@ class Manage_order extends CI_Controller {
 				'value'       => !empty($order_info['zip']) ? trim($order_info['zip'], ',') : false
 			))
 			->text('FINE_PRICE', array(
-				'value'       => (defined('FINE_PRICE') ? FINE_PRICE : ''),
+				'value'       => !empty($order_info['fine_price']) ? $order_info['fine_price'] : false,
 				'valid_rules' => 'required|trim|xss_clean|numeric',
 				'label'       => 'Штраф за отмену сделки менее чем за 24 часа до начала',
 				'width'       => '2',
