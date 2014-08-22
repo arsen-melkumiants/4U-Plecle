@@ -107,13 +107,17 @@ class Order_model extends CI_Model {
 	}
 
 	function get_all_cleaners($zip = false) {
+		$sql = 'SELECT u.*, SUM(IFNULL(m.amount,0)) as rating
+			FROM users AS u
+			LEFT JOIN marks AS m ON u.id = m.cleaner_id
+			WHERE u.active = 1
+			AND u.is_cleaner = 1';
 		if (!empty($zip)) {
-			$this->db->like('zip', ','.$zip.',');
+		$sql .= ' AND u.zip LIKE \'%,'.$zip.',%\'';
 		}
+		$sql .= ' GROUP BY u.id ORDER BY rating desc';
 		return $this->db
-			->where('active', 1)
-			->where('is_cleaner', 1)
-			->get('users')
+			->query($sql)
 			->result_array();
 	}
 
