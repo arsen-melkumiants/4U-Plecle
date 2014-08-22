@@ -149,8 +149,8 @@ body .bootstrap-datetimepicker-widget td span {display: inline-block;float: none
 	-khtml-opacity: 0.3;
 	opacity: 0.3;
 }
-.client_block .btn-success {background-color: #a8ff00;color: #53730d;border-color: #a8ff00;}
-.client_block .btn-danger {background-color: #f52525;color: #4e0606;border-color: #f52525;}
+.client_block .btn-success {background-color: #a8ff00;color: #53730d;border-color: #a8ff00;width: 200px;}
+.client_block .btn-danger {background-color: #f52525;color: #4e0606;border-color: #f52525;width: 200px;}
 .client_block .text-danger {color: #9C0000;}
 
 .list.dl-horizontal dt {padding: 10px 0;font-weight: normal;width: 40%;text-align: left;}

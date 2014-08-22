@@ -73,10 +73,10 @@ if (!empty($order_info)) {
 					<?php }?>
 				<?php } elseif ($order_info['status'] == 2 && !empty($order_info['cleaner_id'])) {
 					if (($order_info['start_date'] + (3600 * $order_info['duration']) + 1800) < time()) {?>
-						<a data-toggle="modal" data-target="#ajaxModal" href="<?php echo site_url('orders/positive_mark/'.$order_info['id'])?>" class="btn btn-success">Уборкой доволен(а)</a>
+						<a data-toggle="modal" data-target="#ajaxModal" href="<?php echo site_url('orders/positive_mark/'.$order_info['id'])?>" class="btn btn-success">Уборкой доволен</a>
 						<br>
 						<br>
-						<a data-toggle="modal" data-target="#ajaxModal" href="<?php echo site_url('orders/negative_mark/'.$order_info['id'])?>" class="btn btn-danger">Уборкой не доволен(а)</a>
+						<a data-toggle="modal" data-target="#ajaxModal" href="<?php echo site_url('orders/negative_mark/'.$order_info['id'])?>" class="btn btn-danger">Уборкой не доволен</a>
 					<?php } elseif ($order_info['start_date'] > 3600 + time()) {?>
 						<a data-toggle="modal" data-target="#ajaxModal" class="black_link no_margin" href="<?php echo site_url('orders/cancel/'.$order_info['id'])?>">Отказаться от сделки</a>
 					<?php } else {?>
