@@ -396,7 +396,7 @@ class Order_model extends CI_Model {
 		return $total_sum;
 	}
 
-	function get_completed_orders($user_type = false, $user_id = false) {
+	function get_reviews_statistic($user_type = false, $user_id = false) {
 		if (empty($user_id)) {
 			$user_id = $this->data['user_info']['id'];
 		}
@@ -433,6 +433,49 @@ class Order_model extends CI_Model {
 			} else {
 				$result_array['fail']++;
 			}
+		}
+		return $result_array;
+	}
+
+	function get_completed_orders($user_type = false, $user_id = false) {
+		if (empty($user_id)) {
+			$user_id = $this->data['user_info']['id'];
+		}
+
+		if ($user_type == 'client') {
+			$this->db->where('client_id', $user_id);
+		} elseif ($user_type == 'cleaner') {
+			$this->db->where('cleaner_id', $user_id);
+		}
+
+		$this->db->where('(status > 2 OR (status IN (0,1) AND start_date < '.(time() + 86400).') OR (status = 2 AND start_date < '.time().' AND cleaner_id = 0))');
+
+		$result_array = array(
+			'total'   => 0,
+			'success' => 0,
+			'fail'    => 0,
+		);
+
+		$orders_info = $this->db->get('orders')->result_array();
+		if (empty($orders_info)) {
+			return $result_array;
+		}
+
+		foreach ($orders_info as $row) {
+			if (in_array($row['status'], array(0,1)) && $row['start_date'] < 86400 + time()) {
+				$result_array['fail']++;
+			} elseif (in_array($row['status'], array(4,5))) {
+				$result_array['fail']++;
+			} elseif (!$row['cleaner_id'] && $row['status'] == 2 && $row['start_date'] < time()) {
+				$result_array['fail']++;
+			} elseif ($row['status'] == 3 && $row['last_mark'] == 'positive') {
+				$result_array['success']++;
+			} elseif ($row['status'] == 3 && $row['last_mark'] == 'negative') {
+				$result_array['fail']++;
+			} elseif ($row['status'] == 3) {
+				$result_array['success']++;
+			}
+			$result_array['total']++;
 		}
 		return $result_array;
 	}

@@ -537,7 +537,7 @@ class Personal extends CI_Controller {
 		$this->data['is_favorite'] = $is_favorite;
 
 		$this->load->model('order_model');
-		$this->data['marks'] = $this->order_model->get_completed_orders('cleaner', $user_id);
+		$this->data['marks'] = $this->order_model->get_reviews_statistic('cleaner', $user_id);
 		$this->data['reviews'] = $this->order_model->get_cleaner_reviews($user_id, 7);
 
 		$this->data['center_block'] = $this->load->view('orders/cleaner_profile', $this->data, true);
