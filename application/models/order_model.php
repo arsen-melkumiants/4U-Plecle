@@ -84,7 +84,8 @@ class Order_model extends CI_Model {
 		}
 
 		if ($status == 0) {
-			$this->db->where('status', 0);
+			$this->db->where('cleaner_id', 0);
+			$this->db->where_in('status', array(0,1,2));
 			$this->db->where('start_date >', time() + 86400);
 		} elseif ($status == 1) {
 			$this->db->where('cleaner_id !=', 0);
@@ -404,7 +405,7 @@ class Order_model extends CI_Model {
 		if ($user_type == 'client') {
 			$this->db->where('o.client_id', $user_id);
 		} elseif ($user_type == 'cleaner') {
-			$this->db->where('o.cleaner_id', $user_id);
+			$this->db->where('m.cleaner_id', $user_id);
 		}
 
 
@@ -486,7 +487,7 @@ class Order_model extends CI_Model {
 			->join('orders AS o', 'o.id = m.order_id')
 			->join('users AS u', 'u.id = o.client_id')
 			->where('m.status', 1)
-			->where('o.cleaner_id', $user_id)
+			->where('m.cleaner_id', $user_id)
 			->order_by('m.add_date', 'desc')
 			->get();
 	}

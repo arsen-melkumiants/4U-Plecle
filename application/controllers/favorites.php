@@ -60,7 +60,9 @@ class Favorites extends CI_Controller {
 				'title' => 'Номер',
 				'width' => '20%',
 				'func'  => function($row, $params) {
-					return '<img src="'.(!empty($row['photo']) ? '/uploads/avatars/'.$row['photo'] : '/img/no_photo.jpg').'" width="100" class="img-circle">';
+					return '<a data-toggle="modal" data-target="#ajaxModal" href="'.site_url('personal/cleaner_profile/'.$row['id']).'">'.
+						'<img src="'.(!empty($row['photo']) ? '/uploads/avatars/'.$row['photo'] : '/img/no_photo.jpg').'" width="100" class="img-circle">'.
+						'</div>';
 				}
 			))
 			->text('first_name', array(

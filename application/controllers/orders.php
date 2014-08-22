@@ -152,6 +152,8 @@ class Orders extends CI_Controller {
 						return '<span class="text-warning">Ожидаем оплаты</span>';
 					} elseif (!$row['cleaner_id']) {
 						return '<span class="text-warning">Ожидаем горничную</span>';
+					} elseif ($row['status'] == 2 && $row['start_date'] + (3600 * $row['duration']) > time()) {
+						return '<span class="text-warning">Сделка в процессе</span>';
 					} elseif ($row['status'] == 2 && $row['start_date'] + (3600 * $row['duration']) < time()) {
 						return '<span class="text-warning">Ожидаем оценку уборки</span>';
 					} elseif ($row['status'] == 3 && $row['last_mark'] == 'positive') {
@@ -306,12 +308,13 @@ class Orders extends CI_Controller {
 				$this->db->trans_begin();
 				$this->db->where('id', $order_id)->update('orders', $update_array);
 				$this->db->insert('marks', array(
-					'order_id' => $order_info['id'],
-					'mark'     => $type,
-					'amount'   => $this->input->post('amount'),
-					'review'   => $this->input->post('review'),
-					'add_date' => time(),
-					'status'   => 1,
+					'order_id'   => $order_info['id'],
+					'cleaner_id' => $order_info['cleaner_id'],
+					'mark'       => $type,
+					'amount'     => $this->input->post('amount'),
+					'review'     => $this->input->post('review'),
+					'add_date'   => time(),
+					'status'     => 1,
 				));
 				$this->db->trans_commit();
 				$this->session->set_flashdata('success', 'Сделка успешно завершена');
