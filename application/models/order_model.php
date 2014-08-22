@@ -412,6 +412,7 @@ class Order_model extends CI_Model {
 			'total'   => 0,
 			'success' => 0,
 			'fail'    => 0,
+			'rating'  => 0,
 		);
 
 		$marks_info = $this->db->select('m.*')
@@ -426,6 +427,7 @@ class Order_model extends CI_Model {
 
 		foreach ($marks_info as $item) {
 			$result_array['total']++;
+			$result_array['rating'] += $item['amount'];
 			if ($item['mark'] == 'positive') {
 				$result_array['success']++;
 			} else {
@@ -433,5 +435,24 @@ class Order_model extends CI_Model {
 			}
 		}
 		return $result_array;
+	}
+
+	function get_cleaner_reviews($user_id = false, $limit = false) {
+		if (!empty($limit)) {
+			$this->db->limit($limit);
+		}
+		$reviews_info = $this->db->select('m.*, u.first_name, u.last_name, u.photo')
+			->from('marks AS m')
+			->join('orders AS o', 'o.id = m.order_id')
+			->join('users AS u', 'u.id = o.client_id')
+			->where('m.status', 1)
+			->order_by('m.add_date', 'desc')
+			->get()
+			->result_array();
+		if (empty($reviews_info)) {
+			return false;
+		}
+
+		return $reviews_info;
 	}
 }

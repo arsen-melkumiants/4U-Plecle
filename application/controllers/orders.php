@@ -243,7 +243,7 @@ class Orders extends CI_Controller {
 		$this->mark($order_id, 'negative');
 	}
 
-	private function mark($order_id = false, $sign = 'positive') {
+	private function mark($order_id = false, $type = 'positive') {
 		$order_id = intval($order_id);
 		if (empty($order_id)) {
 			custom_404();
@@ -256,37 +256,76 @@ class Orders extends CI_Controller {
 
 		$mark_time = ($order_info['start_date'] + (3600 * $order_info['duration']) + 1800) < time();
 		if ($order_info['status'] == 2 && $mark_time && !empty($order_info['cleaner_id'])) {
-			$update_array = array('status' => 3);
-			if ($order_info['frequency'] == 'every_week') {
-				$update_array['status'] = 1;
-				$update_array['start_date'] = $this->next_order_time($order_info['start_date'], 604800);
-			} elseif ($order_info['frequency'] == 'every_2_weeks') {
-				$update_array['status'] = 1;
-				$update_array['start_date'] = $this->next_order_time($order_info['start_date'], 1209600);
+			$this->load->library('form');
+			$this->data['center_block']  = '';
+			$this->data['title']         = $this->data['header'] = 'Отзыв';
+
+			$this->data['center_block'] .= '<div class="popup_info">';
+			$this->data['center_block'] .= 'Спасибо за проведенную сделку, а теперь, оставьте пожалуйста отзыв о горничной.';
+			$this->data['center_block'] .= '</div>';
+
+			$sign = $type == 'positive' ? 1 : -1;
+
+			for ($i = 1;$i <= 10;$i++) {
+				$inputs[$i * $sign] = $i * $sign;
 			}
 
-			if ($update_array['status'] === 1) {
-				$update_array['price_per_hour']  = PRICE_PER_HOUR;
-				$update_array['detergent_price'] = floatval($order_info['detergent_price']) ? DETERGENT_PRICE * $order_info['duration'] : 0;
-				$update_array['total_price']     = PRICE_PER_HOUR * $order_info['duration'] + floatval($update_array['detergent_price']);
-			}
-			$this->db->trans_begin();
-			$this->db->where('id', $order_id)->update('orders', $update_array);
-			$this->db->insert('marks', array(
-				'order_id' => $order_info['id'],
-				'mark'     => $sign,
-				'add_date' => time(),
-				'status'   => 1,
-			));
-			$this->db->trans_commit();
-			$this->session->set_flashdata('success', 'Сделка успешно выполнена');
-			$email_info = array(
-				'order_id'   => $order_info['id'],
-				'start_date' => date('d.m.Y в H:i', $order_info['start_date']),
-			);
-			$this->order_model->send_mail($this->ion_auth->user($order_info['client_id'])->row()->email, 'Сделка успешно выполнена', 'success_order', $email_info);
-			if (!empty($order_info['cleaner_id'])) {
-				$this->order_model->send_mail($this->ion_auth->user($order_info['cleaner_id'])->row()->email, 'Сделка успешно выполнена', 'success_order', $email_info);
+			$this->data['center_block'] .= $this->form
+				->textarea('review', array('no_editor' => true, 'rows' => 7, 'width' => 12, 'valid_rules' => 'trim|required', 'label' => 'Отзыв'))
+				->separator('<div class="popup_info">И поставьте оценку, которую по-Вашему заслуживает горничная</div>')
+				->radio('amount', array(
+					'valid_rules' => 'required|trim',
+					'inputs'      => $inputs,
+					'btn_view'    => true,
+					'placeholder' => 'Оценка',
+				))
+				->btn(array('name' => 'submit', 'value' => 'Завершить сделку', 'class' => 'btn-primary btn-block'))
+				->create(array('action' => current_url(), 'btn_offset' => 0, 'error_inline' => true, 'class' => 'review_form'));
+
+			if ($this->form_validation->run() == false || !in_array($this->input->post('amount'), $inputs)) {
+				if ($this->input->is_ajax_request()) {
+					echo $this->load->view('ajax', $this->data, true);
+				} else {
+					custom_404();
+				}
+			} else {
+				$update_array = array('status' => 3);
+				if ($order_info['frequency'] == 'every_week') {
+					$update_array['status'] = 1;
+					$update_array['start_date'] = $this->next_order_time($order_info['start_date'], 604800);
+				} elseif ($order_info['frequency'] == 'every_2_weeks') {
+					$update_array['status'] = 1;
+					$update_array['start_date'] = $this->next_order_time($order_info['start_date'], 1209600);
+				}
+
+				if ($update_array['status'] === 1) {
+					$update_array['price_per_hour']  = PRICE_PER_HOUR;
+					$update_array['detergent_price'] = floatval($order_info['detergent_price']) ? DETERGENT_PRICE * $order_info['duration'] : 0;
+					$update_array['total_price']     = PRICE_PER_HOUR * $order_info['duration'] + floatval($update_array['detergent_price']);
+				}
+				$this->db->trans_begin();
+				$this->db->where('id', $order_id)->update('orders', $update_array);
+				$this->db->insert('marks', array(
+					'order_id' => $order_info['id'],
+					'mark'     => $type,
+					'amount'   => $this->input->post('amount'),
+					'review'   => $this->input->post('review'),
+					'add_date' => time(),
+					'status'   => 1,
+				));
+				$this->db->trans_commit();
+				$this->session->set_flashdata('success', 'Сделка успешно завершена');
+				$email_info = array(
+					'order_id'   => $order_info['id'],
+					'start_date' => date('d.m.Y в H:i', $order_info['start_date']),
+				);
+				$this->order_model->send_mail($this->ion_auth->user($order_info['client_id'])->row()->email, 'Сделка успешно завершена', 'success_order', $email_info);
+				if (!empty($order_info['cleaner_id'])) {
+					$this->order_model->send_mail($this->ion_auth->user($order_info['cleaner_id'])->row()->email, 'Сделка успешно завершена', 'success_order', $email_info);
+				}
+				$this->order_model->send_mail(SITE_EMAIL, 'Сделка завершена c негативным рейтингом', 'negative_order', $email_info);
+				echo 'refresh';
+				exit;
 			}
 		} else {
 			$this->session->set_flashdata('danger', 'Оценка не может быть произведена');
@@ -360,7 +399,7 @@ class Orders extends CI_Controller {
 				$this->data['center_block'] = '';
 				if (in_array($order_info['status'], array(2)) && ($order_info['start_date'] < time() + 86400) && ($order_info['start_date'] > time() + 360)) {
 					$this->data['title']         = $this->data['header'] = 'Внимание!';
-					$this->data['center_block'] .= '<div class="cancel_info">';
+					$this->data['center_block'] .= '<div class="popup_info">';
 					$this->data['center_block'] .= 'До начало уборки осталось <span class="text-danger">менее 24 часов</span>.<br>';
 					$this->data['center_block'] .= 'С вас будет списан штраф в <b>'.FINE_PRICE.' рублей</b>!<br>';
 					$this->data['center_block'] .= 'Все равно хотите продолжить?';

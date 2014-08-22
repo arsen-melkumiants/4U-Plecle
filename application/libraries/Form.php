@@ -110,6 +110,7 @@ class Form {
 		$input = '';
 		if ($type == 'radio' || ($type == 'checkbox' && isset($params['inputs']) && is_array($params['inputs']))) {
 			if (isset($params['inputs']) && is_array($params['inputs'])) {
+				$input .= !empty($params['btn_view']) ? '<div class="btn-group" data-toggle="buttons">' : '';
 				foreach ($params['inputs'] as $value => $info) {
 					if (is_array($info)) {
 						$input_name = $info['name'];
@@ -132,10 +133,15 @@ class Form {
 						$input_checked = $value == $params['value'] ? ' checked="checked"' : false;
 					}
 
-					$input .= '<label class="'.$type.(isset($params['inline']) && !$params['inline'] ? '' : '-inline').'">'.PHP_EOL;
+					if (!empty($params['btn_view'])) {
+						$input .= '<label class="btn btn-primary'.($input_checked ? ' active' : '').'">'.PHP_EOL;
+					} else {
+						$input .= '<label class="'.$type.(isset($params['inline']) && !$params['inline'] ? '' : '-inline').'">'.PHP_EOL;
+					}
 					$input .= '<input type="'.$type.'" name="'.$name.'" value="'.$value.'"'.$input_checked.'> '.$input_name.PHP_EOL;
 					$input .= '</label>'.PHP_EOL;
 				}
+				$input .= !empty($params['btn_view']) ? '</div>' : '';
 			}
 		} elseif ($type == 'select') {
 			if (isset($params['options']) && is_array($params['options'])) {
@@ -248,7 +254,7 @@ class Form {
 
 	public function separator($text = '&nbsp;', $params = false) {
 		$this->form_data[] = array(
-			'form'   => $text,
+			'form'   => '<div class="'.$this->grid_type.'-12">'.$text.'</div>',
 			'params' => $params,
 		);
 		return $this;
@@ -272,11 +278,11 @@ class Form {
 	}
 
 	public function textarea($name = false, $params = false) {
-		if (!$this->load_editor) {
-			$this->load_editor = true;
-		}
 		if (empty($params['no_editor'])) {
 			$params['class'] = !empty($params['class']) ? $params['class'].' ckeditor' : 'ckeditor';
+			if (!$this->load_editor) {
+				$this->load_editor = true;
+			}
 		}
 
 		if (empty($params['full_width'])) {

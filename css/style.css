@@ -208,12 +208,18 @@ table.cleaners .active_block i {font-size: 18px;color: #C91313;}
 .modal-body {padding: 20px 80px;}
 .modal-body .title {text-align: center;color: #005668;margin-bottom: 25px;}
 
-.cancel_info {margin: -15px 0 15px;}
-.cancel_info,
-.cancel_info * {font-size: 18px;}
+.popup_info {margin: -15px 0 15px;}
+.popup_info,
+.popup_info * {font-size: 18px;}
+.btn-group {width: 100%;}
+.btn-group .btn {background-color: #4f5f6f;border-color: #4f5f6f;width: 10%;}
+.btn-group .btn.active {background-color: #59c2e6;border-color: #59c2e6;}
+
+.review_form > div > label {display: none;}
 
 .cleaner_info {text-align: center;}
 .cleaner_info h2 {font-size: 26px;margin-top: 30px;}
+.cleaner_info p {margin: 0;}
 .cleaner_info .reviews {text-align: left;}
 .cleaner_info .reviews .title {text-align: left;color: #005668;border-bottom: 1px solid #005668;margin-bottom: 5px;}
 .cleaner_info .reviews ul {list-style: none;padding-left: 0px;}
