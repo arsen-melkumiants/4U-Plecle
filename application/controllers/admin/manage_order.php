@@ -41,7 +41,7 @@ class Manage_order extends CI_Controller {
 			'header'       => 'Редактирование региона "%name"',
 			'header_descr' => 'Редактирование региона и индексов',
 		),
-		'delete_region'       => array(
+		'delete_region'    => array(
 			'header'       => 'Удаление региона "%name"',
 			'header_descr' => 'Добавление региона и индексов',
 		),
@@ -52,6 +52,10 @@ class Manage_order extends CI_Controller {
 		'edit_review'      => array(
 			'header'       => 'Редактирование отзыва #%id',
 			'header_descr' => 'Редактирование отзыва',
+		),
+		'delete_review'    => array(
+			'header'       => 'Удаление отзыва #%id',
+			'header_descr' => '',
 		),
 	);
 
@@ -463,8 +467,9 @@ class Manage_order extends CI_Controller {
 					}
 				}
 		))
-			->date('add_date')
+			->date('add_date', array('title' => 'Дата'))
 			->edit(array('link' => $this->MAIN_URL.'edit_review/%d'))
+			->delete(array('link' => $this->MAIN_URL.'delete_review/%d', 'modal' => 1))
 			->create(function($CI) {
 				return $CI->admin_order_model->get_all_reviews();
 			});
@@ -537,5 +542,20 @@ class Manage_order extends CI_Controller {
 			))
 			->btn(array('value' => 'Изменить'))
 			->create(array('action' => current_url()));
+	}
+
+	public function delete_review($id = false) {
+		if (empty($id)) {
+			custom_404();
+		}
+
+		$review_info = $this->admin_order_model->get_review_info($id);
+		if (empty($review_info)) {
+			custom_404();
+		}
+		set_header_info($review_info);
+
+		$this->DB_TABLE = 'marks';
+		admin_method('delete', $this->DB_TABLE, $review_info);
 	}
 }

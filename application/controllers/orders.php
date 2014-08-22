@@ -287,6 +287,7 @@ class Orders extends CI_Controller {
 			if ($this->form_validation->run() == false || !in_array($this->input->post('amount'), $inputs)) {
 				if ($this->input->is_ajax_request()) {
 					echo $this->load->view('ajax', $this->data, true);
+					exit;
 				} else {
 					custom_404();
 				}
