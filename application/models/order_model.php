@@ -317,22 +317,26 @@ class Order_model extends CI_Model {
 			$payment_info = $this->db->where(array('order_id' => $order_info['id'], 'status' => 0))->get('payments')->row_array();
 			if (empty($payment_info)) {
 				$this->db->insert('payments', array(
-					'order_id'        => $order_info['id'],
-					'price_per_hour'  => $order_info['price_per_hour'],
-					'detergent_price' => $order_info['detergent_price'],
-					'total_price'     => $order_info['total_price'],
-					'add_date'        => time(),
-					'status'          => 0,
+					'order_id'            => $order_info['id'],
+					'price_per_hour'      => $order_info['price_per_hour'],
+					'cleaner_price'       => $order_info['cleaner_price'],
+					'detergent_price'     => $order_info['detergent_price'],
+					'total_price'         => $order_info['total_price'],
+					'total_cleaner_price' => $order_info['total_cleaner_price'],
+					'add_date'            => time(),
+					'status'              => 0,
 				));
 				$payment_id = $this->db->insert_id();
 			} else {
 				$this->db->where('id', $payment_info['id'])->update('payments', array(
-					'order_id'        => $order_info['id'],
-					'price_per_hour'  => $order_info['price_per_hour'],
-					'detergent_price' => $order_info['detergent_price'],
-					'total_price'     => $order_info['total_price'],
-					'add_date'        => time(),
-					'status'          => 0,
+					'order_id'            => $order_info['id'],
+					'price_per_hour'      => $order_info['price_per_hour'],
+					'cleaner_price'       => $order_info['cleaner_price'],
+					'detergent_price'     => $order_info['detergent_price'],
+					'total_price'         => $order_info['total_price'],
+					'total_cleaner_price' => $order_info['total_cleaner_price'],
+					'add_date'            => time(),
+					'status'              => 0,
 				));
 				$payment_id = $payment_info['id'];
 			}
@@ -371,18 +375,20 @@ class Order_model extends CI_Model {
 
 	function get_total_payments($type = false, $user_type = false) {
 		if ($type == 'month') {
-			$this->db->where('p.add_date >= '.(time() - 2592000));
+			$this->db->where('p.add_date >= '.strtotime(date('Y-m-1 00:00')));
 		} elseif ($type == 'year') {
-			$this->db->where('p.add_date >= '.(time() - 2592000 * 12));
+			$this->db->where('p.add_date >= '.strtotime(date('Y-1-1 00:00')));
 		}
 
 		if ($user_type == 'client') {
 			$this->db->where('o.client_id', $this->data['user_info']['id']);
+			$this->db->select('SUM(p.total_price) as total_price, o.fine_price');
 		} elseif ($user_type == 'cleaner') {
 			$this->db->where('o.cleaner_id', $this->data['user_info']['id']);
+			$this->db->select('SUM(p.total_cleaner_price) as total_price, o.fine_price');
 		}
 
-		$payment_info = $this->db->select('SUM(p.total_price) as total_price, o.fine_price')
+		$payment_info = $this->db
 			->from('payments AS p')
 			->join('orders AS o', 'o.id = p.order_id')
 			->where('p.status', 1)

@@ -102,6 +102,9 @@ class Orders extends CI_Controller {
 		if ($this->data['user_info']['is_cleaner']) {
 			$this->data['client_info'] = $this->ion_auth->user($this->data['order_info']['client_id'])->row_array();
 			$this->load->view('orders/cleaner_top', $this->data);
+
+			$this->data['right_info']['info_array']['Цена за час'] = floatval($this->data['order_info']['cleaner_price']).' рублей';
+			$this->data['right_info']['info_array']['Итого'] = floatval($this->data['order_info']['total_cleaner_price']).' рублей';
 		} else {
 			if (!empty($this->data['order_info']['cleaner_id'])) {
 				$this->data['cleaner_info'] = $this->ion_auth->user($this->data['order_info']['cleaner_id'])->row_array();
@@ -186,10 +189,10 @@ class Orders extends CI_Controller {
 			))
 			->text('total_price', array(
 				'title' => 'Цена',
-				'func'  => function($row, $params) {
-					return floatval($row['total_price']).' рублей';
+				'func'  => function($row, $params, $that, $CI) {
+					return floatval($CI->data['user_info']['is_cleaner'] ? $row['total_cleaner_price'] : $row['total_price']).' рублей';
 				}
-		))
+			))
 			->create(function($CI) {
 				return $CI->order_model->get_order_payments($CI->data['order_id']);
 			}, array('no_header' => true, 'class' => 'list'));
@@ -302,9 +305,11 @@ class Orders extends CI_Controller {
 				}
 
 				if ($update_array['status'] === 1) {
-					$update_array['price_per_hour']  = PRICE_PER_HOUR;
-					$update_array['detergent_price'] = floatval($order_info['detergent_price']) ? DETERGENT_PRICE * $order_info['duration'] : 0;
-					$update_array['total_price']     = PRICE_PER_HOUR * $order_info['duration'] + floatval($update_array['detergent_price']);
+					$update_array['price_per_hour']      = PRICE_PER_HOUR;
+					$update_array['cleaner_price']       = CLEANER_SALARY;
+					$update_array['detergent_price']     = floatval($order_info['detergent_price']) ? DETERGENT_PRICE * $order_info['duration'] : 0;
+					$update_array['total_price']         = PRICE_PER_HOUR * $order_info['duration'] + floatval($update_array['detergent_price']);
+					$update_array['total_cleaner_price'] = CLEANER_SALARY * $order_info['duration'] + floatval($update_array['detergent_price']);
 				}
 				$this->db->trans_begin();
 				$this->db->where('id', $order_id)->update('orders', $update_array);

@@ -26,15 +26,19 @@ $options = implode(', ', $options) ?: '&nbsp;';
 <h4 class="title">Финансы</h4>
 <dl class="dl-horizontal list">
 	<dt>Сумма за рабочие часы</dt>
+	<?php if ($user_info['is_cleaner']) {?>
+	<dd><?php echo $order_info['cleaner_price'] * $order_info['duration']?> рублей</dd>
+	<?php } else {?>
 	<dd><?php echo $order_info['price_per_hour'] * $order_info['duration']?> рублей</dd>
+	<?php }?>
 	<dt>Сумма за моющие средства</dt>
 	<dd><?php echo $order_info['detergent_price'] * $order_info['need_detergents']?> рублей</dd>
 	<dt><b>Итого</b></dt>
+	<?php if ($user_info['is_cleaner']) {?>
+	<dd><b><?php echo floatval($order_info['total_cleaner_price'])?> рублей</b></dd>
+	<?php } else {?>
 	<dd><b><?php echo floatval($order_info['total_price'])?> рублей</b></dd>
-	<?php /*if (floatval($order_info['fine_price'])) {?>
-	<dt><b class="text-danger">Штраф</b></dt>
-	<dd><b class="text-danger"><?php echo floatval($order_info['fine_price'])?> рублей</b></dd>
-	<?php }*/ ?>
+	<?php }?>
 </dl>
 
 <?php if (!empty($payment_history)) {?>

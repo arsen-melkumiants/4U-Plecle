@@ -47,7 +47,12 @@ class payment extends CI_Controller {
 			exit;
 		}
 
-		$payment_info = $this->db->where(array('id' =>  $inv_id, 'status' => 0))->get('payments')->row_array();
+		$payment_info = $this->db->where(array(
+			'id'          => $inv_id,
+			'total_price' => $out_summ,
+			'status'      => 0
+		))->get('payments')->row_array();
+
 		if (empty($payment_info)) {
 			echo "bad sign\n";
 			exit;
