@@ -124,6 +124,18 @@ class Manage_order extends CI_Controller {
 					return $row['zip'].(isset($CI->zip[$row['zip']]) ? ' ('.$CI->zip[$row['zip']].')' : '');
 				}
 		))
+			->text('total_price', array(
+				'title' => 'Сумма сделки',
+				'func'  => function($row, $params, $that, $CI) {
+					return $row['total_price'].' рублей';
+				}
+		))
+			->text('total_cleaner_price', array(
+				'title' => 'Сумма выплаты работнику',
+				'func'  => function($row, $params, $that, $CI) {
+					return $row['total_cleaner_price'].' рублей';
+				}
+		))
 			->text('comment', array(
 				'title' => 'Статус',
 				'width' => '30%',
@@ -194,7 +206,7 @@ class Manage_order extends CI_Controller {
 			$_POST['start_date']   = strtotime($this->input->post('start_date'));
 			$_POST['have_pets']    = $this->input->post('have_pets');
 			$_POST['need_ironing'] = $this->input->post('need_ironing');
-			admin_method('edit', $this->DB_TABLE, array('id' => $id));
+			admin_method('edit', $this->DB_TABLE, array('id' => $id, 'except_fields' => array('total_price', 'total_cleaner_price', 'fine_price')));
 		}
 	}
 
@@ -267,10 +279,26 @@ class Manage_order extends CI_Controller {
 				'label'       => 'Индекс',
 				'value'       => !empty($order_info['zip']) ? trim($order_info['zip'], ',') : false
 			))
-			->text('FINE_PRICE', array(
+			->text('fine_price', array(
 				'value'       => !empty($order_info['fine_price']) ? $order_info['fine_price'] : false,
 				'valid_rules' => 'required|trim|xss_clean|numeric',
 				'label'       => 'Штраф за отмену сделки менее чем за 24 часа до начала',
+				'width'       => '2',
+				'symbol'      => 'руб',
+				'readonly'    => true,
+			))
+			->text('total_price', array(
+				'value'       => !empty($order_info['total_price']) ? $order_info['total_price'] : false,
+				'valid_rules' => 'required|trim|xss_clean|numeric',
+				'label'       => 'Сумма сделки',
+				'width'       => '2',
+				'symbol'      => 'руб',
+				'readonly'    => true,
+			))
+			->text('total_cleaner_price', array(
+				'value'       => !empty($order_info['total_cleaner_price']) ? $order_info['total_cleaner_price'] : false,
+				'valid_rules' => 'required|trim|xss_clean|numeric',
+				'label'       => 'Сумма выплаты работнику',
 				'width'       => '2',
 				'symbol'      => 'руб',
 				'readonly'    => true,
