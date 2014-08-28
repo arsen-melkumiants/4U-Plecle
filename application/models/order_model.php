@@ -359,7 +359,7 @@ class Order_model extends CI_Model {
 				'Encoding='      .$encoding,
 			);
 			$pay_url = 'https://auth.robokassa.ru/Merchant/Index.aspx?'.implode('&', $url_params);
-			$pay_url = site_url('orders/pay/'.$order_info['id']);
+			//$pay_url = site_url('orders/pay/'.$order_info['id']);
 			return $pay_url;
 		} elseif ($order_info['status'] == 2) {
 			//$this->session->set_flashdata('danger', 'Оплата уже совершена');

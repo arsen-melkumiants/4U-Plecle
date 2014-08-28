@@ -196,7 +196,7 @@ class Orders extends CI_Controller {
 	}
 
 	function pay($order_id = false) {
-//		return custom_404();
+		return custom_404();
 		$order_id = intval($order_id);
 		if (empty($order_id)) {
 			custom_404();
