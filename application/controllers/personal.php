@@ -264,6 +264,7 @@ class Personal extends CI_Controller {
 		}
 
 		$user_info = $this->ion_auth->user()->row_array();
+		$this->data['user_info'] = $user_info;
 		if (!empty($user_info['is_cleaner'])) {
 			if ($this->input->is_ajax_request()) {
 				echo 'refresh';exit;

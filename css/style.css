@@ -112,6 +112,7 @@ body .bootstrap-datetimepicker-widget td span {display: inline-block;float: none
 .detail_block .title a {float: right;position: relative;right: 30px;color: #fff;}
 .detail_block .title a:hover {text-decoration: none;}
 .detail_block .list {padding: 15px;background: #f2f2f2;border: 1px solid #e3e3e3;}
+.detail_block form .form-group {margin-left: 15px;margin-right: 15px;}
 .detail_block table {margin: 0;}
 .detail_block tbody td {padding: 15px !important;border-color: #fff !important;}
 .detail_block ul {list-style: none;padding-left: 25px;}

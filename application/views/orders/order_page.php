@@ -32,8 +32,28 @@ if ($this->uri->segment(1) != 'make_order') {
 			<?php echo $center_block?>
 		</div>
 		<div class="col-md-4">
+			<?php if (($this->uri->segment(1) != 'make_order') && !$user_info['is_cleaner']) {?>
 			<div class="detail_block">
-			<div class="title"><?php echo $right_info['title']?><?php echo isset($user_info['is_cleaner']) && $user_info['is_cleaner'] == 0 && $right_info['title'] != 'Детали заявки' ? '<a href="'.site_url('personal/edit_profile/'.$user_info['id']).'"><i class="icon-pencil"></i></a>' : ''?></div>
+				<div class="title">Поиск работника</div>
+				<div class="list">
+				<form class="form-horizontal" method="post" action="<?php echo site_url('make_order')?>">
+					<div class="form-group">
+						<div class="col-md-12">
+							<label class="sr-only">Введите свой индекс</label>
+							<input type="text" name="zip" class="form-control" placeholder="Введите свой индекс">
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="col-md-12">
+							<button class="btn btn-primary btn-block" modal="" value="Вход" type="submit">Найти работника</button>
+						</div>
+					</div>
+				</form>
+				</div>
+			</div>
+			<?php }?>
+			<div class="detail_block">
+				<div class="title"><?php echo $right_info['title']?><?php echo isset($user_info['is_cleaner']) && $user_info['is_cleaner'] == 0 && $right_info['title'] != 'Детали заявки' ? '<a href="'.site_url('personal/edit_profile').'"><i class="icon-pencil"></i></a>' : ''?></div>
 				<div class="list">
 					<table class="table">
 						<tbody>

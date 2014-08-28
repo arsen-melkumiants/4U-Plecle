@@ -5,7 +5,7 @@
 				<div class="col-sm-12">
 					<div class="big_status">Станьте горничной на Plecle.com</div>
 					<?php if (defined('CLEANER_SALARY')) {?>
-					<h2>И зарабатывайте по <?php echo CLEANER_SALARY?> рублей в час</h2>
+					<h2>И зарабатывайте до <?php echo CLEANER_SALARY?> рублей в час</h2>
 					<?php }?>
 					<div class="add_title">Появилась пыль? Нужно навести порядок?</div>
 				</div>
