@@ -31,6 +31,10 @@ a {color: #009dbf;}
 input[type="radio"], input[type="checkbox"] {margin: 2px 0 0;cursor: pointer;}
 .radio, .checkbox {cursor: pointer;}
 .form-group {margin-bottom: 25px;}
+.text_edit:empty:before {
+	content: attr(placeholder);
+	color: #999999;
+}
 
 h4.title {font-size: 16px;border-bottom: 1px solid #333;padding-bottom: 7px;margin: 15px 0;}
 h4.title a {font-size: 16px;color: #333;}

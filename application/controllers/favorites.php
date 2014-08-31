@@ -76,7 +76,7 @@ class Favorites extends CI_Controller {
 				'width' => '40%',
 				'title' => 'Заметка',
 				'func'  => function($row, $params) {
-					return '<div class="text_edit">'.$row['info'].'</div>
+					return '<div class="text_edit" placeholder="Можно добавить заметку">'.$row['info'].'</div>
 						<button data-id="'.$row['id'].'" data-loading-text="Сохранение..." class="btn btn-default btn-xs text_save">Сохранить</button>
 						<small class="text-danger">До 250 символов</small>';
 				}
@@ -109,7 +109,7 @@ class Favorites extends CI_Controller {
 		}
 
 		$this->load->library('form_validation');
-		$this->form_validation->set_rules('info', 'Заметка', 'required|max_length[250]|trim');
+		$this->form_validation->set_rules('info', 'Заметка', 'max_length[250]|trim');
 		if ($this->form_validation->run() == true) {
 			$this->db->where('id', $id)->update('favorites', array('info' => $this->input->post('info')));
 		}
