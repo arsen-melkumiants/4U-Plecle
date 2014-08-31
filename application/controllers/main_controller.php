@@ -35,7 +35,7 @@ class Main_controller extends CI_Controller {
 	}
 
 	function menu_content($name = false) {
-		if(empty($name)) {
+		if (empty($name)) {
 			custom_404();
 		}
 
@@ -63,7 +63,7 @@ class Main_controller extends CI_Controller {
 	}
 
 	function content($name = false) {
-		if(empty($name)) {
+		if (empty($name)) {
 			custom_404();
 		}
 
@@ -78,5 +78,19 @@ class Main_controller extends CI_Controller {
 		$this->load->view('header', $this->data);
 		$this->load->view('content_page', $this->data);
 		$this->load->view('footer', $this->data);
+	}
+
+	function region($id = false) {
+		$id = intval($id);
+		if (empty($id)) {
+			custom_404();
+		}
+
+		$region_info = $this->db->where('id', $id)->get('regions')->row_array();
+		if (empty($region_info)) {
+			custom_404();
+		}
+
+		$this->data['title'] = $this->data['header'] = 'Район "'.$region_info['name'].'"';
 	}
 }

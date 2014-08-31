@@ -73,6 +73,8 @@ $route['reviews']           = 'reviews';
 
 $route['cli_tools/(:any)'] = 'cli_tools/$1';
 
+$route['region/(:num)'] = 'main_controller/region/$1';
+
 $route['(:any)'] = 'main_controller/menu_content/$1';
 
 $route['default_controller'] = 'main_controller';
