@@ -494,7 +494,7 @@ class Order_model extends CI_Model {
 	function get_all_reviews($user_id = false) {
 		return $this->db->select('m.*, u.first_name, u.last_name, u.photo')
 			->from('marks AS m')
-			->join('orders AS o', 'o.id = m.order_id')
+			->join('orders AS o', 'o.id = m.order_id', 'left')
 			->join('users AS u', 'u.id = o.client_id')
 			->where('m.status', 1)
 			->where('m.cleaner_id', $user_id)
