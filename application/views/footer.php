@@ -86,7 +86,7 @@
 							<ul>
 								<?php if (!empty($regions)) {
 								foreach ($regions as $item) {?>
-								<li><?php echo $item['name']?></li>
+								<li><a href="<?php echo site_url('region/'.$item['id'])?>"><?php echo $item['name']?></a></li>
 								<?php }}?>
 							</ul>
 						</div>				

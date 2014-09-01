@@ -113,7 +113,17 @@ class Order_model extends CI_Model {
 			WHERE u.active = 1
 			AND u.is_cleaner = 1';
 		if (!empty($zip)) {
-			$sql .= ' AND u.zip LIKE \'%,'.$zip.',%\'';
+			if (!is_array($zip)) {
+				$zip = array($zip);
+			}
+			$sql_like = array();
+			foreach($zip as $key => $item) {
+				if (empty($item)) {
+					continue;
+				}
+				$sql_like[] = 'u.zip LIKE \'%,'.$item.',%\'';
+			}
+			$sql .= ' AND ('.implode(' OR ', $sql_like).')';
 		}
 		$sql .= ' GROUP BY u.id ORDER BY rating desc';
 		return $this->db

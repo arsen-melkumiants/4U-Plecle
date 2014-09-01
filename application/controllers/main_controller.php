@@ -34,7 +34,7 @@ class Main_controller extends CI_Controller {
 		$this->load->view('footer', $this->data);
 	}
 
-	function menu_content($name = false) {
+	public function menu_content($name = false) {
 		if (empty($name)) {
 			custom_404();
 		}
@@ -62,7 +62,7 @@ class Main_controller extends CI_Controller {
 		$this->load->view('footer', $this->data);
 	}
 
-	function content($name = false) {
+	public function content($name = false) {
 		if (empty($name)) {
 			custom_404();
 		}
@@ -80,7 +80,7 @@ class Main_controller extends CI_Controller {
 		$this->load->view('footer', $this->data);
 	}
 
-	function region($id = false) {
+	public function region($id = false) {
 		$id = intval($id);
 		if (empty($id)) {
 			custom_404();
@@ -95,7 +95,8 @@ class Main_controller extends CI_Controller {
 		$this->data['header'] .= '<br />(Индексы: '.trim($region_info['zips'], ',').')';
 
 		$this->load->model('order_model');
-		$this->data['cleaners'] = $this->order_model->get_all_cleaners(trim($region_info['zips'], ','));
+		$zip_array = explode(',', trim($region_info['zips'], ','));
+		$this->data['cleaners'] = $this->order_model->get_all_cleaners($zip_array);
 
 		$this->data['center_block'] = $this->load->view('orders/cleaners', $this->data, true);
 
