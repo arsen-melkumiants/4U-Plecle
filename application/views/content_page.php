@@ -8,7 +8,7 @@
 	</div>
 	<?php }?>
 </div>
-<?php $center_block = '<h1 class="text-center">'.$title.'</h1><hr />'.$center_block?>
+<?php $center_block = '<h1 class="text-center">'.$header.'</h1><hr />'.$center_block?>
 <div class="container content_block">
 	<div class="row">
 		<?php if (($this->uri->segment(1) != 'make_order') && empty($this->ion_auth->user()->row()->is_cleaner)) {?>

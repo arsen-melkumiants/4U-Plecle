@@ -92,5 +92,15 @@ class Main_controller extends CI_Controller {
 		}
 
 		$this->data['title'] = $this->data['header'] = 'Район "'.$region_info['name'].'"';
+		$this->data['header'] .= '<br />(Индексы: '.trim($region_info['zips'], ',').')';
+
+		$this->load->model('order_model');
+		$this->data['cleaners'] = $this->order_model->get_all_cleaners(trim($region_info['zips'], ','));
+
+		$this->data['center_block'] = $this->load->view('orders/cleaners', $this->data, true);
+
+		$this->load->view('header', $this->data);
+		$this->load->view('content_page', $this->data);
+		$this->load->view('footer', $this->data);
 	}
 }
