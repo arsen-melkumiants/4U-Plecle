@@ -40,7 +40,7 @@ class Main_controller extends CI_Controller {
 		}
 
 		$menu_info = $this->db->select('*, name_'.$this->config->item('lang_abbr').' as name')->where('alias', $name)->get('menu_items')->row_array();
-		if (empty($menu_info)) {
+		if (empty($menu_info) || $menu_info['type'] == 'external') {
 			return $this->content($name);
 		}
 
