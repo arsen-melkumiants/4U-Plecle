@@ -5,7 +5,7 @@
 		</div>
 		<div class="col-sm-8 text-left">
 			<h2><?php echo $cleaner_info['first_name'].' '.$cleaner_info['last_name']?></h2>
-			<p>Рейтинг: <?php echo $marks['rating']?></p>
+			<?php /*<p>Рейтинг: <?php echo $marks['rating']?></p>*/?>
 			<p>Отзывов: <?php echo $marks['total'].' (<span class="text-success">'.$marks['success'].'</span> / <span class="text-danger">'.$marks['fail'].'</span>)'?></p>
 			<?php if ($this->ion_auth->logged_in() && !$is_favorite) {?>
 			<form action="<?php echo site_url('personal/cleaner_profile/'.$cleaner_info['id'])?>" method="post">
