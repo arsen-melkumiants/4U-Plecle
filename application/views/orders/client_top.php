@@ -11,7 +11,10 @@ if (!empty($order_info)) {
 				<div class="add_title">Появилась пыль? Нужно навести порядок?</div>
 				<div class="big_status">Закажите уборку Вашего дома прямо сейчас!</div>
 				<br />
-				<a href="<?php echo site_url('make_order')?>" class="big_link">Оформить заявку на уборку</a>
+				<form method="post" action="<?php echo site_url('make_order')?>">
+				<input type="hidden" name="zip" value="<?php echo trim($user_info['zip'], ',')?>" />
+				<input type="submit" class="big_link" value="Оформить заявку на уборку" />
+				</form>
 			</div>
 		</div>
 		<?php } elseif (!empty($order_info)) {?>

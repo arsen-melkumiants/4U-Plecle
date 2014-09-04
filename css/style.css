@@ -40,7 +40,7 @@ h4.title {font-size: 16px;border-bottom: 1px solid #333;padding-bottom: 7px;marg
 h4.title a {font-size: 16px;color: #333;}
 h4.title .right_link {float: right;color: #a94442;}
 
-.big_link {font-size: 50px;color: #fff;}
+.big_link {font-size: 50px;color: #fff;background: none;border: 0;}
 .big_link:hover {text-decoration: underline;color: #fff;}
 
 .label {background: #005e72;}
