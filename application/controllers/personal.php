@@ -208,7 +208,7 @@ class Personal extends CI_Controller {
 			->create(array('error_inline' => true, 'no_form_tag' => true));
 
 		$this->data['confirm'] = $this->form
-			->checkbox('confirm', array('valid_rules' => 'required', 'inputs' => array('confirm' => 'Я согласен с <a href="'.site_url('rules').'">правилами</a> сайта')))
+			->checkbox('confirm', array('valid_rules' => 'required', 'inputs' => array('confirm' => 'Я согласен с <a target="_blank" href="'.site_url('rules').'">правилами</a> сайта')))
 			->create(array('error_inline' => true, 'no_form_tag' => true));
 
 		if ($this->form_validation->run() == true) {
