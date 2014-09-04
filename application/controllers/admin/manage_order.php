@@ -66,10 +66,14 @@ class Manage_order extends CI_Controller {
 	);
 
 	public $duration = array(
-		'1' => '1 час',
-		'2' => '2 часа',
-		'3' => '3 часа',
-		'4' => '4 часа',
+		'1'   => '1 час',
+		'1.5' => '1.5 часа',
+		'2'   => '2 часа',
+		'2.5' => '2.5 часа',
+		'3'   => '3 часа',
+		'3.5' => '3.5 часа',
+		'4'   => '4 часа',
+		'4.5' => '4.5 часа',
 	);
 
 	public $status = array(
@@ -206,7 +210,20 @@ class Manage_order extends CI_Controller {
 			$_POST['start_date']   = strtotime($this->input->post('start_date'));
 			$_POST['have_pets']    = $this->input->post('have_pets');
 			$_POST['need_ironing'] = $this->input->post('need_ironing');
-			admin_method('edit', $this->DB_TABLE, array('id' => $id, 'except_fields' => array('total_price', 'total_cleaner_price', 'fine_price')));
+
+			//Update prices if change time
+			if (
+				$this->input->post('duration') != $order_info['duration'] ||
+				$this->input->post('frequency') != $order_info['frequency']
+			) {
+				$_POST['price_per_hour']      = PRICE_PER_HOUR;
+				$_POST['cleaner_price']       = CLEANER_SALARY;
+				$_POST['detergent_price']     = floatval($order_info['detergent_price']) ? DETERGENT_PRICE * $this->input->post('duration') : 0;
+				$_POST['total_price']         = PRICE_PER_HOUR * $this->input->post('duration') + floatval($_POST['detergent_price']);
+				$_POST['total_cleaner_price'] = CLEANER_SALARY * $this->input->post('duration') + floatval($_POST['detergent_price']);
+			}
+
+			admin_method('edit', $this->DB_TABLE, array('id' => $id, 'except_fields' => array('fine_price')));
 		}
 	}
 
@@ -283,6 +300,14 @@ class Manage_order extends CI_Controller {
 				'value'       => !empty($order_info['fine_price']) ? $order_info['fine_price'] : false,
 				'valid_rules' => 'required|trim|xss_clean|numeric',
 				'label'       => 'Штраф за отмену сделки менее чем за 24 часа до начала',
+				'width'       => '2',
+				'symbol'      => 'руб',
+				'readonly'    => true,
+			))
+			->text('detergent_price', array(
+				'value'       => !empty($order_info['detergent_price']) ? $order_info['detergent_price'] : false,
+				'valid_rules' => 'required|trim|xss_clean|numeric',
+				'label'       => 'Цена за моющие средства',
 				'width'       => '2',
 				'symbol'      => 'руб',
 				'readonly'    => true,
