@@ -238,7 +238,8 @@ class Personal extends CI_Controller {
 		}
 
 		if ($this->form_validation->run() == true && $this->ion_auth->register($username, $password, $email, $additional_data)) {
-			$this->session->set_flashdata('success', $this->ion_auth->messages());
+			//$this->session->set_flashdata('success', $this->ion_auth->messages());
+			$this->session->set_flashdata('success', 'Спасибо за Вашу заявку. Мы свяжемся с Вами, по указанному в заявке телефону, в ближайшее время');
 			if ($this->input->is_ajax_request()) {
 				echo 'refresh';exit;
 			}
@@ -555,6 +556,10 @@ class Personal extends CI_Controller {
 			redirect();
 		}
 
+		if ($this->ion_auth->logged_in() && !$this->data['user_info']['is_cleaner'] && !$this->input->post('zip')) {
+			$_POST['zip'] = trim($this->data['user_info']['zip'], ',');
+		}
+
 		if (!$this->input->post('zip')) {
 			redirect();
 		}
@@ -656,7 +661,10 @@ class Personal extends CI_Controller {
 			);
 			$this->order_model->send_mail($user_email, 'Завяка успешно создана', 'create_order', $email_info);
 			$this->session->set_flashdata('success', 'Ваша завяка успешно создана');
-			redirect();
+
+			$info['id'] = $order_id;
+			$pay_url = $this->order_model->make_payment_url($info);
+			redirect($pay_url);
 		}
 	}
 

@@ -202,6 +202,10 @@ table.reviews .positive .name {color: #4f5f6f;}
 .content_block p * {color: #2f2f2f;font-size: 16px;}
 
 .footer_big_block {position: absolute;bottom: 0;width: 100%;background: #59c2e6;height: 280px;padding-top: 25px;color: #fff;}
+@media (max-width: 992px) {
+	.footer_big_block {height: 600px;}
+	.main_page {padding-bottom: 620px;}
+}
 .footer_big_block .menu ul {list-style: none;padding: 0;}
 .footer_big_block .menu .title {font-size: 20px;border-bottom: 1px solid #fff;margin-bottom: 10px;}
 .footer_big_block .menu li a {color: #fff;}
@@ -217,7 +221,7 @@ table.reviews .positive .name {color: #4f5f6f;}
 .footer_block .menu li:before {content: "/";padding-right: 10px;}
 .footer_block .menu li:first-child:before {content: "";}
 
-.modal-content {border-radius: 0;}
+.modal-content {border-radius: 1px;border: 0;-webkit-box-shadow: 0 0 0 10px rgba(255,255,255,0.5);box-shadow: 0 0 0 10px rgba(255,255,255,0.5);}
 .modal-content button.close {display: block;position: absolute;right: 20px;top: 15px;font-size: 26px;z-index: 3;}
 .modal-body {padding: 20px 80px;}
 .modal-body .title {text-align: center;color: #005668;margin-bottom: 25px;}

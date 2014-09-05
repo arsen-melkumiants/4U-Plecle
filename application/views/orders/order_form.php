@@ -8,7 +8,8 @@
 		<?php if (!empty($login_form)) {?>
 		<h4 class="title">
 			<a href="#registration_form" role="tab" data-toggle="tab">Ваши персональные данные</a>
-			<a href="#login_form" role="tab" data-toggle="tab" class="right_link">Я уже зарегистрирован</a>
+			<a data-toggle="modal" data-target="#ajaxModal" href="<?php echo site_url('personal/login')?>" class="right_link">Я уже зарегистрирован</a>
+			<?php /*<a href="#login_form" role="tab" data-toggle="tab" class="right_link">Я уже зарегистрирован</a>*/?>
 		</h4>
 		<div id="myTabContent" class="tab-content row">
 			<div class="tab-pane fade<?php echo $this->input->cookie('of_tab') != 'login_form' ? ' active in' : ''?>" id="registration_form">
