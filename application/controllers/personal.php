@@ -592,9 +592,9 @@ class Personal extends CI_Controller {
 					'Время'           => date('H:i'),
 					'Частота'         => isset($this->order_model->frequency[$this->input->post('frequency')]) ? $this->order_model->frequency[$this->input->post('frequency')] : false,
 					'Рабочие часы'    => isset($this->order_model->duration[$this->input->post('duration')]) ? $this->order_model->duration[$this->input->post('duration')] : false,
-					'Цена за час'     => PRICE_PER_HOUR,
-					'Моющие средства' => $detergent_price,
-					'<b>Итого</b>'    => '<b>'.((PRICE_PER_HOUR * $this->input->post('duration')) + ($detergent_price * $this->input->post('duration'))).'</b>'
+					'Цена уборки'     => '<span class="cleaning_price">'.PRICE_PER_HOUR.'</span>',
+					'Моющие средства' => '<span class="detergent_price">'.$detergent_price.'</span>',
+					'<b>Итого</b>'    => '<b class="total_price">'.((PRICE_PER_HOUR * ($this->input->post('duration') ?: 1)) + ($detergent_price * $this->input->post('duration'))).'</b>'
 				),
 			);
 			$this->load->view('header', $this->data);
