@@ -104,6 +104,11 @@ body .bootstrap-datetimepicker-widget td span {display: inline-block;float: none
 .users_block a:hover {text-decoration: none;color: #fff;}
 .users_block .name {font-size: 14px;padding: 10px 0 40px;}
 
+.users_block .col-sm-2 {
+	display: inline-block;
+	float: none;
+}
+
 .users_block.simple_list {background: none;text-align: center;color: #333;margin-bottom: 25px;}
 .users_block.simple_list a {color: #333;}
 .users_block.simple_list a:hover {color: #333;}
