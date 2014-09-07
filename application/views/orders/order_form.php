@@ -49,17 +49,49 @@
 
 <?php after_load('js', '/dist/js/jquery.cookie.js')?>
 <script>
-window.onload = function () {
+var price_per_hour = Number(<?php echo PRICE_PER_HOUR?>);
+var detergent_price = Number(<?php echo DETERGENT_PRICE?>);
+var collect_price = function() {
+	var duration = Number($('[name="duration"]').val());
+	var cleaning_price = duration * price_per_hour;
+	var need_detergents = $('[name="need_detergents"]').prop("checked") ? duration * detergent_price : 0;
+	$('.cleaning_price').text(cleaning_price);
+	$('.detergent_price').text(need_detergents);
+	$('.total_price').text(cleaning_price + need_detergents);
+};
 
-	$(".date_time").datetimepicker({language: 'ru', todayBtn: true, minuteStepping: 30});
-	$(document).on('focus', '.date_time', function(){
-		$(this).datetimepicker({language: 'ru', todayBtn: true, minuteStepping: 30});
+var init_order_picker = function() {
+	$('.date_time').datetimepicker({
+		language       : 'ru',
+		useCurrent     : false,
+		minuteStepping : 30,
+		minDate        : moment().day(1),
+	}).on('dp.change',function (e) {
+		var min_date = moment().day(1);
+		var max_date = moment().day(3);
+		if (e.date > min_date && e.date < max_date) {
+			console.log('warning');
+			$('.date_time').closest('.form-group').append('<div class="text-warning col-md-6">Мы не гарантируем, что найдем работника в указанную дату. Рекомендуем выбрать более позднюю дату</div>');
+		} else {
+			$('.date_time').closest('.form-group').find('.text-warning').remove();
+		}
 	});
+}
+
+window.onload = function () {
+	$('[name="duration"]').on('change', function() {
+		collect_price();
+	});
+
+	$('[name="need_detergents"]').on('change', function() {
+		collect_price();
+	});
+
+	init_order_picker();
 
 	$('input').on('keyup', function() {
 		var input = $(this);
 		setTimeout(function() {
-	//		console.log(input.val());
 			$('input[name="' + input.attr('name') + '"]').val(input.val());
 		}, 100);
 	});
@@ -72,7 +104,7 @@ window.onload = function () {
 	$('a[data-toggle="tab"]').on('shown.bs.tab', function () {
 		$.cookie('of_tab', $(this).attr('href').substring(1));
 	})
-		<?php if (!empty($is_login)) {?>
+	<?php if (!empty($is_login)) {?>
 		$('.order_form').submit();
 	<?php }?>
 }
