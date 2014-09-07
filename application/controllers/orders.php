@@ -130,41 +130,41 @@ class Orders extends CI_Controller {
 				'title' => 'Номер',
 				'width' => '30%',
 				'func'  => function($row, $params) {
-					return '<a href="'.site_url('orders/detail/'.$row['id']).'">#'.$row['id'].'</a>';
+					return '#'.$row['id'];
 				}
 		))
 			->text('status', array(
 				'title' => 'Информация',
 				'func'  => function($row, $params) {
-					return '<a href="'.site_url('orders/detail/'.$row['id']).'">Уборка '.date('d.m.Y в H:i', $row['start_date']).'</a>';
+					return 'Уборка '.date('d.m.Y в H:i', $row['start_date']);
 				}
 		))
 			->text('comment', array(
 				'title' => 'Номер',
-				'width' => '30%',
+				'width' => '35%',
 				'func'  => function($row, $params, $that, $CI) {
 					if (in_array($row['status'], array(0,1)) && $row['start_date'] < 86400 + time()) {
-						return '<span class="text-danger">Сделка не состоялась</span>';
+						return '<span class="label label-danger"><i class="icon-frown"></i>Сделка не состоялась</span>';
 					} elseif (in_array($row['status'], array(4,5))) {
-						return '<span class="text-danger">Сделка отменена</span>';
+						return '<span class="label label-danger"><i class="icon-frown"></i>Сделка отменена</span>';
 					} elseif (!$row['cleaner_id'] && $row['status'] == 2 && $row['start_date'] > time() && $CI->data['user_info']['is_cleaner']) {
 						return '<a href="'.site_url('orders/accept/'.$row['id']).'" class="btn btn-primary">Взяться</a>';
 					} elseif (!$row['cleaner_id'] && $row['status'] == 2 && $row['start_date'] < time()) {
-						return '<span class="text-danger">Сделка отменена (отсутствует горничная)</span>';
+						return '<span class="label label-danger"><i class="icon-frown"></i>Сделка отменена (отсутствует горничная)</span>';
 					} elseif (in_array($row['status'], array(0,1))) {
-						return '<span class="text-warning">Ожидаем оплаты</span>';
+						return '<span class="label label-warning"><i class="icon-time"></i>Ожидаем оплаты</span>';
 					} elseif (!$row['cleaner_id']) {
-						return '<span class="text-warning">Ожидаем горничную</span>';
+						return '<span class="label label-warning"><i class="icon-time"></i>Ожидаем горничную</span>';
 					} elseif ($row['status'] == 2 && $row['start_date'] + (3600 * $row['duration']) > time()) {
-						return '<span class="text-warning">Сделка в процессе</span>';
+						return '<span class="label label-warning"><i class="icon-time"></i>Сделка в процессе</span>';
 					} elseif ($row['status'] == 2 && $row['start_date'] + (3600 * $row['duration']) < time()) {
-						return '<span class="text-warning">Ожидаем оценку уборки</span>';
+						return '<span class="label label-warning"><i class="icon-time"></i>Ожидаем оценку уборки</span>';
 					} elseif ($row['status'] == 3 && $row['last_mark'] == 'positive') {
-						return '<span class="text-success">Уборка успешно завершена</span>';
+						return '<span class="label label-success"><i class="icon-ok"></i>Уборка успешно завершена</span>';
 					} elseif ($row['status'] == 3 && $row['last_mark'] == 'negative') {
-						return '<span class="text-danger">Плохое качество уборки</span>';
+						return '<span class="label label-danger"><i class="icon-frown"></i>Плохое качество уборки</span>';
 					}
-					return false;
+					return '<span class="label label-primary"><i class="icon-info"></i>Подробнее</span>';
 				}
 		));
 
@@ -172,7 +172,13 @@ class Orders extends CI_Controller {
 		$result_html = $this->table
 			->create(function($CI) {
 				return $CI->order_model->get_all_orders($CI->data['status']);
-			}, array('no_header' => true, 'class' => 'list'));
+			}, array(
+				'no_header' => true,
+				'class'     => 'list orders',
+				'tr_func'   => function($row, $table_params, $that, $CI) {
+					return 'onclick="location.href=\''.site_url('orders/detail/'.$row['id']).'\'"';
+				}
+		));
 		if (!empty($result_html)) {
 			$result_html = '<h4 class="title">'.$status_labels[$status].'</h4>'.$result_html;
 		}

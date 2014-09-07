@@ -44,6 +44,12 @@ h4.title .right_link {float: right;color: #a94442;}
 .big_link:hover {text-decoration: underline;color: #fff;}
 
 .label {background: #005e72;}
+.label-primary {background-color: #008caa;}
+.label-info {background-color: #ffba00;}
+.label-success {background-color: #21d018;}
+.label-warning {background-color: #ff7200;}
+.label-danger {background-color: #ff0000;}
+
 .no_margin {margin: 0 !important;}
 
 .main_page {padding-bottom: 280px;}
@@ -176,6 +182,17 @@ table.list {width: 100%;margin-bottom: 15px;}
 table .btn {border-radius: 0;padding: 2px 12px;border: 0;margin: -10px 0;}
 table .btn.btn-primary {color: #fff;background-color: #008caa;}
 table .btn.btn-primary:hover {color: #fff;background-color: #005668;}
+
+.list.orders * {font-size: 14px;}
+.list.orders tr {cursor: pointer;}
+.list.orders .label {display: inline-block;border-radius: 0;padding: 13px 10px 13px 45px;position: relative;}
+.list.orders .label [class^="icon-"], [class*=" icon-"] {display: block;position: absolute;top: 0px;left: 0px;height: 100%;font-size: 24px;border-right: 1px solid #fff;padding: 8px;font-weight: normal;}
+.list.orders tr:hover td {color: #59c2e6;}
+.list.orders tr:hover .label-primary {background-color: #59c2e6;}
+.list.orders tr:hover .label-info {background-color: #ffc939;}
+.list.orders tr:hover .label-success {background-color: #3bff31;}
+.list.orders tr:hover .label-warning {background-color: #ffae00;}
+.list.orders tr:hover .label-danger {background-color: #ff452c;}
 
 table.cleaners .text_edit {width: 100%;min-height: 60px;}
 table.cleaners .text_edit:hover {cursor: text;}
