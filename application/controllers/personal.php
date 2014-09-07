@@ -240,6 +240,10 @@ class Personal extends CI_Controller {
 		if ($this->form_validation->run() == true && $this->ion_auth->register($username, $password, $email, $additional_data)) {
 			//$this->session->set_flashdata('success', $this->ion_auth->messages());
 			$this->session->set_flashdata('success', 'Спасибо за Вашу заявку. Мы свяжемся с Вами, по указанному в заявке телефону, в ближайшее время');
+
+			$this->load->model('order_model');
+			$this->order_model->send_mail(SITE_EMAIL, 'Новый работник', 'new_cleaner', $additional_data);
+
 			if ($this->input->is_ajax_request()) {
 				echo 'refresh';exit;
 			}
