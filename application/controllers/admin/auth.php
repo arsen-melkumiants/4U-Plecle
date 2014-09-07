@@ -456,7 +456,7 @@ class Auth extends CI_Controller {
 		{
 			redirect(ADM_URL.'auth', 'refresh');
 		}
-		
+
 		$user_info = $this->ion_auth->user($id)->row_array();
 		$groups=$this->ion_auth->groups()->result_array();
 		$currentGroups = $this->ion_auth->get_users_groups($id)->result();
@@ -465,17 +465,14 @@ class Auth extends CI_Controller {
 		$this->load->library('form');
 		$this->form
 			->text('username', array('value' => $user_info['username'], 'valid_rules' => 'required|trim|xss_clean|max_length[150]',  'label' => 'Имя'))
-			->text('company', array('value' => $user_info['company'], 'valid_rules' => 'required|trim|xss_clean|max_length[100]', 'label' => 'Компания'))
 			->text('address', array('value' => $user_info['address'], 'valid_rules' => 'required|trim|xss_clean|max_length[100]',  'label' => 'Адрес'))
 			->text('city', array('value' => $user_info['city'], 'valid_rules' => 'required|trim|xss_clean|max_length[100]',  'label' => 'Город'))
-			->text('state', array('value' => $user_info['state'], 'valid_rules' => 'required|trim|xss_clean|max_length[100]',  'label' => 'Штат'))
 			->text('country', array('value' => $user_info['country'], 'valid_rules' => 'required|trim|xss_clean|max_length[100]',  'label' => 'Страна'))
 			->text('zip', array('value' => $user_info['zip'], 'valid_rules' => 'required|trim|xss_clean|max_length[100]|is_natural',  'label' => 'Индекс'))
 			->text('phone', array('value' => $user_info['phone'], 'valid_rules' => 'required|trim|xss_clean|max_length[100]|is_natural',  'label' => 'Телефон'))
 			->separator()
 			->password('password', array('label' => $this->lang->line('edit_user_password_label')))
 			->password('password_confirm', array('label' => $this->lang->line('edit_user_password_confirm_label')));
-			
 
 		if (isset($_POST) && !empty($_POST))
 		{
@@ -487,10 +484,8 @@ class Auth extends CI_Controller {
 
 			$data = array(
 				'username' => $this->input->post('username'),
-				'company'  => $this->input->post('company'),
 				'address'  => $this->input->post('address'),
 				'city'     => $this->input->post('city'),
-				'state'    => $this->input->post('state'),
 				'country'  => $this->input->post('country'),
 				'zip'      => $this->input->post('zip'),
 				'phone'    => $this->input->post('phone'),
@@ -517,7 +512,7 @@ class Auth extends CI_Controller {
 				$this->form_validation->run();
 				$this->form->form_data[9]['params']['error'] = form_error('password');
 				$this->form->form_data[10]['params']['error'] = form_error('password_confirm');
-				
+
 				$data['password'] = $this->input->post('password');
 			}
 
@@ -537,7 +532,6 @@ class Auth extends CI_Controller {
 		$this->form
 			->hidden(key($this->data['csrf']), $this->data['csrf'][key($this->data['csrf'])])
 			->hidden('id', $id);
-		
 
 		//set the flash data error message if there is one
 		$this->data['message'] = (validation_errors() ? validation_errors() : ($this->ion_auth->errors() ? $this->ion_auth->errors() : $this->session->flashdata('message')));
@@ -547,11 +541,10 @@ class Auth extends CI_Controller {
 		$this->data['groups'] = $groups;
 		$this->data['currentGroups'] = $currentGroups;
 
-		
 		$this->data['center_block'] = $this->form
 			->btn(array('value' => 'Изменить', 'offset' => 3))
 			->create();
-		
+
 		$this->_render_page(ADM_FOLDER.'header', $this->data);
 		$this->_render_page(ADM_FOLDER.'s_page', $this->data);
 		$this->_render_page(ADM_FOLDER.'footer', $this->data);
