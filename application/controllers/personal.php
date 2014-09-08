@@ -581,10 +581,13 @@ class Personal extends CI_Controller {
 		}
 		$detergent_price = $this->input->post('need_detergents') ? DETERGENT_PRICE : 0;
 
-		$selected_time = strtotime($_POST['start_date']);
-		$is_late = (!empty($_POST['start_date']) && time() + (86400 * 2) > $selected_time);
-		if (!$selected_time && !empty($_POST['start_date'])) {
-			$_POST['start_date'] = '' ;
+		$is_late = false;
+		if (!empty($_POST['start_date'])) {
+			$selected_time = strtotime($_POST['start_date']);
+			$is_late = (time() + (86400 * 2) > $selected_time);
+			if (!$selected_time) {
+				$_POST['start_date'] = '' ;
+			}
 		}
 
 		$this->data['title'] = $this->data['header'] = 'Создание заявки';

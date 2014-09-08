@@ -65,10 +65,10 @@ var init_order_picker = function() {
 		language       : 'ru',
 		useCurrent     : false,
 		minuteStepping : 30,
-		minDate        : moment().day(1),
+		minDate        : moment().day(2),
 	}).on('dp.change',function (e) {
-		var min_date = moment().day(1);
-		var max_date = moment().day(3);
+		var min_date = moment().day(2);
+		var max_date = moment().day(4);
 		$('.date_time').closest('.form-group').find('.text-danger').remove();
 		$('.date_time').closest('.form-group').find('.text-warning').remove();
 		if (e.date > min_date && e.date < max_date) {
