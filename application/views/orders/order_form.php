@@ -41,7 +41,6 @@
 		<br />
 	</div>
 </form>
-
 <?php after_load('js', '/dist/js/moment-with-langs.min.js')?>
 <?php after_load('js', '/dist/js/bootstrap-datetimepicker.min.js')?>
 <?php after_load('js', '/dist/js/bootstrap-datetimepicker.ru.js')?>
@@ -65,9 +64,9 @@ var init_order_picker = function() {
 		language       : 'ru',
 		useCurrent     : false,
 		minuteStepping : 30,
-		minDate        : moment().day(2),
+		minDate        : moment().day(3),
 	}).on('dp.change',function (e) {
-		var min_date = moment().day(2);
+		var min_date = moment().day(3);
 		var max_date = moment().day(4);
 		$('.date_time').closest('.form-group').find('.text-danger').remove();
 		$('.date_time').closest('.form-group').find('.text-warning').remove();
