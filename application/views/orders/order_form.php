@@ -69,11 +69,9 @@ var init_order_picker = function() {
 	}).on('dp.change',function (e) {
 		var min_date = moment().day(1);
 		var max_date = moment().day(3);
+		$('.date_time').closest('.form-group').find('.text-warning').remove();
 		if (e.date > min_date && e.date < max_date) {
-			console.log('warning');
 			$('.date_time').closest('.form-group').append('<div class="text-warning col-md-6">Мы не гарантируем, что найдем работника в указанную дату. Рекомендуем выбрать более позднюю дату</div>');
-		} else {
-			$('.date_time').closest('.form-group').find('.text-warning').remove();
 		}
 	});
 }
