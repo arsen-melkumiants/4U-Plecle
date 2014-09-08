@@ -185,8 +185,15 @@ table .btn.btn-primary:hover {color: #fff;background-color: #005668;}
 
 .list.orders * {font-size: 14px;}
 .list.orders tr {cursor: pointer;}
-.list.orders .label {display: inline-block;border-radius: 0;padding: 13px 10px 13px 45px;position: relative;}
-.list.orders .label [class^="icon-"], [class*=" icon-"] {display: block;position: absolute;top: 0px;left: 0px;height: 100%;font-size: 24px;border-right: 1px solid #fff;padding: 8px;font-weight: normal;}
+.list.orders .label {display: inline-block;border-radius: 0;padding: 13px 10px 13px 45px;position: relative;font-weight: normal;}
+.list.orders .label [class^="icon_"], [class*="icon_"] {display: block;position: absolute;top: 0px;left: 0px;height: 100%;font-size: 24px;border-right: 1px solid #fff;padding: 6px;font-weight: normal;}
+.list.orders .label [class^="icon_"]:before, [class*=" icon_"]:before {content: "";text-decoration: inherit;display: inline-block;speak: none;height: 31px;width: 28px;background: url(../img/icon_sprite.png);}
+.list.orders .label .icon_info:before {background-position: -2px -3px;}
+.list.orders .label .icon_time:before {background-position: -2px -105px;}
+.list.orders .label .icon_frown:before {background-position: -2px -156px;}
+.list.orders .label .icon_ok:before {background-position: -2px -54px;}
+.list.orders .label .icon_clean:before {background-position: -2px -207px;}
+
 .list.orders tr:hover td {color: #59c2e6;}
 .list.orders tr:hover .label-primary {background-color: #59c2e6;}
 .list.orders tr:hover .label-info {background-color: #ffc939;}

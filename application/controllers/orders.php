@@ -144,27 +144,27 @@ class Orders extends CI_Controller {
 				'width' => '35%',
 				'func'  => function($row, $params, $that, $CI) {
 					if (in_array($row['status'], array(0,1)) && $row['start_date'] < 86400 + time()) {
-						return '<span class="label label-danger"><i class="icon-frown"></i>Сделка не состоялась</span>';
+						return '<span class="label label-danger"><i class="icon_frown"></i>Сделка не состоялась</span>';
 					} elseif (in_array($row['status'], array(4,5))) {
-						return '<span class="label label-danger"><i class="icon-frown"></i>Сделка отменена</span>';
+						return '<span class="label label-danger"><i class="icon_frown"></i>Сделка отменена</span>';
 					} elseif (!$row['cleaner_id'] && $row['status'] == 2 && $row['start_date'] > time() && $CI->data['user_info']['is_cleaner']) {
 						return '<a href="'.site_url('orders/accept/'.$row['id']).'" class="btn btn-primary">Взяться</a>';
 					} elseif (!$row['cleaner_id'] && $row['status'] == 2 && $row['start_date'] < time()) {
-						return '<span class="label label-danger"><i class="icon-frown"></i>Сделка отменена (отсутствует горничная)</span>';
+						return '<span class="label label-danger"><i class="icon_frown"></i>Сделка отменена (отсутствует горничная)</span>';
 					} elseif (in_array($row['status'], array(0,1))) {
-						return '<span class="label label-warning"><i class="icon-time"></i>Ожидаем оплаты</span>';
+						return '<span class="label label-warning"><i class="icon_time"></i>Ожидаем оплаты</span>';
 					} elseif (!$row['cleaner_id']) {
-						return '<span class="label label-warning"><i class="icon-time"></i>Ожидаем горничную</span>';
+						return '<span class="label label-warning"><i class="icon_time"></i>Ожидаем горничную</span>';
 					} elseif ($row['status'] == 2 && $row['start_date'] + (3600 * $row['duration']) > time()) {
-						return '<span class="label label-warning"><i class="icon-time"></i>Сделка в процессе</span>';
+						return '<span class="label label-primary"><i class="icon_info"></i>Сделка в процессе</span>';
 					} elseif ($row['status'] == 2 && $row['start_date'] + (3600 * $row['duration']) < time()) {
-						return '<span class="label label-warning"><i class="icon-time"></i>Ожидаем оценку уборки</span>';
+						return '<span class="label label-warning"><i class="icon_time"></i>Ожидаем оценку уборки</span>';
 					} elseif ($row['status'] == 3 && $row['last_mark'] == 'positive') {
-						return '<span class="label label-success"><i class="icon-ok"></i>Уборка успешно завершена</span>';
+						return '<span class="label label-success"><i class="icon_ok"></i>Уборка успешно завершена</span>';
 					} elseif ($row['status'] == 3 && $row['last_mark'] == 'negative') {
-						return '<span class="label label-danger"><i class="icon-frown"></i>Плохое качество уборки</span>';
+						return '<span class="label label-danger"><i class="icon_frown"></i>Плохое качество уборки</span>';
 					}
-					return '<span class="label label-primary"><i class="icon-info"></i>Подробнее</span>';
+					return '<span class="label label-primary"><i class="icon_info"></i>Подробнее</span>';
 				}
 		));
 
