@@ -355,8 +355,9 @@ class Order_model extends CI_Model {
 			$mrh_pass1 = $this->mrh_pass1;
 			// order properties
 			$inv_id    = $payment_id;
-			$inv_desc  = 'Оплата сделки на уборку #'.$order_info['id'];
+			$inv_desc  = 'Оплата сделки №'.$order_info['id'];
 			$out_summ  = $order_info['total_price'];
+
 			// build CRC value
 			$crc  = md5("$mrh_login:$out_summ:$inv_id:$mrh_pass1");
 			$culture  = 'ru';
@@ -364,10 +365,10 @@ class Order_model extends CI_Model {
 
 			// build URL
 			$url_params = array(
-				'MerchantLogin=' .$mrh_login,
+				'MrchLogin='     .$mrh_login,
 				'OutSum='        .$out_summ,
-				'InvoiceID='     .$inv_id,
-				'Description='   .$inv_desc,
+				'InvId='         .$inv_id,
+				'Desc='          .$inv_desc,
 				'SignatureValue='.$crc,
 				'Culture='       .$culture,
 				'Encoding='      .$encoding,
