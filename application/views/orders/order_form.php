@@ -99,6 +99,12 @@ window.onload = function () {
 		$('input[name="' + input.attr('name') + '"]').val(input.val());
 	});
 
+	$('form').on('submit', function() {
+		var zone = new Date;
+		zone = zone.getTimezoneOffset(zone) * (-60);
+		$(this).append('<input type="hidden" name="timezone" value="' + zone + '" />');
+	});
+
 	$('a[data-toggle="tab"]').on('shown.bs.tab', function () {
 		$.cookie('of_tab', $(this).attr('href').substring(1));
 	})
