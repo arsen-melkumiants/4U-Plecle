@@ -68,8 +68,11 @@ class Personal extends CI_Controller {
 				'value'      => lang('login_submit_btn'),
 				'class'      => 'btn-primary btn-block',
 			))
-			->link(array('name' => lang('login_forgot_password'), 'class' => 'btn btn-link btn-block', 'href' => site_url('personal/forgot_password')))
-			;
+			->link(array(
+				'name' => lang('login_forgot_password'),
+				'class' => 'btn btn-link btn-block',
+				'href' => site_url('personal/forgot_password')
+			));
 
 		if ($this->form_validation->run() == true) {
 			$remember = (bool) $this->input->post('remember');
@@ -583,7 +586,13 @@ class Personal extends CI_Controller {
 
 		$is_late = false;
 		if (!empty($_POST['start_date'])) {
+			//print_r($_POST['start_date']);
 			$selected_time = strtotime($_POST['start_date']);
+			//echo '<br>'.$selected_time;
+			//echo '<br>'.time();
+			//echo '<br>'.date_default_timezone_get();
+			//echo '<br>'.date('Z');
+
 			$is_late = (time() + (86400 * 2) > $selected_time);
 			if (!$selected_time) {
 				$_POST['start_date'] = '' ;
