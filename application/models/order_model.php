@@ -261,7 +261,8 @@ class Order_model extends CI_Model {
 				'inputs'      => $this->special
 			));
 
-		$is_late = (!empty($_POST['start_date']) && time() + (86400 * 2) > strtotime($_POST['start_date']));
+		$zone_offset = isset($_POST['timezone']) ? date('Z') - $_POST['timezone'] : 0;
+		$is_late = (!empty($_POST['start_date']) && time() + (86400 * 2) > strtotime($_POST['start_date']) + $zone_offset);
 		if ($is_late) {
 			$this->form->form_data[2]['params']['error'] = 'Поздняя дата, выберите пожалуйста более раннюю (минимум за два дня)';
 		}

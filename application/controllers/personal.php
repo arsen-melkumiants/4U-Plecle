@@ -588,7 +588,7 @@ class Personal extends CI_Controller {
 		if (!empty($_POST['start_date'])) {
 			$selected_time = strtotime($_POST['start_date']);
 			$zone_offset = isset($_POST['timezone']) ? date('Z') - $_POST['timezone'] : 0;
-			$is_late = (time() + (86400 * 2) > $selected_time - $zone_offset);
+			$is_late = (time() + (86400 * 2) > ($selected_time + $zone_offset));
 			if (!$selected_time) {
 				$_POST['start_date'] = '' ;
 			}

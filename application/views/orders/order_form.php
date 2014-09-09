@@ -66,7 +66,7 @@ var init_order_picker = function() {
 		minuteStepping : 30,
 		minDate        : moment().day(3),
 	}).on('dp.change',function (e) {
-		var min_date = moment().day(3);
+		var min_date = moment().day(2);
 		var max_date = moment().day(4);
 		$('.date_time').closest('.form-group').find('.text-danger').remove();
 		$('.date_time').closest('.form-group').find('.text-warning').remove();
