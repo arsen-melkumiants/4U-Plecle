@@ -102,7 +102,7 @@ class Manage_content extends CI_Controller {
 
 	public function add() {
 		if(!empty($_POST)){
-			$alias = !empty($_POST['alias']) ? $_POST['alias'] : $_POST['name_en'];
+			$alias = !empty($_POST['alias']) ? $_POST['alias'] : $_POST['name_ru'];
 			$_POST['alias'] = url_title(translitIt($alias), 'underscore', TRUE);
 		}
 
@@ -127,7 +127,7 @@ class Manage_content extends CI_Controller {
 		set_header_info($content_info);
 
 		if(!empty($_POST)){
-			$alias = !empty($_POST['alias']) ? $_POST['alias'] : $content_info['name_en'];
+			$alias = !empty($_POST['alias']) ? $_POST['alias'] : $content_info['name_ru'];
 			$_POST['alias'] = url_title(translitIt($alias), 'underscore', TRUE);
 		}
 
