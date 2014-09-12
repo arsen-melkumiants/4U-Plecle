@@ -10,6 +10,7 @@ class Main_controller extends CI_Controller {
 		$this->load->library(array(
 			'session',
 			'ion_auth',
+			'table',
 		));
 		$this->data['main_menu']     = $this->menu_model->get_menu('main');
 		$this->data['help_menu']     = $this->menu_model->get_menu('help');
@@ -24,6 +25,10 @@ class Main_controller extends CI_Controller {
 		$this->data['center_block'] = '';
 		if (empty($this->ion_auth->user()->row()->is_cleaner)) {
 			$this->data['center_block'] .= $this->load->view('main_form', $this->data, true);
+		} else {
+			$this->data['user_info'] = $this->ion_auth->user()->row_array();
+			$this->load->model('order_model');
+			$this->data['center_block'] .= '<div class="container">'.$this->order_model->order_table(1).'</div>';
 		}
 		$this->data['partners'] = $this->db->where(array('status' => 1, 'image !=' => ''))->get('partners')->result_array();
 		$this->data['center_block'] .= $this->load->view('promo_page', $this->data, true);
