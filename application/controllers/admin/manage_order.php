@@ -214,13 +214,15 @@ class Manage_order extends CI_Controller {
 			//Update prices if change time
 			if (
 				$this->input->post('duration') != $order_info['duration'] ||
-				$this->input->post('frequency') != $order_info['frequency']
+				$this->input->post('frequency') != $order_info['frequency'] ||
+				$this->input->post('max_sallary') != $order_info['max_sallary']
 			) {
-				$_POST['price_per_hour']      = PRICE_PER_HOUR;
-				$_POST['cleaner_price']       = CLEANER_SALARY;
 				$_POST['detergent_price']     = floatval($order_info['detergent_price']) ? DETERGENT_PRICE * $this->input->post('duration') : 0;
+				$_POST['price_per_hour']      = PRICE_PER_HOUR;
 				$_POST['total_price']         = PRICE_PER_HOUR * $this->input->post('duration') + floatval($_POST['detergent_price']);
-				$_POST['total_cleaner_price'] = CLEANER_SALARY * $this->input->post('duration') + floatval($_POST['detergent_price']);
+
+				$_POST['cleaner_price']       = $this->input->post('max_sallary') ? MAX_CLEANER_SALARY : CLEANER_SALARY;
+				$_POST['total_cleaner_price'] = $_POST['cleaner_price'] * $this->input->post('duration') + floatval($_POST['detergent_price']);
 			}
 
 			admin_method('edit', $this->DB_TABLE, array('id' => $id, 'except_fields' => array('fine_price')));
@@ -319,6 +321,12 @@ class Manage_order extends CI_Controller {
 				'width'       => '2',
 				'symbol'      => 'руб',
 				'readonly'    => true,
+			))
+			->radio('max_sallary', array(
+				'valid_rules' => 'required|trim|is_natural',
+				'label'       => 'Повышенная зарплата горинчной',
+				'inputs'      => array(1 => 'Да',0 => 'Нет'),
+				'value'       => !empty($order_info['max_sallary']) ? $order_info['max_sallary'] : false,
 			))
 			->text('total_cleaner_price', array(
 				'value'       => !empty($order_info['total_cleaner_price']) ? $order_info['total_cleaner_price'] : false,

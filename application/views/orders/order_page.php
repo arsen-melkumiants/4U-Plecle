@@ -1,8 +1,9 @@
 <?php
 if (!empty($user_info['is_cleaner'])) {
 	$inner_menu = array(
-		'orders'  => 'Сделки',
-		'reviews' => 'Отзывы',
+		'orders'    => 'Сделки',
+		'reviews'   => 'Отзывы',
+		'favorites' => 'Избранные',
 	);
 } else {
 	$inner_menu = array(

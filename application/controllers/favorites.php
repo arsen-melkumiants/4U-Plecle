@@ -35,10 +35,7 @@ class Favorites extends CI_Controller {
 	}
 
 	function index() {
-		if ($this->data['user_info']['is_cleaner']) {
-			custom_404();
-		}
-		$this->data['title'] = $this->data['header'] = 'Избранные горничные';
+		$this->data['title'] = $this->data['header'] = $persone_type = !$this->data['user_info']['is_cleaner'] ? 'Избранные горничные' : 'Избранные клиенты';
 
 		$this->data['right_info'] = array(
 			'title'         => 'Ваш профиль',
