@@ -137,7 +137,7 @@ class Manage_order extends CI_Controller {
 			->text('total_cleaner_price', array(
 				'title' => 'Сумма выплаты работнику',
 				'func'  => function($row, $params, $that, $CI) {
-					return $row['total_cleaner_price'].' рублей';
+					return $row['total_cleaner_price'].' рублей'.($row['max_sallary'] ? ' (Повышенная)' : '');
 				}
 		))
 			->text('comment', array(
