@@ -102,8 +102,11 @@ class Order_model extends CI_Model {
 		}
 
 		return $this->db
+			->select('o.*, u.photo as photo, u.id as user_id')
+			->join('users AS u', 'u.id = o.'.($user_type == 'client' ? 'cleaner' : 'client').'_id', 'left')
+			->from('orders as o')
 			->order_by('id', 'desc')
-			->get('orders');
+			->get();
 	}
 
 	function get_all_cleaners($zip = false) {
@@ -145,13 +148,13 @@ class Order_model extends CI_Model {
 			->text('id', array(
 				'title' => 'Номер',
 				'width' => '30%',
-				'func'  => function($row, $params) {
-					return '#'.$row['id'];
+				'func'  => function($row, $params, $that, $CI) {
+					return $CI->load->view('orders/line_info', $row, true);
 				}
 		))
 			->text('status', array(
 				'title' => 'Информация',
-				'func'  => function($row, $params) {
+				'func'  => function($row, $params, $that, $CI) {
 					return 'Уборка '.date('d.m.Y в H:i', $row['start_date']);
 				}
 		))
@@ -192,7 +195,7 @@ class Order_model extends CI_Model {
 				'no_header' => true,
 				'class'     => 'list orders',
 				'tr_func'   => function($row, $table_params, $that, $CI) {
-					return 'onclick="location.href=\''.site_url('orders/detail/'.$row['id']).'\'"';
+					return 'onclick="show_order(\''.site_url('orders/detail/'.$row['id']).'\')"';
 				}
 		));
 		if (!empty($result_html)) {

@@ -8,7 +8,23 @@
 		<![endif]-->
 
 		<script>
+		var link_clicked = false;
+		var show_order = function(url) {
+			if (link_clicked) {
+				link_clicked = false;
+				return link_clicked;
+			}
+
+			window.location = url;
+			return true;
+		};
+
 		$(function(){
+			$('tr a').on('click', function() {
+				link_clicked  = true;
+			});
+
+
 			$('a').tooltip();
 
 			if (typeof $().selectpicker === 'function') {
@@ -78,7 +94,7 @@
 						<div class="menu">
 							<div class="title">Услуги</div>
 							<?php echo $services_menu ?>
-						</div>				
+						</div>
 					</div>
 					<div class="col-md-4">
 						<div class="menu">
@@ -89,13 +105,13 @@
 								<li><a href="<?php echo site_url('region/'.$item['id'])?>"><?php echo $item['name']?></a></li>
 								<?php }}?>
 							</ul>
-						</div>				
+						</div>
 					</div>
 					<div class="col-md-4">
 						<div class="menu">
 							<div class="title">Справка</div>
 							<?php echo $help_menu ?>
-						</div>				
+						</div>
 					</div>
 				</div>
 				<hr />
@@ -103,7 +119,7 @@
 			</div>
 		</div>
 		<?php }?>
-		
+
 		<div class="modal fade" id="ajaxModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 			<div class="modal-dialog">
 				<div class="modal-content"></div>
