@@ -62,7 +62,7 @@ if (!empty($order_info)) {
 				<?php if (!empty($cleaner_info)) {?>
 				<img src="<?php echo !empty($cleaner_info['photo']) ? '/uploads/avatars/'.$cleaner_info['photo'] : '/img/no_photo.jpg'?>" width="100" alt="<?php echo $cleaner_info['first_name']?>" class="img-circle">
 				<div class="name"><?php echo $cleaner_info['first_name']?></div>
-				<a data-toggle="modal" data-target="#ajaxModal" href="<?php echo site_url('personal/cleaner_profile/'.$cleaner_info['id'])?>" data-original-title="" title="" class="label">Профиль</a>
+				<a data-toggle="modal" data-target="#ajaxModal" href="<?php echo site_url('personal/profile/'.$cleaner_info['id'])?>" data-original-title="" title="" class="label">Профиль</a>
 				<?php } else {?>
 				<img src="/img/no_photo.jpg" width="100" class="img-circle">
 				<div class="name">Неизвестно</div>

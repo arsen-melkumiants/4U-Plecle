@@ -2,7 +2,7 @@
 	<?php if (!empty($cleaners)) {?>
 	<?php foreach ($cleaners as $item) {?>
 	<div class="col-sm-3">
-		<a data-toggle="modal" data-target="#ajaxModal" href="<?php echo site_url('personal/cleaner_profile/'.$item['id'])?>">
+		<a data-toggle="modal" data-target="#ajaxModal" href="<?php echo site_url('personal/profile/'.$item['id'])?>">
 			<img src="<?php echo !empty($item['photo']) ? '/uploads/avatars/'.$item['photo'] : '/img/no_photo.jpg'?>" width="100" alt="<?php echo $item['first_name']?>" class="img-circle">
 			<div class="name"><?php echo $item['first_name']?></div>
 		</a>

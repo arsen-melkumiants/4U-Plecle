@@ -57,7 +57,7 @@ class Favorites extends CI_Controller {
 				'title' => 'Номер',
 				'width' => '20%',
 				'func'  => function($row, $params) {
-					return '<a data-toggle="modal" data-target="#ajaxModal" href="'.site_url('personal/cleaner_profile/'.$row['user_id']).'">'.
+					return '<a data-toggle="modal" data-target="#ajaxModal" href="'.site_url('personal/profile/'.$row['user_id']).'">'.
 						'<img src="'.(!empty($row['photo']) ? '/uploads/avatars/'.$row['photo'] : '/img/no_photo.jpg').'" width="100" class="img-circle">'.
 						'</div>';
 				}

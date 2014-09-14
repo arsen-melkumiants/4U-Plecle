@@ -521,14 +521,14 @@ class Personal extends CI_Controller {
 		if (!$render) return $view_html;
 	}
 
-	function cleaner_profile($user_id = false) {
+	function profile($user_id = false) {
 		$user_id = intval($user_id);
 		if (empty($user_id)) {
 			custom_404();
 		}
 
-		$this->data['cleaner_info'] = $this->ion_auth->user($user_id)->row_array();
-		if (empty($this->data['cleaner_info'])) {
+		$this->data['user_info'] = $this->ion_auth->user($user_id)->row_array();
+		if (empty($this->data['user_info'])) {
 			custom_404();
 		}
 
@@ -545,9 +545,11 @@ class Personal extends CI_Controller {
 		}
 		$this->data['is_favorite'] = $is_favorite;
 
-		$this->load->model('order_model');
-		$this->data['marks'] = $this->order_model->get_reviews_statistic('cleaner', $user_id);
-		$this->data['reviews'] = $this->order_model->get_cleaner_reviews($user_id, 7);
+		if ($this->data['user_info']['is_cleaner']) {
+			$this->load->model('order_model');
+			$this->data['marks'] = $this->order_model->get_reviews_statistic('cleaner', $user_id);
+			$this->data['reviews'] = $this->order_model->get_cleaner_reviews($user_id, 7);
+		}
 
 		$this->data['center_block'] = $this->load->view('orders/cleaner_profile', $this->data, true);
 		$this->load->view('ajax', $this->data);

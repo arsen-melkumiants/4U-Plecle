@@ -71,7 +71,7 @@ class Order_model extends CI_Model {
 			->get('payments');
 	}
 
-	function get_all_orders($status = '0', $user_id = false, $user_type = false) {
+	function get_all_orders($status = '0', $user_id = false, $user_type = false, $limit = false) {
 		if (empty($user_type)) {
 			if (!empty($this->data['user_info']['is_cleaner'])) {
 				$user_type = 'cleaner';
@@ -99,6 +99,11 @@ class Order_model extends CI_Model {
 
 		if ($status != 3) {
 			$this->db->where($user_type.'_id', $user_id);
+		}
+
+
+		if (!empty($limit)) {
+			$this->db->limit($limit);
 		}
 
 		return $this->db
@@ -134,8 +139,9 @@ class Order_model extends CI_Model {
 			->result_array();
 	}
 
-	function order_table($status = 0) {
+	function order_table($status = 0, $limit = 0) {
 		$this->table_status = $status;
+		$this->order_limit = $limit;
 
 		$status_labels = array(
 			'0' => 'Заявки на сделки',
@@ -147,20 +153,14 @@ class Order_model extends CI_Model {
 		$this->table
 			->text('id', array(
 				'title' => 'Номер',
-				'width' => '30%',
 				'func'  => function($row, $params, $that, $CI) {
+					$row['is_cleaner'] = $CI->data['user_info']['is_cleaner'];
 					return $CI->load->view('orders/line_info', $row, true);
-				}
-		))
-			->text('status', array(
-				'title' => 'Информация',
-				'func'  => function($row, $params, $that, $CI) {
-					return 'Уборка '.date('d.m.Y в H:i', $row['start_date']);
 				}
 		))
 			->text('comment', array(
 				'title' => 'Номер',
-				'width' => '35%',
+				'width' => '37%',
 				'func'  => function($row, $params, $that, $CI) {
 					if (in_array($row['status'], array(0,1)) && $row['start_date'] < 86400 + time()) {
 						return '<span class="label label-danger"><i class="icon_frown"></i>Сделка не состоялась</span>';
@@ -190,7 +190,7 @@ class Order_model extends CI_Model {
 
 		$result_html = $this->table
 			->create(function($CI) {
-				return $CI->order_model->get_all_orders($CI->order_model->table_status);
+				return $CI->order_model->get_all_orders($CI->order_model->table_status, false, false, $CI->order_model->order_limit);
 			}, array(
 				'no_header' => true,
 				'class'     => 'list orders',
