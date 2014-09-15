@@ -115,7 +115,7 @@
 					</div>
 				</div>
 				<hr />
-				<div class="contact_block">Напишите нам info@plecle.com или позвоните нам 02033221136. © 2014 Plecle.com</div>
+				<div class="contact_block">Напишите нам info@plecle.com или позвоните нам +7(495)767-34-33. © 2014 Plecle.com</div>
 			</div>
 		</div>
 		<?php }?>
