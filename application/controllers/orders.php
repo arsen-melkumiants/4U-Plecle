@@ -2,7 +2,7 @@
 
 class Orders extends CI_Controller {
 
-	function __construct() {
+	public function __construct() {
 		parent::__construct();
 		$this->load->library(array(
 			'ion_auth',
@@ -34,7 +34,7 @@ class Orders extends CI_Controller {
 		set_alert($this->session->flashdata('danger'), false, 'danger');
 	}
 
-	function index() {
+	public function index() {
 		$this->data['title'] = $this->data['header'] = 'Список сделок';
 
 		$this->data['right_info'] = array(
@@ -66,7 +66,7 @@ class Orders extends CI_Controller {
 		$this->load->view('footer', $this->data);
 	}
 
-	function detail($order_id = false) {
+	public function detail($order_id = false) {
 		$order_id = intval($order_id);
 		if (empty($order_id)) {
 			custom_404();
@@ -115,6 +115,27 @@ class Orders extends CI_Controller {
 		$this->load->view('footer', $this->data);
 	}
 
+	public function contact($order_id = false) {
+		$order_id = intval($order_id);
+		if (empty($order_id)) {
+			custom_404();
+		}
+
+		$this->data['order_info'] = $this->order_model->get_user_order($order_id);
+		if (empty($this->data['order_info'])) {
+			$this->data['order_info'] = $this->order_model->get_user_order($order_id, false, 'no_cleaner');
+			if (empty($this->data['order_info'])) {
+				custom_404();
+			}
+		}
+
+		$this->data['address'] = $this->data['order_info']['country'].
+			','.$this->data['order_info']['city'].
+			','.$this->data['order_info']['address'];
+		echo $this->load->view('orders/contact', $this->data, true);
+		exit;
+	}
+
 	private function payment_table($order_id = false) {
 		$this->data['order_id'] = $order_id;
 		return $this->table
@@ -134,7 +155,7 @@ class Orders extends CI_Controller {
 			}, array('no_header' => true, 'class' => 'list'));
 	}
 
-	function pay($order_id = false) {
+	public function pay($order_id = false) {
 		return custom_404();
 		$order_id = intval($order_id);
 		if (empty($order_id)) {
@@ -176,11 +197,11 @@ class Orders extends CI_Controller {
 		redirect('orders/detail/'.$order_id, 'refresh');
 	}
 
-	function positive_mark($order_id = false) {
+	public function positive_mark($order_id = false) {
 		$this->mark($order_id, 'positive');
 	}
 
-	function negative_mark($order_id = false) {
+	public function negative_mark($order_id = false) {
 		$this->mark($order_id, 'negative');
 	}
 
@@ -286,7 +307,7 @@ class Orders extends CI_Controller {
 		return $next_date;
 	}
 
-	function cancel($order_id = false) {
+	public function cancel($order_id = false) {
 		$order_id = intval($order_id);
 		if (empty($order_id)) {
 			custom_404();
@@ -362,7 +383,7 @@ class Orders extends CI_Controller {
 
 	}
 
-	function accept($order_id = false) {
+	public function accept($order_id = false) {
 		$order_id = intval($order_id);
 		if (empty($order_id)) {
 			custom_404();
@@ -386,4 +407,5 @@ class Orders extends CI_Controller {
 		}
 		redirect('orders/detail/'.$order_id, 'refresh');
 	}
+
 }

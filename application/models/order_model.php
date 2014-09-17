@@ -167,7 +167,8 @@ class Order_model extends CI_Model {
 					} elseif (in_array($row['status'], array(4,5))) {
 						return '<span class="label label-danger"><i class="icon_frown"></i>Сделка отменена</span>';
 					} elseif (!$row['cleaner_id'] && $row['status'] == 2 && $row['start_date'] > time() && $CI->data['user_info']['is_cleaner']) {
-						return '<a href="'.site_url('orders/accept/'.$row['id']).'" class="btn btn-primary">Взяться</a>';
+						return '<span class="label label-primary"><i class="icon_info"></i>Подробнее</span>';
+						//return '<a href="'.site_url('orders/accept/'.$row['id']).'" class="btn btn-primary">Взяться</a>';
 					} elseif (!$row['cleaner_id'] && $row['status'] == 2 && $row['start_date'] < time()) {
 						return '<span class="label label-danger"><i class="icon_frown"></i>Сделка отменена (отсутствует горничная)</span>';
 					} elseif (in_array($row['status'], array(0,1))) {

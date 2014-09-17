@@ -9,5 +9,5 @@
 </div>
 <div class="info">
 	Уборка <?php echo date('d.m.Y с H:i', $start_date).' до '.date('H:i', $start_date + ($duration * 3600)) ?><br />
-	<small><?php echo $address.', <span class="price">'.floatval($is_cleaner ? $total_cleaner_price : $total_price).' рублей</span>'?></small>
+	<small><a data-toggle="modal" data-target="#ajaxModal" href="<?php echo site_url('orders/contact/'.$id)?>"><?php echo $address?></a>, <span class="price"><?php echo floatval($is_cleaner ? $total_cleaner_price : $total_price)?> рублей</span></small>
 </div>

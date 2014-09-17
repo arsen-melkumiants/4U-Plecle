@@ -23,6 +23,7 @@ input:hover,
 button:hover {outline: none !important;}
 label {font-weight: normal;}
 a {color: #009dbf;}
+.no_print {display: none;}
 .clear {clear: both;height: 0;overflow: hidden;}
 .btn,
 .form-control {border-radius: 3px;padding: 12px;height: auto;}
@@ -185,8 +186,8 @@ table .btn.btn-primary:hover {color: #fff;background-color: #005668;}
 
 .list.orders * {font-size: 14px;}
 .list.orders tr {cursor: pointer;}
-.list.orders .label {display: inline-block;border-radius: 0;padding: 13px 10px 13px 45px;position: relative;font-weight: normal;}
-.list.orders .label [class^="icon_"], [class*="icon_"] {display: block;position: absolute;top: 0px;left: 0px;height: 100%;font-size: 24px;border-right: 1px solid #fff;padding: 6px;font-weight: normal;}
+.list.orders .label {display: inline-block;border-radius: 0;padding: 13px 10px 13px 50px;position: relative;font-weight: normal;}
+.list.orders .label [class^="icon_"], [class*="icon_"] {display: block;position: absolute;top: 0px;left: 0px;height: 100%;font-size: 24px;border-right: 1px solid #fff;padding: 6px 7px;font-weight: normal;}
 .list.orders .label [class^="icon_"]:before, [class*=" icon_"]:before {content: "";text-decoration: inherit;display: inline-block;speak: none;height: 31px;width: 28px;background: url(../img/icon_sprite.png);}
 .list.orders .label .icon_info:before {background-position: -2px -3px;}
 .list.orders .label .icon_time:before {background-position: -2px -105px;}
@@ -283,6 +284,13 @@ table.reviews .positive .name {color: #4f5f6f;}
 .user_info .reviews .name {color: #000;}
 .user_info .reviews .text {color: #777;}
 .user_info form button {display: inline;background: transparent;border: 0;padding: 0;color: #FFA044;font-weight: bold;}
+
+.contact_info {position: relative;}
+.contact_info_inner .phone {padding: 15px;}
+.contact_info .print {position: absolute;right: 20px;bottom: 30px;color: #C1C1C1;cursor: pointer;}
+.contact_info .print:hover {color: #000;opacity: 0.5;}
+.contact_info .print * {font-size: 24px;}
+.contact_info .btn_block {padding: 20px 120px;}
 
 .inner_menu {margin-bottom: 25px;}
 .inner_menu ul {list-style: none;padding-left: 0;}
