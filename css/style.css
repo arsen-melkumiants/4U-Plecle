@@ -286,6 +286,7 @@ table.reviews .positive .name {color: #4f5f6f;}
 .user_info form button {display: inline;background: transparent;border: 0;padding: 0;color: #FFA044;font-weight: bold;}
 
 .contact_info {position: relative;}
+.contact_info .group-google-maps-preview {width: 100%;}
 .contact_info_inner .phone {padding: 15px;}
 .contact_info .print {position: absolute;right: 20px;bottom: 30px;color: #C1C1C1;cursor: pointer;}
 .contact_info .print:hover {color: #000;opacity: 0.5;}

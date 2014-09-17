@@ -1,6 +1,6 @@
 <div class="contact_info">
 	<div class="contact_info_inner" data-title="Контакты сделки">
-		<img class="group-google-maps-preview" src="http://maps.googleapis.com/maps/api/staticmap?center=<?php echo urlencode($address)?>&size=600x500&sensor=true&markers=color:red|<?php echo urlencode($address)?>">
+		<img class="group-google-maps-preview" src="http://maps.googleapis.com/maps/api/staticmap?center=<?php echo urlencode($address)?>&size=700x500&sensor=true&markers=color:red|<?php echo urlencode($address)?>">
 		<div class="phone">Телефон клиента: <?php echo $this->ion_auth->user($order_info['client_id'])->row()->phone?></div>
 	</div>
 	<div class="btn_block">
