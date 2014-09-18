@@ -669,6 +669,9 @@ class Personal extends CI_Controller {
 			$this->db->insert('orders', $info);
 			$order_id = $this->db->insert_id();
 
+			$info['order_id'] = $order_id;
+			$this->order_model->send_invites($info);
+
 			$email_info = array(
 				'order_id'  => $order_id,
 				'auto_reg'  => $auto_reg,

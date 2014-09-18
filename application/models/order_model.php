@@ -84,21 +84,27 @@ class Order_model extends CI_Model {
 		}
 
 		if ($status == 0) {
-			$this->db->where('cleaner_id', 0);
-			$this->db->where_in('status', array(0,1,2));
-			$this->db->where('start_date >', time() + 86400);
+			$this->db
+				->where('o.cleaner_id', 0)
+				->where_in('o.status', array(0,1,2))
+				->where('o.start_date >', time() + 86400);
 		} elseif ($status == 1) {
-			$this->db->where('cleaner_id !=', 0);
-			$this->db->where('(status = 2 OR (status = 1 AND start_date > '.(time() + 86400).'))');
+			$this->db
+				->where('o.cleaner_id !=', 0)
+				->where('(o.status = 2 OR (o.status = 1 AND o.start_date > '.(time() + 86400).'))');
 		} elseif ($status == 3) {
-			$this->db->where('cleaner_id', 0);
-			$this->db->where('((status = 2 AND start_date > '.time().') OR (status IN (1) AND start_date > '.(time() + 86400).') )');
+			$this->db
+				->where('cleaner_id', 0)
+				->where('((o.status = 2 AND o.start_date > '.time().') OR (o.status  = 1 AND o.start_date > '.(time() + 86400).') )');
+
+			$this->db
+				->where('((o.recommended) = 0 OR (o.recommended = 1 AND o.add_date + '.(3600 * 3).' < '.time().'))');
 		} else {
-			$this->db->where('(status > 2 OR (status IN (0,1) AND start_date < '.(time() + 86400).') OR (status = 2 AND start_date < '.time().' AND cleaner_id = 0))');
+			$this->db->where('(o.status > 2 OR (o.status IN (0,1) AND o.start_date < '.(time() + 86400).') OR (o.status = 2 AND o.start_date < '.time().' AND o.cleaner_id = 0))');
 		}
 
 		if ($status != 3) {
-			$this->db->where($user_type.'_id', $user_id);
+			$this->db->where('o.'.$user_type.'_id', $user_id);
 		}
 
 
@@ -110,7 +116,8 @@ class Order_model extends CI_Model {
 			->select('o.*, u.photo as photo, u.id as user_id')
 			->join('users AS u', 'u.id = o.'.($user_type == 'client' ? 'cleaner' : 'client').'_id', 'left')
 			->from('orders as o')
-			->order_by('id', 'desc')
+			->order_by('o.id', 'desc')
+			->group_by('o.id')
 			->get();
 	}
 
@@ -593,5 +600,26 @@ class Order_model extends CI_Model {
 			$this->db->limit($limit);
 		}
 		return $this->get_all_reviews($user_id)->result_array();
+	}
+
+	function send_invites($order_info) {
+		$this->load->model('special_model');
+		$cleaners = $this->special_model->get_favorite_users($order_info['client_id'])->result_array();
+		foreach ($cleaners as $item) {
+			$insert_array[] = array(
+				'order_id'   => $order_info['order_id'],
+				'cleaner_id' => $item['id'],
+				'add_date'   => time(),
+				'status'     => 0,
+			);
+		}
+
+		if (!empty($insert_array)) {
+			$this->db->insert_batch('order_invites', $insert_array);
+			$this->db->where('id', $order_info['order_id'])->update('orders', array('recommend' => 1));
+			return true;
+		}
+
+		return false;
 	}
 }
