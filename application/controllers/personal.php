@@ -2,7 +2,7 @@
 
 class Personal extends CI_Controller {
 
-	function __construct() {
+	public function __construct() {
 		parent::__construct();
 		$this->load->library(array(
 			'ion_auth',
@@ -31,7 +31,7 @@ class Personal extends CI_Controller {
 	}
 
 	//redirect if needed, otherwise display the user list
-	function index() {
+	public function index() {
 		return false;
 		if (!$this->ion_auth->logged_in()) {
 			redirect(ADM_URL.'auth/login', 'refresh');
@@ -43,7 +43,7 @@ class Personal extends CI_Controller {
 	}
 
 	//log the user in
-	function login() {
+	public function login() {
 		if ($this->ion_auth->logged_in()) {
 			if ($this->input->is_ajax_request()) {
 				echo 'refresh';exit;
@@ -105,7 +105,7 @@ class Personal extends CI_Controller {
 	}
 
 	//log the user out
-	function logout()
+	public function logout()
 	{
 		$logout = $this->ion_auth->logout();
 		$this->session->set_flashdata('success', $this->ion_auth->messages());
@@ -113,7 +113,7 @@ class Personal extends CI_Controller {
 	}
 
 	//activate the user
-	function activate($id, $code=false)
+	public function activate($id, $code=false)
 	{
 		if ($code !== false) {
 			$activation = $this->ion_auth->activate($id, $code);
@@ -132,7 +132,7 @@ class Personal extends CI_Controller {
 		}
 	}
 
-	function registration()	{
+	public function registration()	{
 		$this->data['title'] = $this->data['header'] = 'Регистрация горничной';
 
 		if ($this->ion_auth->logged_in()) {
@@ -261,7 +261,7 @@ class Personal extends CI_Controller {
 		}
 	}
 
-	function edit_profile()	{
+	public function edit_profile()	{
 		$this->data['title'] = $this->data['header'] = lang('edit_user_heading');
 
 		if (!$this->ion_auth->logged_in()) {
@@ -437,13 +437,64 @@ class Personal extends CI_Controller {
 			))
 			->create(array('error_inline' => true, 'btn_offset' => 3, 'btn_width' => 6));
 
+		$this->upload_photo(true);
+
+
 		$this->load->view('header', $this->data);
 		$this->load->view('orders/client_top', $this->data);
 		$this->load->view('orders/order_page', $this->data);
 		$this->load->view('footer', $this->data);
 	}
 
-	function forgot_password() {
+
+	public function upload_photo($is_called = false) {
+		$id = $this->ion_auth->user()->row()->id;
+		if (empty($id)) {
+			custom_404();
+		}
+
+		$this->load->model(ADM_FOLDER.'admin_user_model');
+		$user_info = $this->admin_user_model->get_user_info($id);
+
+		if (empty($user_info )) {
+			custom_404();
+		}
+
+		$this->data['image_full_path'] = !empty($user_info['photo']) ? '/uploads/avatars/'.$user_info['photo'] : false;
+
+		$this->load->library('form');
+		$this->data['upload_form'] = $this->form
+			->file('photo', array(
+				'label' => 'Фото',
+				'width' => 12, 'group_class' => 'col-sm-6'
+			))
+			->hidden('x1')
+			->hidden('y1')
+			->hidden('re_width')
+			->hidden('re_height')
+			->hidden('height')
+			->hidden('width')
+			->btn(array(
+				'value' => 'Загрузить',
+				'class' => 'btn btn-block btn-primary',
+			))
+			->create(array('upload' => true, 'action' => site_url('personal/upload_photo'), 'error_inline' => true, 'btn_offset' => 3, 'btn_width' => 6));
+		if (!empty($this->data['center_block'])) {
+			$this->data['center_block'] .= $this->load->view('profile/upload_js', $this->data, true);
+		}
+		$upload_info = $this->admin_user_model->upload_user_photo($user_info);
+		if ($upload_info === true) {
+			$this->session->set_flashdata('success', 'Фото успешно добавлено');
+		} elseif (!empty($upload_info)) {
+			$this->session->set_flashdata('danger', $upload_info);
+		}
+
+		if (empty($is_called)) {
+			redirect('personal/edit_profile', 'refresh');
+		}
+	}
+
+	public function forgot_password() {
 		$this->data['header'] = $this->data['title'] = lang('forgot_password_heading');
 
 		if ($this->config->item('identity', 'ion_auth') == 'username') {
@@ -495,7 +546,7 @@ class Personal extends CI_Controller {
 		}
 	}
 
-	function _get_csrf_nonce() {
+	public function _get_csrf_nonce() {
 		$this->load->helper('string');
 		$key   = random_string('alnum', 8);
 		$value = random_string('alnum', 20);
@@ -505,7 +556,7 @@ class Personal extends CI_Controller {
 		return array($key => $value);
 	}
 
-	function _valid_csrf_nonce() {
+	public function _valid_csrf_nonce() {
 		if ($this->input->post($this->session->flashdata('csrfkey')) !== FALSE &&
 			$this->input->post($this->session->flashdata('csrfkey')) == $this->session->flashdata('csrfvalue'))
 		{
@@ -515,13 +566,13 @@ class Personal extends CI_Controller {
 		}
 	}
 
-	function _render_page($view, $data = null, $render = false)	{
+	public function _render_page($view, $data = null, $render = false)	{
 		$this->viewdata = (empty($data)) ? $this->data: $data;
 		$view_html = $this->load->view($view, $this->viewdata, $render);
 		if (!$render) return $view_html;
 	}
 
-	function profile($user_id = false) {
+	public function profile($user_id = false) {
 		$user_id = intval($user_id);
 		if (empty($user_id)) {
 			custom_404();
@@ -556,7 +607,7 @@ class Personal extends CI_Controller {
 	}
 
 
-	function make_order() {
+	public function make_order() {
 		$this->data['user_info'] = $this->ion_auth->user()->row_array();
 		if ($this->ion_auth->logged_in() && $this->data['user_info']['is_cleaner']) {
 			if ($this->input->is_ajax_request()) {
@@ -687,7 +738,7 @@ class Personal extends CI_Controller {
 		}
 	}
 
-	function order_request($user_info = false) {
+	public function order_request($user_info = false) {
 		if (!isset($_POST['email'])) {
 			$this->data['temp_post']['zip'] = $this->input->post('zip');
 			$_POST = array();
