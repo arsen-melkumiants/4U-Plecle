@@ -28,7 +28,10 @@ class Main_controller extends CI_Controller {
 		} else {
 			$this->data['user_info'] = $this->ion_auth->user()->row_array();
 			$this->load->model('order_model');
-			$this->data['center_block'] .= '<div class="container">'.$this->order_model->order_table(3, 5).'<a class="more_orders" href="'.site_url('orders').'">Больше сделок</a></div>';
+			$this->data['request_orders'] = $this->order_model->order_table(3, 5);
+			$this->data['invite_orders'] = $this->order_model->order_table(4, 5);
+
+			$this->data['center_block'] .= '<div class="container">'.$this->load->view('orders/orders_list', $this->data, true).'<a class="more_orders" href="'.site_url('orders').'">Больше сделок</a></div>';
 		}
 		$this->data['partners'] = $this->db->where(array('status' => 1, 'image !=' => ''))->get('partners')->result_array();
 		$this->data['center_block'] .= $this->load->view('promo_page', $this->data, true);

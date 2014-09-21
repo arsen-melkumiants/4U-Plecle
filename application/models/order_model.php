@@ -51,15 +51,18 @@ class Order_model extends CI_Model {
 			if (empty($this->data['user_info']['is_cleaner'])) {
 				return false;
 			}
-			$this->db->where('cleaner_id', 0);
-			$this->db->where('(status = 2 AND start_date > '.time().')');
+			$this->db->where('o.cleaner_id', 0);
+			$this->db->where('(o.status = 2 AND o.start_date > '.time().')');
 		} else {
-			$this->db->where($user_type.'_id', $user_id);
+			$this->db->where('o.'.$user_type.'_id', $user_id);
 		}
 		return $this->db
-			->where('id', $order_id)
-			->order_by('id', 'desc')
-			->get('orders')
+			->select('o.*, i.status as invite_status, i.id as invite_id, i.read as invite_read')
+			->from('orders as o')
+			->join('order_invites as i', 'o.id = i.order_id AND i.cleaner_id = '.$user_id, 'left')
+			->where('o.id', $order_id)
+			->order_by('o.id', 'desc')
+			->get()
 			->row_array();
 	}
 
@@ -94,16 +97,19 @@ class Order_model extends CI_Model {
 				->where('(o.status = 2 OR (o.status = 1 AND o.start_date > '.(time() + 86400).'))');
 		} elseif ($status == 3) {
 			$this->db
-				->where('cleaner_id', 0)
-				->where('((o.status = 2 AND o.start_date > '.time().') OR (o.status  = 1 AND o.start_date > '.(time() + 86400).') )');
-
-			$this->db
+				->where('o.cleaner_id', 0)
+				->where('((o.status = 2 AND o.start_date > '.time().') OR (o.status  = 1 AND o.start_date > '.(time() + 86400).') )')
 				->where('((o.recommended) = 0 OR (o.recommended = 1 AND o.add_date + '.(3600 * 3).' < '.time().'))');
+		} elseif ($status == 4) {
+			$this->db
+				->where('o.cleaner_id', 0)
+				->where('((o.status = 2 AND o.start_date > '.time().') OR (o.status  = 1 AND o.start_date > '.(time() + 86400).') )')
+				->join('order_invites AS i', 'o.id = i.order_id AND i.status = 0 AND i.cleaner_id = '.$user_id, 'inner');
 		} else {
 			$this->db->where('(o.status > 2 OR (o.status IN (0,1) AND o.start_date < '.(time() + 86400).') OR (o.status = 2 AND o.start_date < '.time().' AND o.cleaner_id = 0))');
 		}
 
-		if ($status != 3) {
+		if (!in_array($status, array(3,4))) {
 			$this->db->where('o.'.$user_type.'_id', $user_id);
 		}
 
@@ -154,7 +160,8 @@ class Order_model extends CI_Model {
 			'0' => 'Заявки на сделки',
 			'1' => 'Активные сделки',
 			'2' => 'Завершенные сделки',
-			'3' => 'Эти сделки должны Вас заинтересовать',
+			//'3' => 'Эти сделки должны Вас заинтересовать',
+			//'4' => 'Вам предлагают',
 		);
 
 		$this->table
@@ -206,7 +213,7 @@ class Order_model extends CI_Model {
 					return 'onclick="show_order(\''.site_url('orders/detail/'.$row['id']).'\')"';
 				}
 		));
-		if (!empty($result_html)) {
+		if (!empty($result_html) && !empty($status_labels[$status])) {
 			$result_html = '<h4 class="title">'.$status_labels[$status].'</h4>'.$result_html;
 		}
 		return $result_html;
@@ -608,7 +615,7 @@ class Order_model extends CI_Model {
 		foreach ($cleaners as $item) {
 			$insert_array[] = array(
 				'order_id'   => $order_info['order_id'],
-				'cleaner_id' => $item['id'],
+				'cleaner_id' => $item['user_id'],
 				'add_date'   => time(),
 				'status'     => 0,
 			);
@@ -616,10 +623,30 @@ class Order_model extends CI_Model {
 
 		if (!empty($insert_array)) {
 			$this->db->insert_batch('order_invites', $insert_array);
-			$this->db->where('id', $order_info['order_id'])->update('orders', array('recommend' => 1));
+			$this->db->where('id', $order_info['order_id'])->update('orders', array('recommended' => 1));
 			return true;
 		}
 
 		return false;
+	}
+
+	function get_unread_invite_count($user_id, $reset = false) {
+		$unread_invites = $this->db
+			->select('i.id')
+			->from('orders AS o')
+			->join('order_invites AS i', 'o.id = i.order_id AND i.status = 0 AND i.cleaner_id = '.$user_id.' AND i.read = 0', 'inner')
+			->where('o.cleaner_id', 0)
+			->where('((o.status = 2 AND o.start_date > '.time().') OR (o.status  = 1 AND o.start_date > '.(time() + 86400).') )')
+			->order_by('i.id', 'desc')
+			->get()
+			->result_array();
+		if ($reset && !empty($unread_invites)) {
+			foreach ($unread_invites as $item) {
+				$ids[] = $item['id'];
+			}
+			$this->db->where_in('id', $ids)->update('order_invites', array('read' => 1));
+		}
+
+		return count($unread_invites);
 	}
 }

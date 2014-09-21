@@ -51,17 +51,21 @@ class Orders extends CI_Controller {
 			),
 		);
 
-		$this->data['center_block'] = $this->order_model->order_table(0);
-		$this->data['center_block'] .= $this->order_model->order_table(1);
-		$this->data['center_block'] .= $this->order_model->order_table(2);
+		$this->data['created_orders']   = $this->order_model->order_table(0);
+		$this->data['active_orders']    = $this->order_model->order_table(1);
+		$this->data['completed_orders'] = $this->order_model->order_table(2);
 
 		$this->load->view('header', $this->data);
 		if ($this->data['user_info']['is_cleaner']) {
-			$this->data['center_block'] .= $this->order_model->order_table(3);
+			$this->data['request_orders'] = $this->order_model->order_table(3);
+			$this->data['invite_orders'] = $this->order_model->order_table(4);
 			$this->load->view('orders/cleaner_top', $this->data);
 		} else {
 			$this->load->view('orders/client_top', $this->data);
 		}
+
+		$this->data['center_block'] = $this->load->view('orders/orders_list', $this->data, true);
+
 		$this->load->view('orders/order_page', $this->data);
 		$this->load->view('footer', $this->data);
 	}
@@ -78,6 +82,10 @@ class Orders extends CI_Controller {
 			if (empty($this->data['order_info'])) {
 				custom_404();
 			}
+		}
+
+		if ($this->data['order_info']['invite_read'] === '0') {
+			$this->db->where('id', $this->data['order_info']['invite_id'])->update('order_invites', array('read' => 1));
 		}
 
 		$this->data['title'] = $this->data['header'] = 'Сделка #'.$order_id;
@@ -149,7 +157,7 @@ class Orders extends CI_Controller {
 				'func'  => function($row, $params, $that, $CI) {
 					return floatval($CI->data['user_info']['is_cleaner'] ? $row['total_cleaner_price'] : $row['total_price']).' рублей';
 				}
-			))
+		))
 			->create(function($CI) {
 				return $CI->order_model->get_order_payments($CI->data['order_id']);
 			}, array('no_header' => true, 'class' => 'list'));
@@ -396,6 +404,9 @@ class Orders extends CI_Controller {
 
 		$update_array['cleaner_id'] = $this->data['user_info']['id'];
 		$this->db->where('id', $order_id)->update('orders', $update_array);
+		if ($order_info['invite_status'] === '0') {
+			$this->db->where('id', $order_info['invite_id'])->update('order_invites', array('status' => 1));
+		}
 		$this->session->set_flashdata('success', 'Сделка успешно заключена');
 		$email_info = array(
 			'order_id'   => $order_info['id'],
@@ -406,6 +417,29 @@ class Orders extends CI_Controller {
 			$this->order_model->send_mail($this->ion_auth->user($order_info['cleaner_id'])->row()->email, 'Заявка успешно принята', 'accept_order', $email_info);
 		}
 		redirect('orders/detail/'.$order_id, 'refresh');
+	}
+
+	public function reject_invite($order_id = false) {
+		$order_id = intval($order_id);
+		if (empty($order_id)) {
+			custom_404();
+		}
+
+		$order_info = $this->order_model->get_user_order($order_id, false, 'no_cleaner');
+		if (empty($order_info)) {
+			custom_404();
+		}
+
+		if ($order_info['invite_status'] === '0') {
+			$this->db->where('id', $order_info['invite_id'])->update('order_invites', array('status' => 2));
+			$this->session->set_flashdata('success', 'Предложение по работе отклонено, но у вас остается возможность заключить эту сделку, если вы передумали');
+		}
+		redirect('orders', 'refresh');
+	}
+
+	public function read_invites() {
+		$this->order_model->get_unread_invite_count($this->data['user_info']['id'], true);
+		exit;
 	}
 
 }

@@ -23,8 +23,16 @@
 			</div>
 
 			<div class="col-sm-4 text-right">
-				<?php if (!$order_info['cleaner_id'] && (($order_info['status'] == 2 && $order_info['start_date'] > time()))) {?>
+				<?php if (!$order_info['cleaner_id'] && (($order_info['status'] == 2 && $order_info['start_date'] > time()))) {
+					if ($order_info['invite_status'] === '0') {?>
+					<div class="invite_action_block">
+						<a href="<?php echo site_url('orders/accept/'.$order_info['id'])?>" class="big_link">Взяться!</a>
+						или
+						<a href="<?php echo site_url('orders/reject_invite/'.$order_info['id'])?>" class="big_link">Отказаться</a>
+					</div>
+					<?php } else {?>
 					<a href="<?php echo site_url('orders/accept/'.$order_info['id'])?>" class="big_link">Взяться!</a>
+					<?php }?>
 				<?php } elseif ($order_info['status'] == 2 && time() > $order_info['start_date'] && $order_info['start_date'] + (3600 * $order_info['duration']) > time()) {?>
 					<div class="big_status">Уборка идет</div>
 					<div class="add_title">Конец <?php echo date('d.m.Y в H:i', $order_info['start_date'] + (3600 * $order_info['duration']))?></div>
