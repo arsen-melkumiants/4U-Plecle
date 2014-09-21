@@ -36,6 +36,7 @@ input[type="radio"], input[type="checkbox"] {margin: 2px 0 0;cursor: pointer;}
 	content: attr(placeholder);
 	color: #999999;
 }
+dl {margin: 0;padding-bottom: 20px;}
 
 h4.title {font-size: 16px;border-bottom: 1px solid #333;padding-bottom: 7px;margin: 15px 0;height: 25px;}
 h4.title a {font-size: 16px;color: #333;}
@@ -305,3 +306,13 @@ table.reviews .positive .name {color: #4f5f6f;}
 .inner_menu li:first-child:before {content: "";padding: 0;}
 .inner_menu a {font-size: 18px;color: #333;text-decoration: none;}
 .inner_menu a:hover {text-decoration: underline;color: #009dbf;}
+
+.message_items {border: 1px solid #e9e9e9;height: 350px;border-bottom: 0;overflow: auto;}
+.message_items .item {padding: 10px;}
+.message_items .item .text {width: 50%;margin: 0 20px;padding: 10px;min-height: 55px;border-radius: 10px;}
+.message_items .item .date {color: #aaa;padding: 20px 5px;}
+.message_items .to_me.item .inner > div {float: left;}
+.message_items .to_me.item .text {background: #eee;}
+.message_items .from_me.item .inner > div {float: right;}
+.message_items .from_me.item .text {background: #cdedf5;}
+.message_form textarea {border-radius: 0;border: 1px solid #e9e9e9;-webkit-box-shadow: none;box-shadow: none;resize: none;}

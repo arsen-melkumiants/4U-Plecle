@@ -92,6 +92,9 @@ class Orders extends CI_Controller {
 
 		$this->data['payment_history'] = $this->payment_table($order_id);
 		$this->data['center_block'] = $this->load->view('orders/order_info', $this->data, true);
+
+		$this->messages($order_id, true);
+
 		$this->data['right_info']   = array(
 			'title'      => 'Детали заявки',
 			'info_array' => array(
@@ -441,6 +444,24 @@ class Orders extends CI_Controller {
 	public function read_invites() {
 		$this->order_model->get_unread_invite_count($this->data['user_info']['id'], true);
 		exit;
+	}
+
+	public function messages() {
+
+		$this->data['message_form'] = $this->form
+			->textarea('text', array(
+				'valid_rules' => 'required|xss_clean|max_length[250]',
+				'width'       => 12,
+				'no_editor'   => true,
+				'rows'        => 3,
+				'placeholder' => 'Введите сообщение...',
+			))
+			->btn(array(
+				'value'       => 'Отправить сообщение',
+				'class'       => 'btn-primary btn-block',
+			))
+			->create(array('error_inline' => true, 'btn_offset' => 3, 'btn_width' => 6));
+		$this->data['center_block'] .= $this->load->view('orders/order_messages', $this->data, true);
 	}
 
 }

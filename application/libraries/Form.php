@@ -160,7 +160,7 @@ class Form {
 				$input .= '</select>';
 			}
 		} elseif ($type == 'textarea') {
-			$attrs_list = array('class','name','readonly','rows');
+			$attrs_list = array('class','name','readonly','rows','placeholder');
 			$input .= '<textarea'.$this->attributes($attrs_list, $params).'>'.$params['value'].'</textarea>';
 		} else {
 			$attrs_list = array('type','class','name','value','placeholder','readonly');
