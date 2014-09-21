@@ -432,6 +432,7 @@ class Orders extends CI_Controller {
 
 		if ($order_info['invite_status'] === '0') {
 			$this->db->where('id', $order_info['invite_id'])->update('order_invites', array('status' => 2));
+			$this->db->query('UPDATE orders SET recommended = 0 WHERE NOT EXISTS (SELECT * FROM order_invites WHERE order_id = '.$order_id.' AND status = 0)');
 			$this->session->set_flashdata('success', 'Предложение по работе отклонено, но у вас остается возможность заключить эту сделку, если вы передумали');
 		}
 		redirect('orders', 'refresh');
