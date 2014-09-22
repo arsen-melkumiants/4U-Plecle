@@ -649,4 +649,28 @@ class Order_model extends CI_Model {
 
 		return count($unread_invites);
 	}
+
+	function get_order_messages($order_id) {
+		$user_id = $this->data['user_info']['id'];
+		$messages = $this->db
+			->select('m.*, u.photo')
+			->from('order_messages AS m')
+			->join('users AS u', 'm.sender_id = u.id')
+			->where('order_id', $order_id)
+			->where('(sender_id = '.$user_id.' OR reciever_id = '.$user_id.')')
+			->get()
+			->result_array();
+		if (empty($messages)) {
+			return false;
+		}
+
+		foreach ($messages as $key => $item) {
+			if ($user_id == $item['sender_id']) {
+				$messages[$key]['owner'] = 1;
+			} else {
+				$messages[$key]['owner'] = 0;
+			}
+		}
+		return $messages;
+	}
 }

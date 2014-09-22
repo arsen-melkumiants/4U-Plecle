@@ -93,7 +93,9 @@ class Orders extends CI_Controller {
 		$this->data['payment_history'] = $this->payment_table($order_id);
 		$this->data['center_block'] = $this->load->view('orders/order_info', $this->data, true);
 
-		$this->messages($order_id, true);
+		if (in_array($this->data['order_info']['status'], array(1,2)) && $this->data['order_info']['start_date'] - 86400 < time()) {
+			$this->messages($order_id, true);
+		}
 
 		$this->data['right_info']   = array(
 			'title'      => 'Детали заявки',
@@ -446,7 +448,21 @@ class Orders extends CI_Controller {
 		exit;
 	}
 
-	public function messages() {
+	public function messages($order_id = false, $is_called = false) {
+		$order_id = intval($order_id);
+		if (empty($order_id)) {
+			custom_404();
+		}
+
+		$this->data['order_info'] = $this->order_model->get_user_order($order_id);
+		if (empty($this->data['order_info'])) {
+			$this->data['order_info'] = $this->order_model->get_user_order($order_id, false, 'no_cleaner');
+			if (empty($this->data['order_info'])) {
+				custom_404();
+			}
+		}
+
+		$this->data['order_messages'] = $this->order_model->get_order_messages($order_id);
 
 		$this->data['message_form'] = $this->form
 			->textarea('text', array(
@@ -462,6 +478,19 @@ class Orders extends CI_Controller {
 			))
 			->create(array('error_inline' => true, 'btn_offset' => 3, 'btn_width' => 6));
 		$this->data['center_block'] .= $this->load->view('orders/order_messages', $this->data, true);
+
+		if ($this->form_validation->run() != false) {
+			$this->db->insert('order_messages', array(
+				'text'        => $this->input->post('text'),
+				'order_id'    => $order_id,
+				'sender_id'   => $this->data['user_info']['id'],
+				'reciever_id' => $this->data['order_info']['client_id'] == $this->data['user_info']['id'] ? $this->data['order_info']['cleaner_id'] : $this->data['order_info']['client_id'],
+				'add_date'    => time(),
+			));
+
+			$this->session->set_flashdata('success', 'Сообщение успешно отправлено');
+			redirect('orders/detail/'.$order_id, 'refresh');
+		}
 	}
 
 }

@@ -309,7 +309,7 @@ table.reviews .positive .name {color: #4f5f6f;}
 
 .message_items {border: 1px solid #e9e9e9;height: 350px;border-bottom: 0;overflow: auto;}
 .message_items .item {padding: 10px;}
-.message_items .item .text {width: 50%;margin: 0 20px;padding: 10px;min-height: 55px;border-radius: 10px;}
+.message_items .item .text {width: 50%;margin: 0 20px;padding: 15px;min-height: 55px;border-radius: 10px;}
 .message_items .item .date {color: #aaa;padding: 20px 5px;}
 .message_items .to_me.item .inner > div {float: left;}
 .message_items .to_me.item .text {background: #eee;}

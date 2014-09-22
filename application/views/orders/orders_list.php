@@ -1,4 +1,5 @@
 <?php echo (!empty($created_orders) ? $created_orders: '')."\n";?>
+<?php echo (!empty($active_orders) ? $active_orders: '')."\n";?>
 
 <?php $unread_invites = $this->order_model->get_unread_invite_count($user_info['id']);
 $unread_invites = !empty($unread_invites) ? '<div class="count invite_count">'.$unread_invites.'</div>' : '';
