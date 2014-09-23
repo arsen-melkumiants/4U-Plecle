@@ -6,6 +6,10 @@
 	<?php } else {?>
 	<img src="/img/no_photo.jpg" width="55" class="img-circle">
 	<?php }?>
+
+	<?php if(!empty($unread)) {?>
+	<div class="count"><?php echo $unread?></div>
+	<?php }?>
 </div>
 <div class="info">
 	Уборка <?php echo date('d.m.Y с H:i', $start_date).' до '.date('H:i', $start_date + ($duration * 3600)) ?><br />

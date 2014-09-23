@@ -462,6 +462,10 @@ class Orders extends CI_Controller {
 			}
 		}
 
+		if ($is_called) {
+			$this->order_model->read_messages($order_id);
+		}
+
 		$this->data['order_messages'] = $this->order_model->get_order_messages($order_id);
 
 		$this->data['message_form'] = $this->form

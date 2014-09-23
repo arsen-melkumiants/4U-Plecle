@@ -119,9 +119,10 @@ class Order_model extends CI_Model {
 		}
 
 		return $this->db
-			->select('o.*, u.photo as photo, u.id as user_id')
-			->join('users AS u', 'u.id = o.'.($user_type == 'client' ? 'cleaner' : 'client').'_id', 'left')
+			->select('o.*, u.photo as photo, u.id as user_id, COUNT(m.id) as unread')
 			->from('orders as o')
+			->join('order_messages AS m', 'o.id = m.order_id AND m.reciever_id = '.$user_id.' AND m.read = 0', 'left')
+			->join('users AS u', 'u.id = o.'.($user_type == 'client' ? 'cleaner' : 'client').'_id', 'left')
 			->order_by('o.id', 'desc')
 			->group_by('o.id')
 			->get();
@@ -672,5 +673,16 @@ class Order_model extends CI_Model {
 			}
 		}
 		return $messages;
+	}
+
+	function read_messages($order_id) {
+		$user_id = $this->data['user_info']['id'];
+		$this->db
+			->where(array(
+				'order_id'    => $order_id,
+				'reciever_id' => $user_id,
+				'read'        => 0,
+			))
+			->update('order_messages', array('read' => 1));
 	}
 }
