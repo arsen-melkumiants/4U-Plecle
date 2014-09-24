@@ -38,7 +38,7 @@ input[type="radio"], input[type="checkbox"] {margin: 2px 0 0;cursor: pointer;}
 }
 dl {margin: 0;padding-bottom: 20px;}
 
-h4.title {font-size: 16px;border-bottom: 1px solid #333;padding-bottom: 7px;margin: 15px 0;height: 25px;}
+h4.title {font-size: 16px;border-bottom: 1px solid #a3b5b9;padding-bottom: 7px;margin: 15px 0;height: 25px;color: #00313c;}
 h4.title a {font-size: 16px;color: #333;}
 h4.title .right_link {float: right;color: #a94442;}
 h4.title .invite_link {position: relative;margin-left: 45px;}
@@ -310,10 +310,12 @@ table.reviews .positive .name {color: #4f5f6f;}
 
 .message_items {border: 1px solid #e9e9e9;height: 350px;border-bottom: 0;overflow: auto;}
 .message_items .item {padding: 10px;}
-.message_items .item .text {width: 50%;margin: 0 20px;padding: 15px;min-height: 55px;border-radius: 10px;}
+.message_items .item .text {width: 50%;margin: 0 20px;padding: 15px;min-height: 55px;border-radius: 7px;position: relative;}
 .message_items .item .date {color: #aaa;padding: 20px 5px;}
 .message_items .to_me.item .inner > div {float: left;}
 .message_items .to_me.item .text {background: #eee;}
+.message_items .to_me.item .text:before {content: "";display: block;position: absolute;left: -9px;top: 20px;border-style: solid;border-width: 10px 0 0 10px;border-color: #eee transparent transparent;}
 .message_items .from_me.item .inner > div {float: right;}
 .message_items .from_me.item .text {background: #cdedf5;}
+.message_items .from_me.item .text:before {content: "";display: block;position: absolute;right: -9px;top: 20px;border-style: solid;border-width: 10px 10px 0 0;border-color: #cdedf5 transparent transparent;}
 .message_form textarea {border-radius: 0;border: 1px solid #e9e9e9;-webkit-box-shadow: none;box-shadow: none;resize: none;}
