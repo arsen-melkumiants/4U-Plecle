@@ -12,7 +12,7 @@ class Table {
 
 	public $grid_type     = 'col-md';
 
-	public $limit_page    = 15;
+	public $limit_page    = 2;
 
 	public function __construct($grid_type = false) {
 		$this->grid_type = $grid_type ? $grid_type : $this->grid_type;
@@ -228,10 +228,11 @@ class Table {
 		$limit = !empty($table_params['limit']) ? $table_params['limit'] : $this->limit_page;
 		if (intval($limit)) {
 			$sql_all = $sql($CI);
+			$page_name= !empty($table_params['page_name']) ? $table_params['page_name'] : '';
 			if (isset($sql_all->conn_id)) {
-				$result['pages'] = $this->pagination($sql_all->num_rows(), $limit);
+				$result['pages'] = $this->pagination($sql_all->num_rows(), $limit, 5, $page_name);
 			}
-			$offset = isset($_GET['page']) && intval($_GET['page']) > 1 ? (intval($_GET['page']) - 1) * $limit : 0;
+			$offset = isset($_GET[$page_name]) && intval($_GET[$page_name]) > 1 ? (intval($_GET[$page_name]) - 1) * $limit : 0;
 			$CI->db->limit($limit, $offset);
 		}
 
@@ -241,22 +242,23 @@ class Table {
 		return $result;
 	}
 
-	function pagination($total = false, $per_page = false, $size = 5){
+	public function pagination($total = false, $per_page = false, $size = 5, $page_name = false){
 		if (!$total || !$per_page) {
 			return false;
 		}
+		$page_name = $page_name ? $page_name : 'page';
 		$pages = ceil($total/$per_page);
 		if ($pages < 2) {
 			return false;
 		}
-		$cur_page = empty($_GET['page']) ? 1 : $_GET['page'];
+		$cur_page = empty($_GET[$page_name]) ? 1 : $_GET[$page_name];
 		$text = '<ul class="pagination">';
 		if ($cur_page < 2) {
 			$text .= '<li class="disabled"><a>«</a></li>';
 			$text .= '<li class="disabled"><a>‹</a></li>';
 		} else {
-			$text .= '<li><a href="?page=1">«</a></li>';
-			$text .= '<li><a href="?page='.($cur_page-1).'">‹</a></li>';
+			$text .= '<li><a href="?'.$page_name.'=1">«</a></li>';
+			$text .= '<li><a href="?'.$page_name.'='.($cur_page-1).'">‹</a></li>';
 		}
 
 		if ($cur_page >= $size - floor($size / 2) && ($pages - $cur_page) >= ceil($size / 2)) {
@@ -276,7 +278,7 @@ class Table {
 			if ($i == $cur_page) {
 				$text .= '<li class="active"><a>'.$i.'</a></li>';
 			} else {
-				$text .= '<li><a href="?page='.$i.'">'.$i.'</a></li>';
+				$text .= '<li><a href="?'.$page_name.'='.$i.'">'.$i.'</a></li>';
 			}
 
 			$n++;
@@ -286,8 +288,8 @@ class Table {
 			$text .= '<li class="disabled"><a>›</a></li>';
 			$text .= '<li class="disabled"><a>»</a></li>';
 		}else{
-			$text .= '<li><a href="?page='.($cur_page+1).'">›</a></li>';
-			$text .= '<li><a href="?page='.$pages.'">»</a></li>';
+			$text .= '<li><a href="?'.$page_name.'='.($cur_page+1).'">›</a></li>';
+			$text .= '<li><a href="?'.$page_name.'='.$pages.'">»</a></li>';
 		}
 		$text .= '</ul><br />';
 

@@ -165,6 +165,14 @@ class Order_model extends CI_Model {
 			//'4' => 'Вам предлагают',
 		);
 
+		$page_names = array(
+			'0' => 'created_page',
+			'1' => 'active_page',
+			'2' => 'completed_page',
+			'3' => 'request_page',
+			'4' => 'invite_page',
+		);
+
 		$this->table
 			->text('id', array(
 				'title' => 'Номер',
@@ -210,6 +218,7 @@ class Order_model extends CI_Model {
 			}, array(
 				'no_header' => true,
 				'class'     => 'list orders',
+				'page_name' => $page_names[$status],
 				'tr_func'   => function($row, $table_params, $that, $CI) {
 					return 'onclick="show_order(\''.site_url('orders/detail/'.$row['id']).'\')"';
 				}
