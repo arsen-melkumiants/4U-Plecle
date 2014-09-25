@@ -30,9 +30,13 @@ class Order_model extends CI_Model {
 		'have_pets'    => 'Есть домашнее животное',
 	);
 
+	public $add_durations = array();
+
 	function __construct() {
 		parent::__construct();
 		$this->load->database();
+
+		$this->add_durations = $this->db->where('status', 1)->get('order_options')->result_array();
 	}
 
 	function get_user_order($order_id, $user_id = false, $user_type = false) {
@@ -219,6 +223,7 @@ class Order_model extends CI_Model {
 				'no_header' => true,
 				'class'     => 'list orders',
 				'page_name' => $page_names[$status],
+				'limit'     => 5,
 				'tr_func'   => function($row, $table_params, $that, $CI) {
 					return 'onclick="show_order(\''.site_url('orders/detail/'.$row['id']).'\')"';
 				}
@@ -332,6 +337,9 @@ class Order_model extends CI_Model {
 			->create(array('error_inline' => true, 'no_form_tag' => true));
 
 		//------------------------------------------
+		foreach ((array)$this->add_durations as $key => $item) {
+			$durations['add_durations['.$item['id'].']'] = $item['name'];
+		}
 		$this->form
 			->radio('frequency', array(
 				'valid_rules' => 'required|trim',
@@ -357,6 +365,12 @@ class Order_model extends CI_Model {
 				'label'       => 'Особые требования',
 				'inline'      => false, 'group_class' => 'col-sm-12', 'label_width' => 6,
 				'inputs'      => $this->special
+			))
+			->checkbox('add_durations[]', array(
+				'valid_rules' => 'trim|xss_clean',
+				'label'       => 'Дополнительные услуги',
+				'inline'      => false, 'group_class' => 'col-sm-12', 'label_width' => 6,
+				'inputs'      => $durations,
 			));
 
 		$zone_offset = isset($_POST['timezone']) ? date('Z') - $_POST['timezone'] : 0;

@@ -647,10 +647,15 @@ class Personal extends CI_Controller {
 			}
 		}
 
+		$incorrect_duration = false;
+		if (!isset($this->order_model->duration[$this->input->post('duration')])) {
+			$incorrect_duration = true;
+		}
+
 		$this->data['title'] = $this->data['header'] = 'Создание заявки';
 		$this->data['center_block'] = $this->order_model->order_form();
 
-		if ($this->form_validation->run() == FALSE || $is_late) {
+		if ($this->form_validation->run() == FALSE || $is_late || $incorrect_duration) {
 			$this->data['right_info'] = array(
 				'title'       => 'Детали заявки',
 				'info_array'  => array(
@@ -693,15 +698,16 @@ class Personal extends CI_Controller {
 				$user_email = $this->data['user_info']['email'];
 			}
 
+			$duration = $this->input->post('duration');
 			$info = array(
 				'client_id'           => $user_id,
 				'price_per_hour'      => PRICE_PER_HOUR,
 				'cleaner_price'       => CLEANER_SALARY,
-				'detergent_price'     => $detergent_price * $this->input->post('duration'),
-				'total_price'         => (PRICE_PER_HOUR * $this->input->post('duration')) + ($detergent_price * $this->input->post('duration')),
-				'total_cleaner_price' => (CLEANER_SALARY * $this->input->post('duration')) + ($detergent_price * $this->input->post('duration')),
+				'detergent_price'     => $detergent_price * $duration,
+				'total_price'         => (PRICE_PER_HOUR * $duration) + ($detergent_price * $duration),
+				'total_cleaner_price' => (CLEANER_SALARY * $duration) + ($detergent_price * $duration),
 				'frequency'           => $this->input->post('frequency'),
-				'duration'            => $this->input->post('duration'),
+				'duration'            => $duration,
 				'need_ironing'        => intval($this->input->post('need_ironing')),
 				'have_pets'           => intval($this->input->post('have_pets')),
 				'need_detergents'     => $this->input->post('need_detergents'),

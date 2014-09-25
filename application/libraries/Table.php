@@ -12,7 +12,7 @@ class Table {
 
 	public $grid_type     = 'col-md';
 
-	public $limit_page    = 2;
+	public $limit_page    = 15;
 
 	public function __construct($grid_type = false) {
 		$this->grid_type = $grid_type ? $grid_type : $this->grid_type;
