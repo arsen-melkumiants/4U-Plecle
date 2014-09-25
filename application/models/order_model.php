@@ -338,7 +338,7 @@ class Order_model extends CI_Model {
 
 		//------------------------------------------
 		foreach ((array)$this->add_durations as $key => $item) {
-			$durations['add_durations['.$item['id'].']'] = $item['name'];
+			$duration_inputs['add_durations['.$item['id'].']'] = $item['name'];
 		}
 		$this->form
 			->radio('frequency', array(
@@ -370,7 +370,7 @@ class Order_model extends CI_Model {
 				'valid_rules' => 'trim|xss_clean',
 				'label'       => 'Дополнительные услуги',
 				'inline'      => false, 'group_class' => 'col-sm-12', 'label_width' => 6,
-				'inputs'      => $durations,
+				'inputs'      => $duration_inputs,
 			));
 
 		$zone_offset = isset($_POST['timezone']) ? date('Z') - $_POST['timezone'] : 0;
@@ -378,6 +378,12 @@ class Order_model extends CI_Model {
 		if ($is_late) {
 			$this->form->form_data[2]['params']['error'] = 'Поздняя дата, выберите пожалуйста более раннюю (минимум за два дня)';
 		}
+
+		$duration = $this->input->post('duration');
+		if (!empty($duration) && !isset($this->order_model->duration[$duration])) {
+			$this->form->form_data[1]['params']['error'] = 'Выбрано неверное время';
+		}
+
 		$data['order_form'] = $this->form->create(array('error_inline' => true, 'no_form_tag' => true));
 
 		//------------------------------------------
