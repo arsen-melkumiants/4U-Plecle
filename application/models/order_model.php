@@ -338,7 +338,10 @@ class Order_model extends CI_Model {
 
 		//------------------------------------------
 		foreach ((array)$this->add_durations as $key => $item) {
-			$duration_inputs['add_durations['.$item['id'].']'] = $item['name'];
+			$duration_inputs['add_durations['.$item['id'].']'] = array(
+				'name'  => $item['name'],
+				'value' => $item['hours'],
+			);
 		}
 		$this->form
 			->radio('frequency', array(
@@ -351,6 +354,7 @@ class Order_model extends CI_Model {
 				'valid_rules' => 'required|trim',
 				'label'       => 'На сколько времени нужна?',
 				'group_class' => 'col-sm-12', 'label_width' => 6,
+				'width'       => 3,
 				'options'     => $this->duration
 			))
 			->date('start_date', array(

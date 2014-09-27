@@ -120,7 +120,7 @@ class Form {
 
 					if ($type == 'checkbox') {
 						$name = $value;
-						$value = 1;
+						$value = !empty($info['value']) ? $info['value'] : 1;
 
 						$input_checked = !empty($params['value'][$name]) && !isset($_POST[$name]) ? 'checked="checked"' : false;
 
