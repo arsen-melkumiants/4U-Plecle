@@ -108,53 +108,51 @@ class Form {
 
 		//radio-buttons
 		$input = '';
-		if ($type == 'radio' || ($type == 'checkbox' && isset($params['inputs']) && is_array($params['inputs']))) {
-			if (isset($params['inputs']) && is_array($params['inputs'])) {
-				$input .= !empty($params['btn_view']) ? '<div class="btn-group" data-toggle="buttons">' : '';
-				foreach ($params['inputs'] as $value => $info) {
-					if (is_array($info)) {
-						$input_name = $info['name'];
-					} else {
-						$input_name = $info;
-					}
-
-					if ($type == 'checkbox') {
-						$name = $value;
-						$value = !empty($info['value']) ? $info['value'] : 1;
-
-						$input_checked = !empty($params['value'][$name]) && !isset($_POST[$name]) ? 'checked="checked"' : false;
-
-						if (strpos($name, '[') !== false) {
-							list($var_name, $check_key) = explode('[', $name);
-							$check_key = str_replace(']', '' , $check_key);
-							if (!empty($_POST[$var_name][$check_key])) {
-								$input_checked = 'checked="checked"';
-							}
-						} else {
-							if ($CI->input->post($name)) {
-								$input_checked = 'checked="checked"';
-							}
-						}
-
-					} else {
-						$input_checked = set_radio($name, $value);
-					}
-
-					if (empty($input_checked)) {
-						$input_checked = $value == $params['value'] ? ' checked="checked"' : false;
-					}
-
-					if (!empty($params['btn_view'])) {
-						$input .= '<label class="btn btn-primary'.($input_checked ? ' active' : '').'">'.PHP_EOL;
-					} else {
-						$input .= '<label class="'.$type.(isset($params['inline']) && !$params['inline'] ? '' : '-inline').'">'.PHP_EOL;
-					}
-					$readonly = !empty($params['disabled']) ? ' disabled="disabled"' : '';
-					$input .= '<input type="'.$type.'" name="'.$name.'" value="'.$value.'"'.$input_checked.$readonly.'> '.$input_name.PHP_EOL;
-					$input .= '</label>'.PHP_EOL;
+		if (($type == 'radio' || $type == 'checkbox') && isset($params['inputs']) && is_array($params['inputs'])) {
+			$input .= !empty($params['btn_view']) ? '<div class="btn-group" data-toggle="buttons">' : '';
+			foreach ($params['inputs'] as $value => $info) {
+				if (is_array($info)) {
+					$input_name = $info['name'];
+				} else {
+					$input_name = $info;
 				}
-				$input .= !empty($params['btn_view']) ? '</div>' : '';
+
+				if ($type == 'checkbox') {
+					$name = $value;
+					$value = !empty($info['value']) ? $info['value'] : 1;
+
+					$input_checked = !empty($params['value'][$name]) && !isset($_POST[$name]) ? 'checked="checked"' : false;
+
+					if (strpos($name, '[') !== false) {
+						list($var_name, $check_key) = explode('[', $name);
+						$check_key = str_replace(']', '' , $check_key);
+						if (!empty($_POST[$var_name][$check_key])) {
+							$input_checked = 'checked="checked"';
+						}
+					} else {
+						if ($CI->input->post($name)) {
+							$input_checked = 'checked="checked"';
+						}
+					}
+
+				} else {
+					$input_checked = set_radio($name, $value);
+				}
+
+				if (empty($input_checked)) {
+					$input_checked = $value == $params['value'] ? ' checked="checked"' : false;
+				}
+
+				if (!empty($params['btn_view'])) {
+					$input .= '<label class="btn btn-primary'.($input_checked ? ' active' : '').'">'.PHP_EOL;
+				} else {
+					$input .= '<label class="'.$type.(isset($params['inline']) && !$params['inline'] ? '' : '-inline').'">'.PHP_EOL;
+				}
+				$readonly = !empty($params['disabled']) ? ' disabled="disabled"' : '';
+				$input .= '<input type="'.$type.'" name="'.$name.'" value="'.$value.'"'.$input_checked.$readonly.'> '.$input_name.PHP_EOL;
+				$input .= '</label>'.PHP_EOL;
 			}
+			$input .= !empty($params['btn_view']) ? '</div>' : '';
 		} elseif ($type == 'select') {
 			if (isset($params['options']) && is_array($params['options'])) {
 				$attrs_list = array('class','name', 'data-live-search', 'disabled');
@@ -175,7 +173,10 @@ class Form {
 			$attrs_list = array('class','name','readonly','rows','placeholder');
 			$input .= '<textarea'.$this->attributes($attrs_list, $params).'>'.$params['value'].'</textarea>';
 		} else {
-			$attrs_list = array('type','class','name','value','placeholder','readonly');
+			if ($type == 'checkbox') {
+				$params['class'] = 'checkbox';
+			}
+			$attrs_list = array('type','class','name','value','placeholder','readonly','disabled');
 			$input .= '<input'.$this->attributes($attrs_list, $params).'/>';
 		}
 

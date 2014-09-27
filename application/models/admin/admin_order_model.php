@@ -34,7 +34,7 @@ class Admin_order_model extends CI_Model {
 		}
 
 		return $this->db
-			->where('status', 1)
+			->where_in('status', array(1,2))
 			->order_by('id', 'desc')
 			->get('payments');
 	}

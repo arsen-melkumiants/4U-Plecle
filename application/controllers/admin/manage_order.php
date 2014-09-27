@@ -243,6 +243,10 @@ class Manage_order extends CI_Controller {
 				$_POST['total_cleaner_price'] = $_POST['cleaner_price'] * $duration + floatval($_POST['detergent_price']);
 			}
 
+			$post_status = $this->input->post('status');
+			if ($post_status != $order_info['status'] && in_array($post_status, array(4,5))) {
+			}
+
 			admin_method('edit', $this->DB_TABLE, array('id' => $id, 'except_fields' => array('fine_price')));
 		}
 	}
@@ -258,7 +262,6 @@ class Manage_order extends CI_Controller {
 			foreach (json_decode($order_info['add_durations'], true) as $item) {
 				$add_durations[$item['id']] = $item['name'].' ('.$item['hours'].' час)';
 			}
-			//$add_durations = !empty($order_info['add_durations']) ? json_decode($order_info, true) : false;
 		}
 
 		$this->load->library('form');
@@ -310,8 +313,8 @@ class Manage_order extends CI_Controller {
 				'valid_rules' => 'trim|xss_clean',
 				'label'       => 'Дополнительные условия',
 				'inline'      => false,
-				'inputs'      => !empty($add_durations) ? $add_durations : false,
-				'value'       => !empty($add_durations) ? $add_durations : false,
+				//'inputs'      => !empty($add_durations) ? $add_durations : false,
+				//'value'       => !empty($add_durations) ? $add_durations : false,
 				'disabled'    => true,
 			))
 			->text('country', array(
@@ -428,6 +431,12 @@ class Manage_order extends CI_Controller {
 			->date('add_date', array(
 				'title' => 'Дата оплаты',
 			))
+			->text('status', array(
+				'title' => 'Статус',
+				'func'  => function($row, $params) {
+					return $row['status'] == 2 ? '<span class="label label-danger">Возврат</span>' : '<span class="label label-success">Оплачено</span>';
+				}
+		))
 			->create(function($CI) {
 				return $CI->admin_order_model->get_payments($CI->data['order_id']);
 			});
