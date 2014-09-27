@@ -29,6 +29,22 @@ class Manage_order extends CI_Controller {
 			'header'       => 'Список выплат',
 			'header_descr' => 'История платежей',
 		),
+		'services'         => array(
+			'header'       => 'Список услуг',
+			'header_descr' => 'Список дополнительных улуг заказа',
+		),
+		'add_service'      => array(
+			'header'       => 'Добавление услуги',
+			'header_descr' => 'Добавление дополнительной услуги заказа',
+		),
+		'edit_service'      => array(
+			'header'       => 'Редактирование услуги "%name"',
+			'header_descr' => 'Редактирование дополнительной услуги заказа',
+		),
+		'delete_service'    => array(
+			'header'       => 'Удаление услуги "%name"',
+			'header_descr' => '',
+		),
 		'regions'          => array(
 			'header'       => 'Список регионов',
 			'header_descr' => 'Список регионов для закрепления индексов за ними',
@@ -142,7 +158,7 @@ class Manage_order extends CI_Controller {
 		))
 			->text('comment', array(
 				'title' => 'Статус',
-				'width' => '30%',
+				//'width' => '30%',
 				'func'  => function($row, $params, $that, $CI) {
 					if (in_array($row['status'], array(0,1)) && $row['start_date'] < 86400 + time()) {
 						return '<span class="label label-danger">Сделка не состоялась</span>';
@@ -217,12 +233,14 @@ class Manage_order extends CI_Controller {
 				$this->input->post('frequency') != $order_info['frequency'] ||
 				$this->input->post('max_sallary') != $order_info['max_sallary']
 			) {
-				$_POST['detergent_price']     = floatval($order_info['detergent_price']) ? DETERGENT_PRICE * $this->input->post('duration') : 0;
+				$duration = $this->input->post('duration') ?: $order_info['duration'];
+
+				$_POST['detergent_price']     = floatval($order_info['detergent_price']) ? DETERGENT_PRICE * $duration : 0;
 				$_POST['price_per_hour']      = PRICE_PER_HOUR;
-				$_POST['total_price']         = PRICE_PER_HOUR * $this->input->post('duration') + floatval($_POST['detergent_price']);
+				$_POST['total_price']         = PRICE_PER_HOUR * $duration + floatval($_POST['detergent_price']);
 
 				$_POST['cleaner_price']       = $this->input->post('max_sallary') ? MAX_CLEANER_SALARY : CLEANER_SALARY;
-				$_POST['total_cleaner_price'] = $_POST['cleaner_price'] * $this->input->post('duration') + floatval($_POST['detergent_price']);
+				$_POST['total_cleaner_price'] = $_POST['cleaner_price'] * $duration + floatval($_POST['detergent_price']);
 			}
 
 			admin_method('edit', $this->DB_TABLE, array('id' => $id, 'except_fields' => array('fine_price')));
@@ -236,21 +254,30 @@ class Manage_order extends CI_Controller {
 		$clients = array_merge(array(array('id' => 0, 'name' => 'Клиент не выбран')), $clients);
 		$cleaners = array_merge(array(array('id' => 0, 'name' => 'Работник не выбран')), $cleaners);
 
+		if (!empty($order_info['add_durations'])) {
+			foreach (json_decode($order_info['add_durations'], true) as $item) {
+				$add_durations[$item['id']] = $item['name'].' ('.$item['hours'].' час)';
+			}
+			//$add_durations = !empty($order_info['add_durations']) ? json_decode($order_info, true) : false;
+		}
+
 		$this->load->library('form');
 		return $this->form
 			->select('client_id', array(
 				'value'       => !empty($order_info['client_id']) ? $order_info['client_id'] : false,
-				'valid_rules' => 'trim|xss_clean|required',
+				'valid_rules' => 'trim|xss_clean',
 				'label'       => 'Клиент',
 				'options'     => $clients,
-				'search'      => true,
+				//'search'      => true,
+				'disabled'    => true,
 			))
 			->select('cleaner_id', array(
 				'value'       => !empty($order_info['cleaner_id']) ? $order_info['cleaner_id'] : false,
-				'valid_rules' => 'trim|xss_clean|required',
+				'valid_rules' => 'trim|xss_clean',
 				'label'       => 'Работник',
 				'options'     => $cleaners,
-				'search'      => true,
+				//'search'      => true,
+				'disabled'    => true,
 			))
 			->radio('frequency', array(
 				'valid_rules' => 'required|trim',
@@ -260,10 +287,11 @@ class Manage_order extends CI_Controller {
 				'value'       => !empty($order_info['frequency']) ? $order_info['frequency'] : false,
 			))
 			->select('duration', array(
-				'valid_rules' => 'required|trim',
+				'valid_rules' => 'trim',
 				'label'       => 'На сколько времени нужна?',
 				'options'     => $this->duration,
 				'value'       => !empty($order_info['duration']) ? $order_info['duration'] : false,
+				'disabled'    => true,
 			))
 			->date('start_date', array(
 				'valid_rules' => 'required|trim',
@@ -277,6 +305,14 @@ class Manage_order extends CI_Controller {
 				'inline'      => false,
 				'inputs'      => $this->special,
 				'value'       => !empty($order_info) ? $order_info : false,
+			))
+			->checkbox('add_durations[]', array(
+				'valid_rules' => 'trim|xss_clean',
+				'label'       => 'Дополнительные условия',
+				'inline'      => false,
+				'inputs'      => !empty($add_durations) ? $add_durations : false,
+				'value'       => !empty($add_durations) ? $add_durations : false,
+				'disabled'    => true,
 			))
 			->text('country', array(
 				'valid_rules' => 'required|trim|xss_clean|max_length[100]',
@@ -324,7 +360,7 @@ class Manage_order extends CI_Controller {
 			))
 			->radio('max_sallary', array(
 				'valid_rules' => 'required|trim|is_natural',
-				'label'       => 'Повышенная зарплата горинчной',
+				'label'       => 'Повышенная зарплата горничной',
 				'inputs'      => array(1 => 'Да',0 => 'Нет'),
 				'value'       => !empty($order_info['max_sallary']) ? $order_info['max_sallary'] : false,
 			))
@@ -396,6 +432,114 @@ class Manage_order extends CI_Controller {
 				return $CI->admin_order_model->get_payments($CI->data['order_id']);
 			});
 
+	}
+
+	public function services() {
+		$this->load->library('table');
+		$this->data['center_block'] = $this->table
+			->text('id', array(
+				'title' => 'Номер',
+			))
+			->text('name', array(
+				'title' => 'Название услуги',
+			))
+			->text('hours', array(
+				'title' => 'Часы выполнения',
+				'width' => '20%',
+			))
+			->edit(array('link' => $this->MAIN_URL.'edit_service/%d', 'modal' => 1))
+			->delete(array('link' => $this->MAIN_URL.'delete_service/%d', 'modal' => 1))
+			->active(array('link' => $this->MAIN_URL.'active_service/%d'))
+			->btn(array(
+				'link'   => $this->MAIN_URL.'add_service',
+				'name'   => 'Добавить',
+				'header' => true,
+				'modal'  => 1,
+			))
+			->create(function($CI) {
+				return $CI->db->where('status != 2')->get('order_options');
+			});
+
+		load_admin_views();
+	}
+
+	public function add_service() {
+		$this->data['center_block'] = $this->edit_form_service();
+
+		if ($this->form_validation->run() == FALSE) {
+			load_admin_views();
+		} else {
+			$this->DB_TABLE = 'order_options';
+			admin_method('add', $this->DB_TABLE, array('except_fields' => array('add_date', 'author_id')));
+		}
+	}
+
+	public function edit_service($id = false) {
+		if (empty($id)) {
+			custom_404();
+		}
+
+		$service_info = $this->db->where('id', $id)->get('order_options')->row_array();
+		if (empty($service_info)) {
+			custom_404();
+		}
+		set_header_info($service_info);
+
+		$this->data['center_block'] = $this->edit_form_service($service_info);
+
+		if ($this->form_validation->run() == FALSE) {
+			load_admin_views();
+		} else {
+			$this->DB_TABLE = 'order_options';
+			admin_method('edit', $this->DB_TABLE, array('id' => $id));
+		}
+	}
+
+	private function edit_form_service($service_info = false) {
+		$this->load->library('form');
+		return $this->form
+			->text('name', array(
+				'value'       => $service_info['name'] ?: false,
+				'valid_rules' => 'required|trim|xss_clean',
+				'label'       => 'Название услуги',
+			))
+			->text('hours', array(
+				'value'       => $service_info['hours'] ?: false,
+				'valid_rules' => 'required|trim|xss_clean',
+				'label'       => 'Часы выполнения',
+			))
+			->btn(array('value' => empty($service_info) ? 'Добавить' : 'Изменить'))
+			->create(array('action' => current_url()));
+	}
+
+	public function active_service($id = false) {
+		if (empty($id)) {
+			custom_404();
+		}
+
+		$service_info = $this->db->where('id', $id)->get('order_options')->row_array();
+		if (empty($service_info)) {
+			custom_404();
+		}
+
+		set_header_info($service_info);
+		$this->DB_TABLE = 'order_options';
+		$this->MAIN_URL .= 'services';
+		admin_method('active', $this->DB_TABLE, $service_info);
+	}
+
+	public function delete_service($id = false, $type = false) {
+		if (empty($id)) {
+			custom_404();
+		}
+
+		$service_info = $this->db->where('id', $id)->get('order_options')->row_array();
+		if (empty($service_info)) {
+			custom_404();
+		}
+		set_header_info($service_info);
+		$this->DB_TABLE = 'order_options';
+		admin_method('delete', $this->DB_TABLE, $service_info);
 	}
 
 	public function regions() {
@@ -504,19 +648,19 @@ class Manage_order extends CI_Controller {
 				'func'  => function($row, $params, $that, $CI) {
 					return '<a href="'.site_url($CI->MAIN_URL.'edit/'.$row['order_id']).'">#'.$row['order_id'].'</a>';
 				}
-			))
+		))
 			->text('client_id', array(
 				'title' => 'Горничная',
 				'func'  => function($row, $params) {
 					return '<a href="'.site_url(ADM_URL.'manage_user/edit/'.$row['cleaner_id']).'">'.$row['cleaner_first_name'].' '.$row['cleaner_last_name'].'</a>';
 				}
-			))
+		))
 			->text('client_id', array(
 				'title' => 'Клиент',
 				'func'  => function($row, $params) {
 					return '<a href="'.site_url(ADM_URL.'manage_user/edit/'.$row['client_id']).'">'.$row['client_first_name'].' '.$row['client_last_name'].'</a>';
 				}
-			))
+		))
 			->text('mark', array(
 				'title' => 'Оценка',
 				'func'  => function($row, $params, $that, $CI) {

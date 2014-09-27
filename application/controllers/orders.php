@@ -104,7 +104,7 @@ class Orders extends CI_Controller {
 				'Дата'            => date('d.m.Y', $this->data['order_info']['start_date']),
 				'Время'           => date('H:i', $this->data['order_info']['start_date']),
 				'Частота'         => $this->order_model->frequency[$this->data['order_info']['frequency']],
-				'Рабочие часы'    => $this->order_model->duration[$this->data['order_info']['duration']],
+				'Рабочие часы'    => isset($this->order_model->duration[$this->data['order_info']['duration']]) ? $this->order_model->duration[$this->data['order_info']['duration']] : $this->data['order_info']['duration'].' часов',
 				'Цена за час'     => floatval($this->data['order_info']['price_per_hour']).' рублей',
 				'Моющие средства' => floatval($this->data['order_info']['detergent_price'] * $this->data['order_info']['need_detergents']).' рублей',
 				'Итого'           => floatval($this->data['order_info']['total_price']).' рублей',

@@ -42,7 +42,7 @@ h4.title {font-size: 16px;border-bottom: 1px solid #a3b5b9;padding-bottom: 7px;m
 h4.title a {font-size: 16px;color: #333;}
 h4.title .right_link {float: right;color: #a94442;}
 h4.title .invite_link {position: relative;margin-left: 45px;}
-h4.title .count {position: absolute;padding: 1px 5px;background: #f41e1e;color: #fff;font-size: 10px;right: -25px;top: 3px;border-radius: 50%;}
+h4.title .count {position: absolute;padding: 3px 5px;background: #f41e1e;color: #fff;font-size: 10px;right: -25px;top: 3px;border-radius: 55%;}
 
 .big_link {font-size: 50px;color: #fff;background: none;border: 0;}
 .big_link:hover {text-decoration: underline;color: #fff;}

@@ -610,9 +610,6 @@ class Personal extends CI_Controller {
 	public function make_order() {
 		$this->data['user_info'] = $this->ion_auth->user()->row_array();
 		if ($this->ion_auth->logged_in() && $this->data['user_info']['is_cleaner']) {
-			if ($this->input->is_ajax_request()) {
-				echo 'refresh';exit;
-			}
 			redirect();
 		}
 
@@ -699,6 +696,22 @@ class Personal extends CI_Controller {
 			}
 
 			$duration = $this->input->post('duration');
+			$add_durations = $this->input->post('add_durations');
+			$add_hours = 0;
+			if ($add_durations) {
+				foreach ($this->order_model->add_durations as $item) {
+					if (!isset($add_durations[$item['id']])) {
+						continue;
+					}
+					$add_hours += $item['hours'];
+					$options_array[] = $item;
+
+					if ($item['name'] == 'Мойка окон' && $duration > 4) {
+						$add_hours++;
+					}
+				}
+			}
+			$duration += $add_hours;
 			$info = array(
 				'client_id'           => $user_id,
 				'price_per_hour'      => PRICE_PER_HOUR,
@@ -708,6 +721,7 @@ class Personal extends CI_Controller {
 				'total_cleaner_price' => (CLEANER_SALARY * $duration) + ($detergent_price * $duration),
 				'frequency'           => $this->input->post('frequency'),
 				'duration'            => $duration,
+				'add_durations'       => !empty($options_array) ? json_encode($options_array) : '',
 				'need_ironing'        => intval($this->input->post('need_ironing')),
 				'have_pets'           => intval($this->input->post('have_pets')),
 				'need_detergents'     => $this->input->post('need_detergents'),

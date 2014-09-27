@@ -228,7 +228,7 @@ class Table {
 		$limit = !empty($table_params['limit']) ? $table_params['limit'] : $this->limit_page;
 		if (intval($limit)) {
 			$sql_all = $sql($CI);
-			$page_name= !empty($table_params['page_name']) ? $table_params['page_name'] : '';
+			$page_name= !empty($table_params['page_name']) ? $table_params['page_name'] : 'page';
 			if (isset($sql_all->conn_id)) {
 				$result['pages'] = $this->pagination($sql_all->num_rows(), $limit, 5, $page_name);
 			}

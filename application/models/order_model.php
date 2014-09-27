@@ -36,7 +36,7 @@ class Order_model extends CI_Model {
 		parent::__construct();
 		$this->load->database();
 
-		$this->add_durations = $this->db->where('status', 1)->get('order_options')->result_array();
+		$this->add_durations = $this->db->select('id, name, hours')->where('status', 1)->get('order_options')->result_array();
 	}
 
 	function get_user_order($order_id, $user_id = false, $user_type = false) {

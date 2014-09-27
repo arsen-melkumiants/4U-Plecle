@@ -7,17 +7,28 @@ if (!empty($order_info['have_pets'])) {
 	$options[] = 'есть животные';
 }
 $options = implode(', ', $options) ?: '&nbsp;';
+
+if (!empty($order_info['add_durations'])) {
+	foreach (json_decode($order_info['add_durations'], true) as $item) {
+		$add_options[] = $item['name'];
+	}
+	$add_options = implode(', ', $add_options);
+}
 ?>
 <h4 class="title">Подробности сделки</h4>
 <dl class="dl-horizontal list">
 	<dt>Частота потребности горничной</dt>
 	<dd><?php echo $this->order_model->frequency[$order_info['frequency']]?></dd>
 	<dt>Рабочее время</dt>
-	<dd><?php echo $this->order_model->duration[$order_info['duration']]?></dd>
+	<dd><?php echo isset($this->order_model->duration[$order_info['duration']]) ? $this->order_model->duration[$order_info['duration']] : $order_info['duration'].' часов'?></dd>
 	<dt>Дата уборки</dt>
 	<dd><?php echo date('d.m.Y с H:i', $order_info['start_date'])?></dd>
 	<dt>Особые условия</dt>
 	<dd><?php echo $options?></dd>
+	<?php if (!empty($add_options)) {?>
+	<dt>Дополнительные услуги</dt>
+	<dd><?php echo $add_options?></dd>
+	<?php }?>
 	<dt>Место уборки</dt>
 	<dd><?php echo $order_info['country'].', '.$order_info['city'].', '.$order_info['address']?></dd>
 	<dt>Заметки клиента для Вас</dt>

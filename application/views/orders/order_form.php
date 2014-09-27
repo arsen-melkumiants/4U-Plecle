@@ -64,10 +64,10 @@ var init_order_picker = function() {
 		language       : 'ru',
 		useCurrent     : false,
 		minuteStepping : 30,
-		minDate        : moment().day(3),
+		minDate        : moment().add(1, 'days'),
 	}).on('dp.change',function (e) {
-		var min_date = moment().day(2);
-		var max_date = moment().day(4);
+		var min_date = moment().add(2, 'days');
+		var max_date = moment().add(3, 'days');
 		$('.date_time').closest('.form-group').find('.text-danger').remove();
 		$('.date_time').closest('.form-group').find('.text-warning').remove();
 		if (e.date > min_date && e.date < max_date) {
