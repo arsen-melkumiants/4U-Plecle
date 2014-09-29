@@ -90,6 +90,15 @@ function custom_404() {
 	show_404();
 }
 
+function custom_redirect($url = false) {
+	$CI =& get_instance();
+	if ($CI->input->is_ajax_request()) {
+		echo 'refresh';
+		exit;
+	}
+	redirect($url, 'refresh');
+}
+
 function get_human_time($date) {
 	$time = date("Ymd",time())-date("Ymd", ($date));
 	if($time == 0){

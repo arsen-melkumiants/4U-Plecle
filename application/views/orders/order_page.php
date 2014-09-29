@@ -4,6 +4,7 @@ if (!empty($user_info['is_cleaner'])) {
 		'orders'    => 'Сделки',
 		'reviews'   => 'Отзывы',
 		'favorites' => 'Избранные',
+		'calendar'  => 'Календарь',
 	);
 } else {
 	$inner_menu = array(

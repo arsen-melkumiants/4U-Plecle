@@ -322,3 +322,31 @@ table.reviews .positive .name {color: #4f5f6f;}
 .message_items .from_me.item .text {background: #cdedf5;}
 .message_items .from_me.item .text:before {content: "";display: block;position: absolute;right: -9px;top: 20px;border-style: solid;border-width: 10px 10px 0 0;border-color: #cdedf5 transparent transparent;}
 .message_form textarea {border-radius: 0;border: 1px solid #e9e9e9;-webkit-box-shadow: none;box-shadow: none;resize: none;}
+
+#calendar .fc-toolbar {border-bottom: 1px solid #00313c;}
+#calendar .fc-toolbar h2 {font-size: 16px;color: #00313c;}
+#calendar .fc-toolbar button {border: 0;background: 0;border-radius: 0;margin: 5px 0;padding: 0;font-size: 12px;height: auto;box-shadow: none;}
+#calendar .fc-toolbar button:hover {box-shadow: none;}
+#calendar .fc-toolbar button:first-child {border-right: 1px solid #a3a3a3;margin-right: 10px;padding-right: 10px;}
+#calendar .fc-toolbar .fc-state-active, .fc-state-down {box-shadow: none;color: #a3a3a3;}
+#calendar .fc-widget-header th {padding-top: 20px;padding-bottom: 20px;}
+#calendar .fc-widget-header {background: #f7f7f7;}
+
+#calendar.fc-unthemed .fc-popover,
+#calendar.fc-unthemed .fc-row,
+#calendar.fc-unthemed hr,
+#calendar.fc-unthemed tbody,
+#calendar.fc-unthemed td,
+#calendar.fc-unthemed th,
+#calendar.fc-unthemed thead {
+	border-color: #f7f7f7;
+}
+
+#calendar .fc-today {background: #fff;}
+#calendar .fc-slats .fc-minor td {border-top-style: solid;}
+#calendar .fc-slats td {height: 3em;}
+#calendar .fc-slats span {padding: 0 5px;}
+#calendar .fc-time-grid-event .fc-time,
+#calendar .fc-time-grid-event .fc-title {text-align: center;padding-top: 10px;}
+#calendar .fc-event {border-radius: 0;}
+#calendar .remove {position: absolute;right: 0px;top: -5px;text-decoration: none;color: #fff;padding: 6px;}

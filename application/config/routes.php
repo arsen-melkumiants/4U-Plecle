@@ -70,6 +70,8 @@ $route['statistics/(:any)'] = 'statistics/$1';
 $route['favorites']         = 'favorites';
 $route['favorites/(:any)']  = 'favorites/$1';
 $route['reviews']           = 'reviews';
+$route['calendar']          = 'calendar';
+$route['calendar/(:any)']   = 'calendar/$1';
 
 $route['cli_tools/(:any)'] = 'cli_tools/$1';
 
