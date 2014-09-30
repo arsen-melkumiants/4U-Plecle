@@ -718,4 +718,62 @@ class Order_model extends CI_Model {
 			))
 			->update('order_messages', array('read' => 1));
 	}
+
+	function is_busy($order_info) {
+		$start_date = $order_info['start_date'];
+		$end_date   = $order_info['start_date'] + ($order_info['duration'] * 3600);
+
+		$is_busy = false;
+
+		$active_orders = $this->get_all_orders(1)->result_array();
+		if (!empty($active_orders)) {
+			foreach ($active_orders as $item) {
+				$item['end_date'] = $item['start_date'] + ($item['duration'] * 3600);
+				if ($item['end_date'] > $start_date && $item['start_date'] < $end_date) {
+					$is_busy = true;
+					break;
+				}
+
+				if (in_array($item['frequency'], array('every_week','every_2_weeks')) && $item['start_date'] <= $end_date) {
+					while ($item['start_date'] <= $end_date) {
+						$step = $item['frequency'] == 'every_week' ? 604800 : 1209600;
+						$item['start_date'] += $step;
+						$item['end_date']   += $step;
+						if ($item['end_date'] > $start_date && $item['start_date'] < $end_date) {
+							$is_busy = true;
+							break 2;
+						}
+					}
+				}
+			}
+		}
+
+		if ($is_busy) {
+			return true;
+		}
+
+		$user_events = $this->db->where('user_id', $this->data['user_info']['id'])->get('events')->result_array();
+		if (!empty($user_events )) {
+			foreach ($user_events as $item) {
+				if ($item['end_date'] > $start_date && $item['start_date'] < $end_date) {
+					$is_busy = true;
+					break;
+				}
+
+				if ($item['repeatable'] && $item['start_date'] <= $end_date) {
+					while ($item['start_date'] <= $end_date) {
+						$step = 604800;
+						$item['start_date'] += $step;
+						$item['end_date']   += $step;
+						if ($item['end_date'] > $start_date && $item['start_date'] < $end_date) {
+							$is_busy = true;
+							break 2;
+						}
+					}
+				}
+			}
+		}
+
+		return $is_busy;
+	}
 }

@@ -13,10 +13,14 @@
 window.onload = function() {
 	var calendar = $('#calendar').fullCalendar({
 		lang        : 'ru',
-		titleFormat : 'Мой календарь',
+		titleFormat : {
+			month : 'MMMM YYYY', // September 2009
+			week  : 'D MMMM, YYYY', // Sep 13 2009
+			day   : 'D MMMM, YYYY'  // September 8 2009
+		},
 		header      : {
-			left   : 'title',
-			center : 'prev, next',
+			left   : '',
+			center : 'prev, title, next',
 			right  : 'agendaWeek, agendaDay'
 		},
 		defaultView : 'agendaWeek',
@@ -59,8 +63,10 @@ window.onload = function() {
 			}
 		}
 	});
-	
+
 	calendar.fullCalendar('gotoDate', $.cookie('curr_d'));
+
+	$('.fc-left').prepend('<h1>Мой календарь</h1>');
 
 	$(document).on('loaded.bs.modal', function() {
 		datepicker();

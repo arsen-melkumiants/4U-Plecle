@@ -407,6 +407,11 @@ class Orders extends CI_Controller {
 			custom_404();
 		}
 
+		if ($this->order_model->is_busy($order_info)) {
+			$this->session->set_flashdata('danger', 'Вы не можете взять этот заказ, так как уже заняты в это время');
+			redirect('orders/detail/'.$order_id, 'refresh');
+		}
+
 		$update_array['cleaner_id'] = $this->data['user_info']['id'];
 		$this->db->where('id', $order_id)->update('orders', $update_array);
 		if ($order_info['invite_status'] === '0') {

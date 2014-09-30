@@ -324,10 +324,12 @@ table.reviews .positive .name {color: #4f5f6f;}
 .message_form textarea {border-radius: 0;border: 1px solid #e9e9e9;-webkit-box-shadow: none;box-shadow: none;resize: none;}
 
 #calendar .fc-toolbar {border-bottom: 1px solid #00313c;}
-#calendar .fc-toolbar h2 {font-size: 16px;color: #00313c;}
+#calendar .fc-toolbar h1,
+#calendar .fc-toolbar h2 {font-size: 16px;color: #00313c;margin: 5px 15px 0}
+#calendar .fc-toolbar h1 {margin-left: 0;}
 #calendar .fc-toolbar button {border: 0;background: 0;border-radius: 0;margin: 5px 0;padding: 0;font-size: 12px;height: auto;box-shadow: none;}
 #calendar .fc-toolbar button:hover {box-shadow: none;}
-#calendar .fc-toolbar button:first-child {border-right: 1px solid #a3a3a3;margin-right: 10px;padding-right: 10px;}
+#calendar .fc-toolbar .fc-right button:first-child {border-right: 1px solid #a3a3a3;margin-right: 10px;padding-right: 10px;}
 #calendar .fc-toolbar .fc-state-active, .fc-state-down {box-shadow: none;color: #a3a3a3;}
 #calendar .fc-widget-header th {padding-top: 20px;padding-bottom: 20px;}
 #calendar .fc-widget-header {background: #f7f7f7;}
@@ -342,7 +344,10 @@ table.reviews .positive .name {color: #4f5f6f;}
 	border-color: #f7f7f7;
 }
 
-#calendar .fc-today {background: #fff;}
+#calendar .fc-sat,
+#calendar .fc-sun {color: #ca3d3d;}
+
+/*#calendar .fc-today {background: #fff;}*/
 #calendar .fc-slats .fc-minor td {border-top-style: solid;}
 #calendar .fc-slats td {height: 3em;}
 #calendar .fc-slats span {padding: 0 5px;}
