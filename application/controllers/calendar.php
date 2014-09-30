@@ -219,6 +219,7 @@ class Calendar extends CI_Controller {
 					'color'       => '#e53838',
 					'editable'    => true,
 					'delete'      => site_url('calendar/delete_event/'.$item['id']),
+					'repeatable'  => $item['repeatable'],
 				);
 			}
 		}

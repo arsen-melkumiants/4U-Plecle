@@ -33,7 +33,40 @@ window.onload = function() {
 		axisFormat : 'HH:mm',
 		slotDuration : '00:30:01',
 		selectable : true,
-		events: '/calendar/events',
+		events: function(start, end, timezone, callback) {
+			$.ajax({
+				url: '/calendar/events',
+				dataType: 'json',
+				data: {
+					// our hypothetical feed requires UNIX timestamps
+					start: start.unix(),
+					end: end.unix()
+				},
+				success: function(data) {
+					var events = [];
+					for(var key in data) {
+						events.push(data[key]);
+						if (data[key].repeatable == '1') {
+							var repeat_item = data[key];
+							for(var i = 1;i <= 12;i++) {
+								events.push({
+									id       : data[key].id,
+									color    : data[key].color,
+									editable : data[key].editable,
+									delete   : data[key].delete,
+									title    : data[key].title,
+									start    : moment(repeat_item.start).add(i, 'w').format('YYYY-MM-DD HH:mm'),
+									end      : moment(repeat_item.end).add(i, 'w').format('YYYY-MM-DD HH:mm'),
+								});
+							}
+						}
+					}
+					console.log(events);
+					callback(events);
+				}
+			});
+		},
+		//events: '/calendar/events',
 		droppable : true,
 		unselectAuto : true,
 		select: function(start, end, allDay) {
