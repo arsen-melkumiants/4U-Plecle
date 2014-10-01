@@ -333,6 +333,8 @@ table.reviews .positive .name {color: #4f5f6f;}
 #calendar .fc-toolbar .fc-state-active, .fc-state-down {box-shadow: none;color: #a3a3a3;}
 #calendar .fc-widget-header th {padding-top: 20px;padding-bottom: 20px;}
 #calendar .fc-widget-header {background: #f7f7f7;}
+#calendar .fc-day-header.fc-widget-header {cursor: pointer;}
+#calendar .fc-day-header.fc-widget-header:hover {background: #eeeeee;}
 
 #calendar.fc-unthemed .fc-popover,
 #calendar.fc-unthemed .fc-row,
@@ -356,5 +358,5 @@ table.reviews .positive .name {color: #4f5f6f;}
 #calendar .fc-event {border-radius: 0;}
 #calendar .remove {position: absolute;right: 0px;top: -5px;text-decoration: none;color: #fff;padding: 6px;}
 
-#calendar .set_icon {display: block;background: url(../img/gear.png) no-repeat;width: 23px;height: 22px;margin: 0 auto;padding: 5px 0;cursor: pointer;}
+#calendar .set_icon {display: block;background: url(../img/gear.png) no-repeat;width: 23px;height: 22px;margin: 0 auto;cursor: pointer;}
 #calendar .fc-axis.fc-widget-header {background: #fff;}

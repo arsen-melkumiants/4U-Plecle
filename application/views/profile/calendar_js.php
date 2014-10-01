@@ -26,7 +26,7 @@ window.onload = function() {
 		defaultView : 'agendaWeek',
 		columnFormat : {
 			month : 'MMM',
-			week : 'dddd, D',
+			week : 'dddd, D.MM',
 			day : 'dddd, D.MM.YYYY'
 		},
 		allDaySlot : false,
@@ -109,6 +109,13 @@ window.onload = function() {
 
 	$('.fc-toolbar button').on('click', function() {
 		$.cookie('curr_d', calendar.fullCalendar('getDate').format(), { expires: 7, path: '/' });
+	});
+
+	$('#calendar').on('click', '.fc-day-header.fc-widget-header', function() {
+		var selected = $(this).text();
+		selected = moment(selected, 'dddd, D.MM', 'ru');
+		calendar.fullCalendar('gotoDate', selected);
+		calendar.fullCalendar('changeView', 'agendaDay');
 	});
 
 	var datepicker = function() {
