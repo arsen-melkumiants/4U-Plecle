@@ -61,7 +61,6 @@ window.onload = function() {
 							}
 						}
 					}
-					console.log(events);
 					callback(events);
 				}
 			});
@@ -94,6 +93,9 @@ window.onload = function() {
 			if (typeof event.delete !== 'undefined') {
 				element.find('.fc-title').append('<a class="remove" ref="' + event.delete + '">x</a>');
 			}
+		},
+		viewRender : function() {
+			$('.fc-axis.fc-widget-header').html('<a data-toggle="modal" data-target="#ajaxModal" href="<?php echo site_url('calendar/set_options')?>" class="set_icon"></div>');
 		}
 	});
 
@@ -113,6 +115,12 @@ window.onload = function() {
 		$('.date_time').datetimepicker({
 			language       : 'ru',
 			minuteStepping : 30,
+		});
+
+		$('.time').datetimepicker({
+			language       : 'ru',
+			minuteStepping : 30,
+			pickDate       : false,
 		});
 	};
 };

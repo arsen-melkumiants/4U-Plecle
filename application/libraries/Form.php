@@ -333,7 +333,7 @@ class Form {
 			after_load('js',  '/dist/bs-select/bootstrap-select.js');
 			after_load('css', '/dist/bs-select/bootstrap-select.min.css');
 		}
-		
+
 		$params['method'] = !empty($params['method']) ? $params['method'] : 'post';
 		$params['class'] = !empty($params['class']) ? ' class="'.$params['class'].'" ' : '';
 

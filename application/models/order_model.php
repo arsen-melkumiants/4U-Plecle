@@ -720,10 +720,25 @@ class Order_model extends CI_Model {
 	}
 
 	function is_busy($order_info) {
+		$user_id    = $this->data['user_info']['id'];
 		$start_date = $order_info['start_date'];
 		$end_date   = $order_info['start_date'] + ($order_info['duration'] * 3600);
 
 		$is_busy = false;
+
+		$work_time = $this->db->where('user_id', $user_id)->get('work_time')->row_array();
+		if (!empty($work_time)) {
+				$work_time['start_day'] = strtotime(date('Y-m-d', $start_date).' '.$work_time['start_day']);
+				$work_time['end_day'] = strtotime(date('Y-m-d', $end_date).' '.$work_time['end_day']);
+
+				if ($work_time['start_day'] > $start_date || $work_time['end_day'] < $end_date) {
+					$is_busy = true;
+				}
+		}
+
+		if ($is_busy) {
+			return true;
+		}
 
 		$active_orders = $this->get_all_orders(1)->result_array();
 		if (!empty($active_orders)) {

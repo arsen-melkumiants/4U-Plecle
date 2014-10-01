@@ -355,3 +355,6 @@ table.reviews .positive .name {color: #4f5f6f;}
 #calendar .fc-time-grid-event .fc-title {text-align: center;padding-top: 10px;}
 #calendar .fc-event {border-radius: 0;}
 #calendar .remove {position: absolute;right: 0px;top: -5px;text-decoration: none;color: #fff;padding: 6px;}
+
+#calendar .set_icon {display: block;background: url(../img/gear.png) no-repeat;width: 23px;height: 22px;margin: 0 auto;padding: 5px 0;cursor: pointer;}
+#calendar .fc-axis.fc-widget-header {background: #fff;}

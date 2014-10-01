@@ -81,6 +81,87 @@ class Calendar extends CI_Controller {
 		}
 	}
 
+	public function set_options() {
+		$this->load->library('form');
+		$this->data['event_form'] = $this->form
+			->date('start_date', array(
+				'valid_rules' => 'trim|xss_clean',
+				'label'       => 'Дата начала',
+				'type'        => 'd.m.Y H:i',
+				'icon'        => false,
+				'width'       => 12,
+				'group_class' => 'row',
+			))
+			->date('end_date', array(
+				'valid_rules' => 'trim|xss_clean',
+				'label'       => 'Дата завершения',
+				'type'        => 'd.m.Y H:i',
+				'icon'        => false,
+				'width'       => 12,
+				'group_class' => 'row',
+			))
+			->radio('repeatable', array(
+				'inputs'      => array('Нет', 'Да'),
+				'label'       => 'Повторение',
+				'group_class' => 'row',
+			))
+			->create(array('error_inline' => true, 'no_form_tag' => true));
+
+		$work_time = $this->db->where('user_id', $this->data['user_info']['id'])->get('work_time')->row_array();
+		$this->data['days_off_form'] = $this->form
+			->date('start_day', array(
+				'valid_rules' => 'trim|xss_clean',
+				'label'       => 'Начало рабочего дня',
+				'type'        => 'H:i',
+				'icon'        => false,
+				'width'       => 12,
+				'group_class' => 'row',
+				'class'       => 'time',
+				'value'       => !empty($work_time) && strtotime($work_time['start_day']) ? strtotime($work_time['start_day']) : false,
+			))
+			->date('end_day', array(
+				'valid_rules' => 'trim|xss_clean',
+				'label'       => 'Конец рабочего дня',
+				'type'        => 'H:i',
+				'icon'        => false,
+				'width'       => 12,
+				'group_class' => 'row',
+				'class'       => 'time',
+				'value'       => !empty($work_time) && strtotime($work_time['end_day']) ? strtotime($work_time['end_day']) : false,
+			))
+			->create(array('error_inline' => true, 'no_form_tag' => true));
+
+		$this->data['center_block'] = $this->load->view('profile/sets', $this->data, true);
+
+		if ($this->form_validation->run() == FALSE) {
+				load_views();
+		} else {
+			$data = array(
+				'user_id'    => $this->data['user_info']['id'],
+				'start_date' => strtotime($this->input->post('start_date')),
+				'end_date'   => strtotime($this->input->post('end_date')),
+				'repeatable' => $this->input->post('repeatable'),
+			);
+			if ($data['start_date'] < $data['end_date']) {
+				$this->db->insert('events', $data);
+			}
+
+			$data = array(
+				'user_id'   => $this->data['user_info']['id'],
+				'start_day' => $this->input->post('start_day'),
+				'end_day'   => $this->input->post('end_day'),
+			);
+			if (!empty($work_time)) {
+				$this->db->where('user_id', $data['user_id'])->update('work_time', $data);
+			} else {
+				$this->db->insert('work_time', $data);
+			}
+
+			$this->session->set_flashdata('success', 'Настройки успешно внесены');
+			custom_redirect('calendar');
+		}
+	}
+
 	public function edit_event($event_id = false) {
 		$event_id = intval($event_id);
 		if (empty($event_id)) {
