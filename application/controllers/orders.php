@@ -51,14 +51,14 @@ class Orders extends CI_Controller {
 			),
 		);
 
-		$this->data['user_balance'] = $this->order_model->get_user_balance();
-
 		$this->data['created_orders']   = $this->order_model->order_table(0);
 		$this->data['active_orders']    = $this->order_model->order_table(1);
 		$this->data['completed_orders'] = $this->order_model->order_table(2);
 
 		$this->load->view('header', $this->data);
 		if ($this->data['user_info']['is_cleaner']) {
+			$this->data['user_balance'] = $this->order_model->get_user_balance();
+
 			$this->data['request_orders'] = $this->order_model->order_table(3);
 			$this->data['invite_orders'] = $this->order_model->order_table(4);
 			$this->load->view('orders/cleaner_top', $this->data);
@@ -506,6 +506,10 @@ class Orders extends CI_Controller {
 	}
 
 	public function withdraw() {
+		if (!$this->data['user_info']['is_cleaner']) {
+			custom_404();
+		}
+
 		$this->data['title'] = $this->data['header'] = 'Запрос на снятие денег';
 
 		$this->form_validation->set_message('greater_than', 'Минимальная сумма для снятия 1000 рублей');
