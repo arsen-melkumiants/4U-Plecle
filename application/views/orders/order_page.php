@@ -69,6 +69,22 @@ if ($this->uri->segment(1) != 'make_order') {
 					</table>
 				</div>
 			</div>
+			<?php if (isset($user_balance)) {?>
+			<div class="detail_block">
+				<div class="title">Мой счет</div>
+				<div class="list">
+					<table class="table">
+						<tbody>
+							<tr>
+								<td>На счету</td>
+								<td><?php echo $user_balance?></td>
+							</tr>
+							<tr class="withdraw_link"><td colspan="2" align="center"><a data-toggle="modal" data-target="#ajaxModal" href="<?php echo site_url('orders/withdraw')?>" title="Минимальная сумма 1000 рублей">Вывести деньги</a></td></tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<?php }?>
 		</div>
 		<?php } else {?>
 		<div class="col-md-12"><?php echo $center_block?></div>

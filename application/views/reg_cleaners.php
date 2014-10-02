@@ -24,6 +24,7 @@
 							<div class="checkbox"><label><input type="checkbox" name="options[<?php echo $key?>]" value="1" <?php echo !empty($result_options[$key]) ? 'checked="checked"' : '' ?>> <?php echo $info?></label></div>
 							<?php }?>
 						</div>
+						<div class="clear"></div>
 					</div>
 					<h4 class="title">Ваши персональные данные</h4>
 					<div class="row">

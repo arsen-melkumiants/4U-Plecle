@@ -117,7 +117,6 @@ class Order_model extends CI_Model {
 			$this->db->where('o.'.$user_type.'_id', $user_id);
 		}
 
-
 		if (!empty($limit)) {
 			$this->db->limit($limit);
 		}
@@ -790,5 +789,53 @@ class Order_model extends CI_Model {
 		}
 
 		return $is_busy;
+	}
+
+	function get_user_balance($user_id = false) {
+		if (empty($user_id)) {
+			$user_id = $this->data['user_info']['id'];
+		}
+
+		$user_balance = $this->db
+			->select('SUM(amount) as amount')
+			->from('user_payment_logs')
+			->where('user_id', $user_id)
+			->get()
+			->row_array();
+
+		if (empty($user_balance)) {
+			$user_balance = 0;
+		}
+
+		return !empty($user_balance['amount']) ? $user_balance['amount'] : 0;
+	}
+	
+	function log_payment($user_id, $type_name, $type_id = 0, $amount, $currency = 1) {
+		if (empty($user_id) || empty($type_name) || empty($amount) || empty($currency)) {
+			return false;
+		}
+		
+		$payment_info = array(
+			'user_id'   => $user_id,
+			'type_name' => $type_name,
+			'type_id'   => $type_id,
+			'amount'    => $amount,
+			'date'      => time(),
+		);
+		$this->db->insert('user_payment_logs', $payment_info);
+
+		if ($type_name == 'fill_up') {
+			$this->send_mail($this->data['user_info']['email'], 'mail_account_reffiled', 'account_reffiled', $payment_info);
+		} elseif ($type_name == 'lift_up') {
+			$this->send_mail($this->data['user_info']['email'], 'mail_services_lift_up_product', 'services_lift_up_product', $payment_info);
+		} elseif ($type_name == 'mark') {
+			$this->send_mail($this->data['user_info']['email'], 'mail_services_mark_product', 'services_mark_product', $payment_info);
+		} elseif ($type_name == 'make_vip') {
+			$this->send_mail($this->data['user_info']['email'], 'mail_services_vip_product', 'services_vip_product', $payment_info);
+		} elseif ($type_name == 'income_product') {
+			$this->send_mail($this->data['user_info']['email'], 'mail_product_purchased', 'product_purchased', $payment_info);
+		}
+		
+		return $this->db->insert_id();
 	}
 }

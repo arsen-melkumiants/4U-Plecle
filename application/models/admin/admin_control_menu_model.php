@@ -39,6 +39,7 @@ class Admin_control_menu_model extends CI_Model
 					'manage_order/regions'      => 'Список регионов',
 					'3'                         => '',
 					'manage_order/payments'     => 'Список выплат',
+					'manage_payment'            => 'Заявки на вывод денег',
 					'4'                         => '',
 					'manage_order/reviews'      => 'Отзывы',
 				),

@@ -51,6 +51,8 @@ class Orders extends CI_Controller {
 			),
 		);
 
+		$this->data['user_balance'] = $this->order_model->get_user_balance();
+
 		$this->data['created_orders']   = $this->order_model->order_table(0);
 		$this->data['active_orders']    = $this->order_model->order_table(1);
 		$this->data['completed_orders'] = $this->order_model->order_table(2);
@@ -292,6 +294,7 @@ class Orders extends CI_Controller {
 					'add_date'   => time(),
 					'status'     => 1,
 				));
+				$this->order_model->log_payment($order_info['cleaner_id'], 'order_payment', $order_info['id'], (CLEANER_SALARY * $order_info['duration'] + floatval($update_array['detergent_price'])));
 				$this->db->trans_commit();
 				$this->session->set_flashdata('success', 'Сделка успешно завершена');
 				$email_info = array(
@@ -502,4 +505,49 @@ class Orders extends CI_Controller {
 		}
 	}
 
+	public function withdraw() {
+		$this->data['title'] = $this->data['header'] = 'Запрос на снятие денег';
+
+		$this->form_validation->set_message('greater_than', 'Минимальная сумма для снятия 1000 рублей');
+		$this->data['center_block'] = $this->form
+			->text('number', array(
+				'valid_rules' => 'required|trim|xss_clean|max_length[70]',
+				'label'       => 'Номер счета или кошелька',
+				'width'       => 12,
+			))
+			->text('name', array(
+				'valid_rules' => 'required|trim|xss_clean|max_length[70]',
+				'label'       => 'Название платежной системы',
+				'width'       => 12,
+			))
+			->text('amount', array(
+				'valid_rules' => 'required|trim|xss_clean|price|greater_than[999]',
+				'label'       => 'Сумма на снятие',
+				'width'       => 12,
+			))
+			->btn(array('value' => 'Отправить'))
+			->create(array('action' => current_url(), 'error_inline' => 'true'));
+
+		if ($this->form_validation->run() != FALSE) {
+			$user_balance = $this->order_model->get_user_balance();
+			if ($this->input->post('amount') > $user_balance) {
+				$this->session->set_flashdata('danger', 'К сожалению, у вас недостаточно средств на счету');
+				custom_redirect('orders', 'refresh');
+			}
+
+			$this->db->insert('user_payment_requests', array(
+				'type'       => 'withdraw',
+				'name'       => $this->input->post('name'),
+				'number'     => $this->input->post('number'),
+				'amount'     => $this->input->post('amount'),
+				'user_id'    => $this->data['user_info']['id'],
+				'add_date'   => time(),
+			));
+			$this->session->set_flashdata('success', 'Спасибо, ваша заявка на вывод денег принята. В ближайшее время с вами свяжутся');
+			custom_redirect('orders', 'refresh');
+		}
+
+		load_views();
+
+	}
 }
