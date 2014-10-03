@@ -134,7 +134,7 @@ class Calendar extends CI_Controller {
 		$this->data['center_block'] = $this->load->view('profile/sets', $this->data, true);
 
 		if ($this->form_validation->run() == FALSE) {
-				load_views();
+			load_views();
 		} else {
 			$data = array(
 				'user_id'    => $this->data['user_info']['id'],

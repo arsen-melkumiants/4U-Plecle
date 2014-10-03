@@ -29,6 +29,10 @@ class Manage_statistic extends CI_Controller {
 			'header'       => 'Статитстика по районам',
 			'header_descr' => 'Общее количество сделок по индексам и районам',
 		),
+		'calendar'         => array(
+			'header'       => 'Календарь сделок',
+			'header_descr' => 'Календарь отображает все сделки',
+		),
 	);
 
 	public function __construct() {
@@ -157,5 +161,62 @@ class Manage_statistic extends CI_Controller {
 			});
 
 		load_admin_views();
+	}
+
+	public function calendar() {
+		$this->data['center_block'] = $this->load->view(ADM_FOLDER.'calendar_js', $this->data, true);
+
+		load_admin_views();
+	}
+
+	public function get_events() {
+		$all_orders = $this->db->get('orders')->result_array();
+		if (empty($all_orders)) {
+			exit;
+		}
+
+		foreach ($all_orders as $key => $item) {
+			$result_array[$key] = array(
+				'start'    => date('Y-m-d H:i', $item['start_date']),
+				'end'      => date('Y-m-d H:i', $item['start_date'] + ($item['duration'] * 3600)),
+				'color'    => '#ffba00',
+				'url'      => site_url('4U/manage_order/edit/'.$item['id']),
+			);
+
+			if (in_array($item['status'], array(0,1)) && $item['start_date'] < 86400 + time()) {
+				//Сделка не состоялась
+				$result_array[$key]['color'] = '#a2aea8';
+			} elseif (in_array($item['status'], array(4,5))) {
+				//Сделка отменена
+				$result_array[$key]['color'] = '#a2aea8';
+			} elseif (!$item['cleaner_id'] && $item['status'] == 2 && $item['start_date'] > time() && $this->data['user_info']['is_cleaner']) {
+				//Подробнее
+				$result_array[$key]['color'] = '#ffba00';
+			} elseif (!$item['cleaner_id'] && $item['status'] == 2 && $item['start_date'] < time()) {
+				//Сделка отменена (отсутствует горничная)
+				$result_array[$key]['color'] = '#a2aea8';
+			} elseif (in_array($item['status'], array(0,1))) {
+				//Ожидаем оплаты
+				$result_array[$key]['color'] = '#ffba00';
+			} elseif (!$item['cleaner_id']) {
+				//Ожидаем горничную
+				$result_array[$key]['color'] = '#ffba00';
+			} elseif ($item['status'] == 2 && $item['start_date'] + (3600 * $item['duration']) > time()) {
+				//Сделка в процессе
+				$result_array[$key]['color'] = '#00ff7e';
+			} elseif ($item['status'] == 2 && $item['start_date'] + (3600 * $item['duration']) < time()) {
+				//Ожидаем оценку уборки
+				$result_array[$key]['color'] = '#a2aea8';
+			} elseif ($item['status'] == 3 && $item['last_mark'] == 'positive') {
+				//Уборка успешно завершена
+				$result_array[$key]['color'] = '#a2aea8';
+			} elseif ($item['status'] == 3 && $item['last_mark'] == 'negative') {
+				//Плохое качество уборки
+				$result_array[$key]['color'] = '#a2aea8';
+			}
+		}
+
+		echo json_encode($result_array);
+		exit;
 	}
 }
