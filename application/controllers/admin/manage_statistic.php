@@ -25,9 +25,13 @@ class Manage_statistic extends CI_Controller {
 			'header'       => 'Пользователи',
 			'header_descr' => 'Количество клиентов и горничных',
 		),
+		'regions'         => array(
+			'header'       => 'Статитстика по районам',
+			'header_descr' => 'Общее количество сделок по индексам и районам',
+		),
 	);
 
-	function __construct() {
+	public function __construct() {
 		parent::__construct();
 		$this->config->set_item('sess_cookie_name', 'a_session');
 
@@ -37,16 +41,17 @@ class Manage_statistic extends CI_Controller {
 		}
 
 		$this->load->model(ADM_FOLDER.'admin_order_model');
-		//$this->load->model('shop_model');
 		$this->MAIN_URL = ADM_URL.strtolower(__CLASS__).'/';
 		admin_constructor();
+
+		$this->zip = $this->admin_order_model->get_all_zips();
 	}
 
-	function index() {
+	public function index() {
 		$this->orders('all');
 	}
 
-	function orders($period = 'all') {
+	public function orders($period = 'all') {
 		if ($period == 'period' && !empty($_GET['from']) && !empty($_GET['to'])) {
 			$period = array(
 				'from' => strtotime($_GET['from']),
@@ -74,8 +79,8 @@ class Manage_statistic extends CI_Controller {
 		$this->data['center_block'] = $this->load->view(ADM_FOLDER.'dd_page', $this->data, true);
 		load_admin_views();
 	}
-	
-	function turnover($period = 'all') {
+
+	public function turnover($period = 'all') {
 		if ($period == 'period' && !empty($_GET['from']) && !empty($_GET['to'])) {
 			$period = array(
 				'from' => strtotime($_GET['from']),
@@ -103,15 +108,54 @@ class Manage_statistic extends CI_Controller {
 		load_admin_views();
 	}
 
-	function users() {
+	public function users() {
 		$user_count = $this->admin_order_model->get_user_count();
 		$this->data['dd_list'] = array(
 			'Всего клиентов'  => $user_count['clients'],
 			'Всего горничных' => $user_count['cleaners'],
 		);
 
-		$this->MAIN_URL .= 'turnover/';
 		$this->data['center_block'] = $this->load->view(ADM_FOLDER.'dd_page', $this->data, true);
+		load_admin_views();
+	}
+
+	public function regions($period = 'all') {
+		if ($period == 'period' && !empty($_GET['from']) && !empty($_GET['to'])) {
+			$period = array(
+				'from' => strtotime($_GET['from']),
+				'to'   => strtotime($_GET['to']),
+			);
+		}
+		$this->data['period'] = $period;
+		$this->data['types']  = array(
+			//'all'    => 'Все время',
+			//'daily'  => 'День',
+			'week'   => 'Неделя',
+			'month'  => 'Месяц',
+			'year'   => 'Год',
+			'period' => 'Указанный период'
+		);
+
+		$this->MAIN_URL .= __FUNCTION__.'/';
+		$this->data['center_block'] = $this->load->view(ADM_FOLDER.'dd_page', $this->data, true);
+		$this->load->library('table');
+		$this->data['center_block'] .= $this->table
+			->text('zip', array(
+				'title' => 'Индекс',
+			))
+			->text('zip', array(
+				'title' => 'Район',
+				'func'  => function($row, $params, $that, $CI) {
+					return isset($CI->zip[$row['zip']]) ? $CI->zip[$row['zip']] : 'Не указан';
+				}
+		))
+			->text('count', array(
+				'title' => 'Количество сделок',
+			))
+			->create(function($CI) {
+				return $CI->admin_order_model->get_region_orders($CI->data['period']);
+			});
+
 		load_admin_views();
 	}
 }

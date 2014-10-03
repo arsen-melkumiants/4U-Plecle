@@ -1,6 +1,4 @@
-<?php 
-if (!empty($dd_list)) {
-	if(!empty($types)) {?>
+<?php if(!empty($types)) {?>
 <div class="row">
 	<div class="col-sm-6">
 		<div class="btn-group">
@@ -64,6 +62,7 @@ if (!empty($dd_list)) {
 <?php }?>
 <br />
 <br />
+<?php if (!empty($dd_list)) {?>
 <dl class="dl-horizontal">
 	<?php foreach ($dd_list as $name => $value) {?>
 	<dt><?php echo $name?>:</dt>

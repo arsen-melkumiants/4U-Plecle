@@ -179,7 +179,7 @@ class Admin_order_model extends CI_Model {
 
 		return $turnover_info;
 	}
-	
+
 	function get_user_count() {
 		$user_count = $this->db->select('COUNT(*) AS count, is_cleaner', false)
 			->group_by('is_cleaner')
@@ -203,5 +203,13 @@ class Admin_order_model extends CI_Model {
 			}
 		}
 		return $result_array;
+	}
+
+	function get_region_orders($period = 'all') {
+		$this->set_period_statistic($period, 'start_date');
+		return $this->db->select('COUNT(*) as count, zip')
+			->group_by('zip')
+			->get('orders');
+
 	}
 }

@@ -62,6 +62,7 @@ class Admin_control_menu_model extends CI_Model
 					'manage_statistic'          => 'Статистика по сделкам',
 					'manage_statistic/turnover' => 'Финансовая статистика',
 					'manage_statistic/users'    => 'Пользователи',
+					'manage_statistic/regions'  => 'Статистика по районам',
 				),
 			),
 		);
