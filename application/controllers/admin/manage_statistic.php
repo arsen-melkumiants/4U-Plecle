@@ -184,33 +184,43 @@ class Manage_statistic extends CI_Controller {
 			);
 
 			if (in_array($item['status'], array(0,1)) && $item['start_date'] < 86400 + time()) {
+				$result_array[$key]['title'] = 'Сделка не состоялась';
 				//Сделка не состоялась
 				$result_array[$key]['color'] = '#a2aea8';
 			} elseif (in_array($item['status'], array(4,5))) {
+				$result_array[$key]['title'] = 'Сделка отменена';
 				//Сделка отменена
 				$result_array[$key]['color'] = '#a2aea8';
 			} elseif (!$item['cleaner_id'] && $item['status'] == 2 && $item['start_date'] > time() && $this->data['user_info']['is_cleaner']) {
+				$result_array[$key]['title'] = 'Подробнее';
 				//Подробнее
 				$result_array[$key]['color'] = '#ffba00';
 			} elseif (!$item['cleaner_id'] && $item['status'] == 2 && $item['start_date'] < time()) {
+				$result_array[$key]['title'] = 'Сделка отменена (отсутствует горничная)';
 				//Сделка отменена (отсутствует горничная)
 				$result_array[$key]['color'] = '#a2aea8';
 			} elseif (in_array($item['status'], array(0,1))) {
+				$result_array[$key]['title'] = 'Ожидаем оплаты';
 				//Ожидаем оплаты
 				$result_array[$key]['color'] = '#ffba00';
 			} elseif (!$item['cleaner_id']) {
+				$result_array[$key]['title'] = 'Ожидаем горничную';
 				//Ожидаем горничную
 				$result_array[$key]['color'] = '#ffba00';
 			} elseif ($item['status'] == 2 && $item['start_date'] + (3600 * $item['duration']) > time()) {
+				$result_array[$key]['title'] = 'Сделка в процессе';
 				//Сделка в процессе
 				$result_array[$key]['color'] = '#00ff7e';
 			} elseif ($item['status'] == 2 && $item['start_date'] + (3600 * $item['duration']) < time()) {
+				$result_array[$key]['title'] = 'Ожидаем оценку уборки';
 				//Ожидаем оценку уборки
 				$result_array[$key]['color'] = '#a2aea8';
 			} elseif ($item['status'] == 3 && $item['last_mark'] == 'positive') {
+				$result_array[$key]['title'] = 'Уборка успешно завершена';
 				//Уборка успешно завершена
 				$result_array[$key]['color'] = '#a2aea8';
 			} elseif ($item['status'] == 3 && $item['last_mark'] == 'negative') {
+				$result_array[$key]['title'] = 'Плохое качество уборки';
 				//Плохое качество уборки
 				$result_array[$key]['color'] = '#a2aea8';
 			}
