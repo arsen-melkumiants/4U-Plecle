@@ -1,14 +1,15 @@
 <?php 
-if (!empty($dd_list)) {?>
+if (!empty($dd_list)) {
+	if(!empty($types)) {?>
 <div class="row">
-	<div class="col-sm-5">
+	<div class="col-sm-6">
 		<div class="btn-group">
 			<?php foreach ($types as $key => $item) {?>
 			<a href="<?php echo site_url($this->MAIN_URL.($key == 'all' ? '' : $key))?>" class="btn btn-primary<?php echo $key == $period || ($key == 'period' && is_array($period))? ' active' : ''?>"><?php echo $item?></a>
 			<?php }?>
 		</div>
 	</div>
-	<div class="col-sm-5"<?php if(!is_array($period)){?>style="display: none;"<?php }?>>
+	<div class="col-sm-4"<?php if(!is_array($period) && $period != 'period'){?>style="display: none;"<?php }?>>
 		<form action="<?php echo site_url($this->MAIN_URL.'period')?>" class="form-horizontal date_range" method="get">
 			<div class="row">
 				<div class="col-md-6">
@@ -60,6 +61,7 @@ if (!empty($dd_list)) {?>
 		});
 	};
 </script>
+<?php }?>
 <br />
 <br />
 <dl class="dl-horizontal">

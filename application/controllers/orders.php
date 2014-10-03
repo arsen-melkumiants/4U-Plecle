@@ -267,7 +267,7 @@ class Orders extends CI_Controller {
 					custom_404();
 				}
 			} else {
-				$update_array = array('status' => 3);
+				$update_array = array('status' => 3, 'last_mark' => $type);
 				if ($order_info['frequency'] == 'every_week') {
 					$update_array['status'] = 1;
 					$update_array['start_date'] = $this->next_order_time($order_info['start_date'], 604800);

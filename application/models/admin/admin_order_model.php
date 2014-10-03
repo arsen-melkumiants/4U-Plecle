@@ -114,4 +114,94 @@ class Admin_order_model extends CI_Model {
 			->get()
 			->row_array();
 	}
+
+	function set_period_statistic($period = 'all', $field_name = 'start_date') {
+		if ($period == 'daily') {
+			$day = strtotime('today UTC');
+			$this->db->where($field_name.' >', $day);
+			$this->db->where($field_name.' <', $day + 86400);
+		} elseif ($period == 'week') {
+			$this->db->where($field_name.' >', strtotime('monday this week'));
+			$this->db->where($field_name.' <', strtotime('monday next week'));
+		} elseif ($period == 'month') {
+			$this->db->where($field_name.' >', strtotime('first day of this month'));
+			$this->db->where($field_name.' <', strtotime('first day of next month'));
+		} elseif ($period == 'year') {
+			$this->db->where($field_name.' >', strtotime(date('Y').'-01-01'));
+			$this->db->where($field_name.' <', strtotime((date('Y') + 1).'-01-01'));
+		} elseif (is_array($period)) {
+			$this->db->where($field_name.' >', $period['from']);
+			$this->db->where($field_name.' <', $period['to']);
+		}
+	}
+
+	function get_order_stats($period = 'all') {
+		$this->set_period_statistic($period);
+		$order_counts = $this->db->select('COUNT(*) as count, last_mark as mark')
+			->group_by('last_mark')
+			->get('orders')
+			->result_array();
+
+		$result_array = array(
+			'all'      => 0,
+			'positive' => 0,
+			'negative' => 0,
+		);
+
+		if (empty($order_counts)) {
+			return $result_array;
+		}
+
+		$result_array['all'] = 0;
+		foreach ($order_counts as $item) {
+			$result_array['all'] += $item['count'];
+			if (!empty($item['mark'])) {
+				$result_array[$item['mark']] = $item['count'];
+			}
+		}
+
+		return $result_array;
+	}
+
+	function get_turnover($period = 'all') {
+		$this->set_period_statistic($period, 'add_date');
+		$turnover_info = $this->db->select('SUM(total_price) AS total, SUM(total_price - total_cleaner_price) AS profit', false)
+			->where('status', 1)
+			->get('payments')
+			->row_array();
+
+		if (empty($turnover_info)) {
+			return array(
+				'total'  => 0,
+				'profit' => 0,
+			);
+		}
+
+		return $turnover_info;
+	}
+	
+	function get_user_count() {
+		$user_count = $this->db->select('COUNT(*) AS count, is_cleaner', false)
+			->group_by('is_cleaner')
+			->get('users')
+			->result_array();
+
+		$result_array = array(
+			'clients'  => 0,
+			'cleaners' => 0,
+		);
+
+		if (empty($user_count)) {
+			return $result_array;
+		}
+
+		foreach ($user_count as $item) {
+			if ($item['is_cleaner']) {
+				$result_array['cleaners'] = $item['count'];
+			} else {
+				$result_array['clients'] = $item['count'];
+			}
+		}
+		return $result_array;
+	}
 }
