@@ -248,7 +248,7 @@ class Orders extends CI_Controller {
 			}
 
 			$this->data['center_block'] .= $this->form
-				->textarea('review', array('no_editor' => true, 'rows' => 7, 'width' => 12, 'valid_rules' => 'trim|required', 'label' => 'Отзыв'))
+				->textarea('review', array('no_editor' => true, 'rows' => 7, 'width' => 12, 'valid_rules' => 'trim', 'label' => 'Отзыв'))
 				->separator('<div class="popup_info">И поставьте оценку, которую по-Вашему заслуживает горничная</div>')
 				->radio('amount', array(
 					'valid_rules' => 'required|trim',
@@ -267,7 +267,13 @@ class Orders extends CI_Controller {
 					custom_404();
 				}
 			} else {
-				$update_array = array('status' => 3, 'last_mark' => $type);
+				$cleaner_price = $order_info['max_sallary'] ? MAX_CLEANER_SALARY : CLEANER_SALARY;
+				$update_array = array(
+					'status'          => 3,
+					'last_mark'       => $type,
+					'detergent_price' => $order_info['detergent_price'],
+				);
+
 				if ($order_info['frequency'] == 'every_week') {
 					$update_array['status'] = 1;
 					$update_array['start_date'] = $this->next_order_time($order_info['start_date'], 604800);
@@ -278,10 +284,10 @@ class Orders extends CI_Controller {
 
 				if ($update_array['status'] === 1) {
 					$update_array['price_per_hour']      = PRICE_PER_HOUR;
-					$update_array['cleaner_price']       = CLEANER_SALARY;
+					$update_array['cleaner_price']       = $cleaner_price;
 					$update_array['detergent_price']     = floatval($order_info['detergent_price']) ? DETERGENT_PRICE * $order_info['duration'] : 0;
 					$update_array['total_price']         = PRICE_PER_HOUR * $order_info['duration'] + floatval($update_array['detergent_price']);
-					$update_array['total_cleaner_price'] = CLEANER_SALARY * $order_info['duration'] + floatval($update_array['detergent_price']);
+					$update_array['total_cleaner_price'] = $cleaner_price * $order_info['duration'] + floatval($update_array['detergent_price']);
 				}
 				$this->db->trans_begin();
 				$this->db->where('id', $order_id)->update('orders', $update_array);
@@ -294,7 +300,7 @@ class Orders extends CI_Controller {
 					'add_date'   => time(),
 					'status'     => 1,
 				));
-				$this->order_model->log_payment($order_info['cleaner_id'], 'order_payment', $order_info['id'], (CLEANER_SALARY * $order_info['duration'] + floatval($update_array['detergent_price'])));
+				$this->order_model->log_payment($order_info['cleaner_id'], 'order_payment', $order_info['id'], ($cleaner_price * $order_info['duration'] + floatval($update_array['detergent_price'])));
 				$this->db->trans_commit();
 				$this->session->set_flashdata('success', 'Сделка успешно завершена');
 				$email_info = array(

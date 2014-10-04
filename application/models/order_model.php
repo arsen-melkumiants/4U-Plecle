@@ -631,6 +631,7 @@ class Order_model extends CI_Model {
 			->join('users AS u', 'u.id = o.client_id')
 			->where('m.status', 1)
 			->where('m.cleaner_id', $user_id)
+			->where('m.review !=', '')
 			->order_by('m.add_date', 'desc')
 			->get();
 	}

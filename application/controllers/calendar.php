@@ -57,7 +57,7 @@ class Calendar extends CI_Controller {
 	}
 
 	public function add_event() {
-		$this->data['header'] = 'Создание события';
+		$this->data['header'] = 'Укажите время когда вы не сможете принимать заказы';
 
 		$this->data['center_block'] = $this->edit_form();
 
@@ -176,7 +176,7 @@ class Calendar extends CI_Controller {
 			custom_404();
 		}
 
-		$this->data['header'] = 'Редактирование события';
+		$this->data['header'] = 'Редактирование занятого времени';
 
 		$this->data['center_block'] = $this->edit_form($event_info);
 
