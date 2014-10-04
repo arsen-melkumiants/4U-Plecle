@@ -28,16 +28,13 @@ class Cli_tools extends CI_Controller {
 			return false;
 		}
 
-		$this->load->model('order_model');
-
 		foreach ($result as $item) {
-			$this->order_model->send_mail($item['email'], 'Горничные для Вас', 'confirm_request', $item);
+			$this->send_mail($item['email'], 'Горничные для Вас', 'confirm_request', $item);
 			$this->db->where('id', $item['id'])->update('order_requests', array('status' => 1, 'send_date' => time()));
 		}
 	}
 
 	public function autocomplete_orders() {
-		$this->load->model('order_model');
 		$this->load->library('ion_auth');
 
 		$orders = $this->db->where(array(
@@ -45,7 +42,6 @@ class Cli_tools extends CI_Controller {
 			'cleaner_id !=' => 0,
 		))->get('orders')->result_array();
 
-		print_r($orders);
 		$type = 'positive';
 		$sign = 10;
 		foreach ($orders as $order_info) {
@@ -89,7 +85,7 @@ class Cli_tools extends CI_Controller {
 				'add_date'   => time(),
 				'status'     => 1,
 			));
-			$this->order_model->log_payment($order_info['cleaner_id'], 'order_payment', $order_info['id'], ($cleaner_price * $order_info['duration'] + floatval($update_array['detergent_price'])));
+			$this->log_payment($order_info['cleaner_id'], 'order_payment', $order_info['id'], ($cleaner_price * $order_info['duration'] + floatval($update_array['detergent_price'])));
 
 			$this->db->trans_commit();
 
@@ -97,13 +93,13 @@ class Cli_tools extends CI_Controller {
 				'order_id'   => $order_info['id'],
 				'start_date' => date('d.m.Y в H:i', $order_info['start_date']),
 			);
-			$this->order_model->send_mail($this->ion_auth->user($order_info['client_id'])->row()->email, 'Сделка успешно завершена', 'success_order', $email_info);
+			$this->send_mail($this->ion_auth->user($order_info['client_id'])->row()->email, 'Сделка успешно завершена', 'success_order', $email_info);
 			if (!empty($order_info['cleaner_id'])) {
-				$this->order_model->send_mail($this->ion_auth->user($order_info['cleaner_id'])->row()->email, 'Сделка успешно завершена', 'success_order', $email_info);
+				$this->send_mail($this->ion_auth->user($order_info['cleaner_id'])->row()->email, 'Сделка успешно завершена', 'success_order', $email_info);
 			}
 		}
 	}
-	
+
 	private function next_order_time($start_date, $step) {
 		$next_date = $start_date + $step;
 		if ($next_date - 86400 < time()) {
@@ -113,18 +109,43 @@ class Cli_tools extends CI_Controller {
 	}
 
 
+	private function send_mail($email, $subject, $mail_view, $email_info){
+		$this->load->library('email', array('mailtype'  => 'html'));
+		$this->email->from(SITE_EMAIL, SITE_NAME);
+		$this->email->to($email);
+		$this->email->cc(SITE_EMAIL);
+		$this->email->subject($subject);
+		$this->email->message($this->load->view('email/'.$mail_view, $email_info ,true));
+		$this->email->send();
+	}
 
 
+	private function log_payment($user_id, $type_name, $type_id = 0, $amount, $currency = 1) {
+		if (empty($user_id) || empty($type_name) || empty($amount) || empty($currency)) {
+			return false;
+		}
 
+		$payment_info = array(
+			'user_id'   => $user_id,
+			'type_name' => $type_name,
+			'type_id'   => $type_id,
+			'amount'    => $amount,
+			'date'      => time(),
+		);
+		$this->db->insert('user_payment_logs', $payment_info);
 
+		if ($type_name == 'fill_up') {
+			$this->send_mail($this->data['user_info']['email'], 'mail_account_reffiled', 'account_reffiled', $payment_info);
+		} elseif ($type_name == 'lift_up') {
+			$this->send_mail($this->data['user_info']['email'], 'mail_services_lift_up_product', 'services_lift_up_product', $payment_info);
+		} elseif ($type_name == 'mark') {
+			$this->send_mail($this->data['user_info']['email'], 'mail_services_mark_product', 'services_mark_product', $payment_info);
+		} elseif ($type_name == 'make_vip') {
+			$this->send_mail($this->data['user_info']['email'], 'mail_services_vip_product', 'services_vip_product', $payment_info);
+		} elseif ($type_name == 'income_product') {
+			$this->send_mail($this->data['user_info']['email'], 'mail_product_purchased', 'product_purchased', $payment_info);
+		}
 
-
-
-
-
-
-
-
-
-
+		return $this->db->insert_id();
+	}
 }
