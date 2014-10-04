@@ -101,9 +101,8 @@ class Calendar extends CI_Controller {
 				'width'       => 12,
 				'group_class' => 'row',
 			))
-			->radio('repeatable', array(
-				'inputs'      => array('Нет', 'Да'),
-				'label'       => 'Повторение',
+			->checkbox('repeatable', array(
+				'inputs'      => array('repeatable' => 'Я постоянно буду занята в это время'),
 				'group_class' => 'row',
 			))
 			->create(array('error_inline' => true, 'no_form_tag' => true));
@@ -118,7 +117,7 @@ class Calendar extends CI_Controller {
 				'width'       => 12,
 				'group_class' => 'row',
 				'class'       => 'time',
-				'value'       => !empty($work_time) && strtotime($work_time['start_day']) ? strtotime($work_time['start_day']) : false,
+				'value'       => !empty($work_time) && strtotime($work_time['start_day']) ? strtotime($work_time['start_day']) : '06:00',
 			))
 			->date('end_day', array(
 				'valid_rules' => 'trim|xss_clean',
@@ -128,7 +127,7 @@ class Calendar extends CI_Controller {
 				'width'       => 12,
 				'group_class' => 'row',
 				'class'       => 'time',
-				'value'       => !empty($work_time) && strtotime($work_time['end_day']) ? strtotime($work_time['end_day']) : false,
+				'value'       => !empty($work_time) && strtotime($work_time['end_day']) ? strtotime($work_time['end_day']) : '23:00',
 			))
 			->create(array('error_inline' => true, 'no_form_tag' => true));
 
@@ -141,7 +140,7 @@ class Calendar extends CI_Controller {
 				'user_id'    => $this->data['user_info']['id'],
 				'start_date' => strtotime($this->input->post('start_date')),
 				'end_date'   => strtotime($this->input->post('end_date')),
-				'repeatable' => $this->input->post('repeatable'),
+				'repeatable' => $this->input->post('repeatable') ?: 0,
 			);
 			if ($data['start_date'] < $data['end_date']) {
 				$this->db->insert('events', $data);
