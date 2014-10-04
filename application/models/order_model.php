@@ -728,12 +728,12 @@ class Order_model extends CI_Model {
 
 		$work_time = $this->db->where('user_id', $user_id)->get('work_time')->row_array();
 		if (!empty($work_time)) {
-				$work_time['start_day'] = strtotime(date('Y-m-d', $start_date).' '.$work_time['start_day']);
-				$work_time['end_day'] = strtotime(date('Y-m-d', $end_date).' '.$work_time['end_day']);
+			$work_time['start_day'] = strtotime(date('Y-m-d', $start_date).' '.$work_time['start_day']);
+			$work_time['end_day'] = strtotime(date('Y-m-d', $end_date).' '.$work_time['end_day']);
 
-				if ($work_time['start_day'] > $start_date || $work_time['end_day'] < $end_date) {
-					$is_busy = true;
-				}
+			if ($work_time['start_day'] > $start_date || $work_time['end_day'] < $end_date) {
+				$is_busy = true;
+			}
 		}
 
 		if ($is_busy) {
@@ -810,12 +810,12 @@ class Order_model extends CI_Model {
 
 		return !empty($user_balance['amount']) ? $user_balance['amount'] : 0;
 	}
-	
+
 	function log_payment($user_id, $type_name, $type_id = 0, $amount, $currency = 1) {
 		if (empty($user_id) || empty($type_name) || empty($amount) || empty($currency)) {
 			return false;
 		}
-		
+
 		$payment_info = array(
 			'user_id'   => $user_id,
 			'type_name' => $type_name,
@@ -836,7 +836,7 @@ class Order_model extends CI_Model {
 		} elseif ($type_name == 'income_product') {
 			$this->send_mail($this->data['user_info']['email'], 'mail_product_purchased', 'product_purchased', $payment_info);
 		}
-		
+
 		return $this->db->insert_id();
 	}
 }

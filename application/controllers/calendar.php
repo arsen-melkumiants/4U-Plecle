@@ -44,6 +44,7 @@ class Calendar extends CI_Controller {
 	public function index() {
 		$this->data['title'] = $this->data['header'] = 'Календарь событий';
 
+		$this->data['work_time'] = $this->db->where('user_id', $this->data['user_info']['id'])->get('work_time')->row_array();
 		$this->data['center_block'] = $this->load->view('profile/calendar_js', $this->data, true);
 
 		$this->load->view('header', $this->data);
@@ -227,7 +228,7 @@ class Calendar extends CI_Controller {
 				'type'        => 'd.m.Y H:i',
 			))
 			->date('end_date', array(
-				'value'       => $event_info['end_date'] ?: (!empty($_GET['end_date']) ? $_GET['end_date'] : false),
+				'value'       => !empty($event_info['end_date']) ? $event_info['end_date'] : (!empty($_GET['end_date']) ? $_GET['end_date'] : false),
 				'valid_rules' => 'required|trim|xss_clean',
 				'label'       => 'Дата завершения',
 				'type'        => 'd.m.Y H:i',
@@ -241,8 +242,27 @@ class Calendar extends CI_Controller {
 			->create(array('action' => current_url()));
 	}
 
+	private function time_range() {
+		if (empty($_GET['start'])) {
+			$start = intval($_GET['start']);
+			$this->db->where('o.start_date', $start);
+		}
+		if (empty($_GET['end'])) {
+			$start = intval($_GET['end']);
+			$this->db->where('o.start_date', $start);
+		}
+	}
+
 	public function events() {
-		$all_orders = $this->db->where('cleaner_id', $this->data['user_info']['id'])->get('orders')->result_array();
+		$user_id = $this->data['user_info']['id'];
+		$all_orders = $this->db
+			->select('o.*, COUNT(m.id) as unread')
+			->from('orders as o')
+			->join('order_messages AS m', 'o.id = m.order_id AND m.reciever_id = '.$user_id.' AND m.read = 0', 'left')
+			->where('(o.cleaner_id = '.$user_id.' OR (o.cleaner_id = 0 AND o.status = 2 AND o.start_date > '.time().'))')
+			->group_by('o.id')
+			->get()->result_array();
+
 		if (empty($all_orders)) {
 			exit;
 		}
@@ -254,37 +274,38 @@ class Calendar extends CI_Controller {
 				'color'    => '#ffba00',
 				'editable' => false,
 				'url'      => site_url('orders/detail/'.$item['id']),
+				'unread'   => $item['unread'],
 			);
 
 			if (in_array($item['status'], array(0,1)) && $item['start_date'] < 86400 + time()) {
-				//Сделка не состоялась
+				$result_array[$key]['title'] = 'Сделка не состоялась';
 				$result_array[$key]['color'] = '#a2aea8';
 			} elseif (in_array($item['status'], array(4,5))) {
-				//Сделка отменена
+				$result_array[$key]['title'] = 'Сделка отменена';
 				$result_array[$key]['color'] = '#a2aea8';
 			} elseif (!$item['cleaner_id'] && $item['status'] == 2 && $item['start_date'] > time() && $this->data['user_info']['is_cleaner']) {
-				//Подробнее
+				$result_array[$key]['title'] = 'Подробнее';
 				$result_array[$key]['color'] = '#ffba00';
 			} elseif (!$item['cleaner_id'] && $item['status'] == 2 && $item['start_date'] < time()) {
-				//Сделка отменена (отсутствует горничная)
+				$result_array[$key]['title'] = 'Сделка отменена (отсутствует горничная)';
 				$result_array[$key]['color'] = '#a2aea8';
 			} elseif (in_array($item['status'], array(0,1))) {
-				//Ожидаем оплаты
+				$result_array[$key]['title'] = 'Ожидаем оплаты';
 				$result_array[$key]['color'] = '#ffba00';
 			} elseif (!$item['cleaner_id']) {
-				//Ожидаем горничную
+				$result_array[$key]['title'] = 'Ожидаем горничную';
 				$result_array[$key]['color'] = '#ffba00';
 			} elseif ($item['status'] == 2 && $item['start_date'] + (3600 * $item['duration']) > time()) {
-				//Сделка в процессе
+				$result_array[$key]['title'] = 'Сделка в процессе';
 				$result_array[$key]['color'] = '#00ff7e';
 			} elseif ($item['status'] == 2 && $item['start_date'] + (3600 * $item['duration']) < time()) {
-				//Ожидаем оценку уборки
+				$result_array[$key]['title'] = 'Ожидаем оценку уборки';
 				$result_array[$key]['color'] = '#a2aea8';
 			} elseif ($item['status'] == 3 && $item['last_mark'] == 'positive') {
-				//Уборка успешно завершена
+				$result_array[$key]['title'] = 'Уборка успешно завершена';
 				$result_array[$key]['color'] = '#a2aea8';
 			} elseif ($item['status'] == 3 && $item['last_mark'] == 'negative') {
-				//Плохое качество уборки
+				$result_array[$key]['title'] = 'Плохое качество уборки';
 				$result_array[$key]['color'] = '#a2aea8';
 			}
 		}

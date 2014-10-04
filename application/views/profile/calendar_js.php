@@ -29,6 +29,9 @@ window.onload = function() {
 			week : 'dddd, D.MM',
 			day : 'dddd, D.MM.YYYY'
 		},
+		minTime: '<?php echo !empty($work_time['start_day']) ? $work_time['start_day'].':00' : '06:00:00'?>',
+		maxTime: '<?php echo !empty($work_time['end_day']) ? $work_time['end_day'].':00' : '23:00:00'?>',
+		height : 'auto',
 		allDaySlot : false,
 		axisFormat : 'HH:mm',
 		slotDuration : '00:30:01',
@@ -93,22 +96,30 @@ window.onload = function() {
 			if (typeof event.delete !== 'undefined') {
 				element.find('.fc-title').append('<a class="remove" ref="' + event.delete + '">x</a>');
 			}
+
+			if (typeof event.unread !== 'undefined' && event.unread != 0) {
+				element.find('.fc-title').append('<div class="count">' + event.unread + '</div>');
+			}
 		},
 		viewRender : function() {
 			$('.fc-axis.fc-widget-header').html('<a data-toggle="modal" data-target="#ajaxModal" href="<?php echo site_url('calendar/set_options')?>" class="set_icon"></div>');
 		}
 	});
 
+	if (!$.cookie('set_opts')) {
+		$('a.set_icon').click();
+		$.cookie('set_opts', true, { expires: 365, path: '/' });
+	}
+
+	$('.fc-toolbar button').on('click', function() {
+		$.cookie('curr_d', calendar.fullCalendar('getDate').format(), { expires: 1, path: '/' });
+	});
 	calendar.fullCalendar('gotoDate', $.cookie('curr_d'));
 
 	$('.fc-left').prepend('<h1>Мой календарь</h1>');
 
 	$(document).on('loaded.bs.modal', function() {
 		datepicker();
-	});
-
-	$('.fc-toolbar button').on('click', function() {
-		$.cookie('curr_d', calendar.fullCalendar('getDate').format(), { expires: 7, path: '/' });
 	});
 
 	$('#calendar').on('click', '.fc-day-header.fc-widget-header', function() {

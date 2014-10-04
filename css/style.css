@@ -361,6 +361,10 @@ table.reviews .positive .name {color: #4f5f6f;}
 #calendar .fc-time-grid-event .fc-title {text-align: center;padding-top: 10px;}
 #calendar .fc-event {border-radius: 0;}
 #calendar .remove {position: absolute;right: 0px;top: -5px;text-decoration: none;color: #fff;padding: 6px;}
-
-#calendar .set_icon {display: block;background: url(../img/gear.png) no-repeat;width: 23px;height: 22px;margin: 0 auto;cursor: pointer;}
+#calendar .count {position: absolute;padding: 2px 5px;background: #f41e1e;color: #fff;font-size: 10px;right: -9px;top: -8px;border-radius: 55%;}
+#calendar .fc-time-grid-event {overflow: visible;}
 #calendar .fc-axis.fc-widget-header {background: #fff;}
+
+.set_icon {display: block;background: url(../img/gear.png) no-repeat;width: 23px;height: 22px;margin: 0 auto;cursor: pointer;}
+.modal-body .set_icon {display: inline-block;margin: 0 0 -6px 0;}
+.blue_text {color: #009dbf;}
