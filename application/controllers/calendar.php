@@ -117,7 +117,7 @@ class Calendar extends CI_Controller {
 				'width'       => 12,
 				'group_class' => 'row',
 				'class'       => 'time',
-				'value'       => !empty($work_time) && strtotime($work_time['start_day']) ? strtotime($work_time['start_day']) : '06:00',
+				'value'       => !empty($work_time) && strtotime($work_time['start_day']) ? strtotime($work_time['start_day']) : strtotime('06:00'),
 			))
 			->date('end_day', array(
 				'valid_rules' => 'trim|xss_clean',
@@ -127,7 +127,7 @@ class Calendar extends CI_Controller {
 				'width'       => 12,
 				'group_class' => 'row',
 				'class'       => 'time',
-				'value'       => !empty($work_time) && strtotime($work_time['end_day']) ? strtotime($work_time['end_day']) : '23:00',
+				'value'       => !empty($work_time) && strtotime($work_time['end_day']) ? strtotime($work_time['end_day']) : strtotime('23:00'),
 			))
 			->create(array('error_inline' => true, 'no_form_tag' => true));
 
