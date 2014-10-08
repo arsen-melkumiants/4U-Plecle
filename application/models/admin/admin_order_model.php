@@ -13,9 +13,10 @@ class Admin_order_model extends CI_Model {
 				$this->db->where('status', 0);
 				$this->db->where('start_date >', time() + 86400);
 			} elseif ($status == 1) {
+				$this->db->where('cleaner_id !=', 0);
 				$this->db->where('(status = 2 OR (status = 1 AND start_date > '.(time() + 86400).'))');
 			} else {
-				$this->db->where('(status > 2 OR (status IN (0,1) AND start_date < '.(time() + 86400).'))');
+				$this->db->where('(status > 2 OR (status IN (0,1) AND start_date < '.(time() + 86400).') OR (status = 2 AND start_date < '.time().' AND cleaner_id = 0))');
 			}
 		}
 

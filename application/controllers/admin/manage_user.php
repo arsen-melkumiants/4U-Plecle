@@ -226,11 +226,13 @@ class Manage_user extends CI_Controller {
 				$_POST = array();
 			}
 		}
+
+		$this->form_validation->set_message('is_unique_without', 'Это номер уже используется. Пожалуйста, укажите другой');
 		return $this->form
 			->text('first_name', array('value' => $user_info['first_name'], 'valid_rules' => 'required|trim|xss_clean|max_length[150]',  'label' => lang('create_user_fname_label')))
 			->text('last_name', array('value' => $user_info['last_name'], 'valid_rules' => 'required|trim|xss_clean|max_length[150]',  'label' => lang('create_user_lname_label')))
 			->select('gender', array('value' => $user_info['gender'], 'options' => array('male' => 'Мужской', 'female' => 'Женский'), 'valid_rules' => 'required|trim|xss_clean',  'label' => lang('create_user_gender_label')))
-			->text('phone', array('value' => $user_info['phone'], 'valid_rules' => 'required|trim|xss_clean|max_length[100]|is_natural', 'label' => lang('create_user_phone_label')))
+			->text('phone', array('value' => $user_info['phone'], 'valid_rules' => 'required|trim|xss_clean|max_length[100]|is_natural|is_unique_without[users.phone.'.$user_info['id'].']', 'label' => lang('create_user_phone_label'), 'placeholder' => 'Номер необходимо указывать с кодом страны'))
 			->text('address', array('value' => $user_info['address'], 'valid_rules' => 'required|trim|xss_clean|max_length[100]', 'label' => lang('create_user_address_label')))
 			->text('city', array('value' => $user_info['city'], 'valid_rules' => 'required|trim|xss_clean|max_length[100]', 'label' => lang('create_user_city_label')))
 			->text('country', array('value' => $user_info['country'], 'valid_rules' => 'required|trim|xss_clean|max_length[100]', 'label' => lang('create_user_country_label')))

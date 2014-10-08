@@ -2,6 +2,12 @@
 
 class Cli_tools extends CI_Controller {
 
+	private $sms_server = 'http://gateway.api.sc/rest/';
+
+	private $sms_login  = 'plecle';
+
+	private $sms_pswd   = 'Qazqazqaz';
+
 	public function __construct(){
 		parent::__construct();
 		if (!$this->input->is_cli_request()) {
@@ -147,5 +153,115 @@ class Cli_tools extends CI_Controller {
 		}
 
 		return $this->db->insert_id();
+	}
+
+
+	public function test_sms() {
+		$server = 'http://gateway.api.sc/rest/';
+		require APPPATH.'third_party/stream_telecom/StreamClass.php';
+		$stream = new STREAM();
+
+		// данные пользователя
+		$login = 'plecle';
+		$password = 'Qazqazqaz';
+
+		// запрос на получение идентификатора сессии
+		$session = $stream->GetSessionId($server,$login,$password);
+		print_r($session);
+		echo "\n";
+
+
+		echo "\nBalance:\n";
+		$balance = $stream->GetBalance($server,$session);
+		print_r($balance);
+		echo "\n";
+
+
+		echo "\nGetMessageIn:\n";
+		$minDateUTC = '2013-01-01T00:00:00';				//начало периода для запроса входящих сообщений (указывается по UTC)
+		$maxDateUTC = '2013-01-03T00:00:00';				//конец периода для запроса входящих сообщений (указывается по UTC)
+		$incoming = $stream->GetIncomingSms($server,$session,$minDateUTC,$maxDateUTC);
+		print_r($incoming);
+		echo "\n";
+
+
+		// отправка sms-сообщения нескольким получателям
+		echo "\nSend Bulk:\n";
+		$data = 'Проверка';									//текст сообщения
+		$sourceAddress = '1111';	//имя отправителя сообщения (отличное от testsms, имя отправителя Вы можете запросить в личном кабинете)
+		$destinationAddresses = 'Номер абонента1, Номер абонента2';
+		$send_bulk = $stream->SendBulk($server,$session,$sourceAddress,$destinationAddresses,$data);
+		print_r($send_bulk);
+		echo "\n";
+	}
+
+	public function send_sms() {
+		$cleaners = $this->db
+			->select('id, phone, zip')
+			->where('is_cleaner', 1)
+			->get('users')
+			->result_array();
+		if (empty($cleaners)) {
+			exit;
+		}
+
+		foreach ($cleaners as $key => $item) {
+			$cleaners[$key]['zip'] = explode(',', trim($item['zip'], ','));
+		}
+
+		$orders = $this->db
+			->select('id, zip')
+			->where('cleaner_id', 0)
+			->where('((status = 2 AND start_date > '.time().') OR (status  = 1 AND start_date > '.(time() + 86400).') )')
+			->where('((recommended) = 0 OR (recommended = 1 AND add_date + '.(3600 * 3).' < '.time().'))')
+			->get('orders')
+			->result_array();
+		if (!empty($orders)) {
+			foreach ($orders as $item) {
+				foreach ($cleaners as $user) {
+					if (!in_array($item['zip'], $user['zip'])) {
+						continue;
+					}
+
+					$result_array[$item['id']]['users'][$user['id']] = $user['phone'];
+				}
+			}
+		}
+
+		$orders = $this->db
+			->select('i.*, u.phone')
+			->from('order_invites AS i')
+			->join('orders AS o', 'o.id = i.order_id')
+			->join('users AS u', 'u.id = i.cleaner_id')
+			->where('o.cleaner_id', 0)
+			->where('((o.status = 2 AND o.start_date > '.time().') OR (o.status  = 1 AND o.start_date > '.(time() + 86400).') )')
+			->where('o.recommended = 1')
+			->where('i.status = 0')
+			->get()
+			->result_array();
+		if (!empty($orders)) {
+			foreach ($orders as $item) {
+				$result_array[$item['order_id']]['users'][$item['cleaner_id']] = $item['phone'];
+			}
+		}
+
+
+		if (empty($result_array)) {
+			exit;
+		}
+
+		require APPPATH.'third_party/stream_telecom/StreamClass.php';
+		$stream = new STREAM();
+
+		$session = $stream->GetSessionId($this->sms_server,$this->sms_login,$this->sms_pswd);
+
+		$sourceAddress = 'Plecle.com';	//имя отправителя сообщения (отличное от testsms, имя отправителя Вы можете запросить в личном кабинете)
+		foreach ($result_array as $order_id => $item) {
+			$data = 'Zakaz #'.$order_id; //текст сообщения
+			$destinationAddresses = implode(', ', $item['users']);
+		}
+	//	$send_bulk = $stream->SendBulk($this->sms_server, $session, $sourceAddress, $destinationAddresses, $data, 1440);
+		print_r($send_bulk);
+		echo "\n";
 	}
 }

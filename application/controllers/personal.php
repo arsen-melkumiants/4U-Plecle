@@ -160,6 +160,7 @@ class Personal extends CI_Controller {
 			}
 		}
 
+		$this->form_validation->set_message('is_unique', 'Это номер уже используется. Пожалуйста, укажите другой');
 		$this->data['user_info_form'] = $this->form
 			->text('first_name', array(
 				'valid_rules' => 'required|trim|xss_clean|max_length[150]',
@@ -172,9 +173,10 @@ class Personal extends CI_Controller {
 				'width'       => 12, 'group_class' => 'col-sm-6'
 			))
 			->text('phone', array(
-				'valid_rules' => 'required|trim|xss_clean|max_length[100]|is_natural',
+				'valid_rules' => 'required|trim|xss_clean|max_length[100]|is_natural|is_unique[users.phone]',
 				'label'       => lang('create_user_phone_label'),
-				'width'       => 12, 'group_class' => 'col-sm-6'
+				'width'       => 12, 'group_class' => 'col-sm-6',
+				'placeholder' => 'Необходимо указывать с кодом страны'
 			))
 			->text('email', array(
 				'valid_rules' => 'required|trim|xss_clean|max_length[150]|valid_email|is_unique[users.email]',
