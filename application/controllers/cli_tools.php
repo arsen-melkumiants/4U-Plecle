@@ -209,8 +209,10 @@ class Cli_tools extends CI_Controller {
 			$cleaners[$key]['zip'] = explode(',', trim($item['zip'], ','));
 		}
 
+		$result_array = array();
+
 		$orders = $this->db
-			->select('id, zip')
+			->select('id, zip, address, start_date, duration, total_cleaner_price')
 			->where('cleaner_id', 0)
 			->where('((status = 2 AND start_date > '.time().') OR (status  = 1 AND start_date > '.(time() + 86400).') )')
 			->where('((recommended) = 0 OR (recommended = 1 AND add_date + '.(3600 * 3).' < '.time().'))')
@@ -218,6 +220,10 @@ class Cli_tools extends CI_Controller {
 			->result_array();
 		if (!empty($orders)) {
 			foreach ($orders as $item) {
+				$result_array[$item['id']]['address']             = $item['address'];
+				$result_array[$item['id']]['start_date']          = $item['start_date'];
+				$result_array[$item['id']]['duration']            = $item['duration'];
+				$result_array[$item['id']]['total_cleaner_price'] = $item['total_cleaner_price'];
 				foreach ($cleaners as $user) {
 					if (!in_array($item['zip'], $user['zip'])) {
 						continue;
@@ -229,7 +235,7 @@ class Cli_tools extends CI_Controller {
 		}
 
 		$orders = $this->db
-			->select('i.*, u.phone')
+			->select('i.*, u.phone, o.address, o.start_date, o.duration, o.total_cleaner_price')
 			->from('order_invites AS i')
 			->join('orders AS o', 'o.id = i.order_id')
 			->join('users AS u', 'u.id = i.cleaner_id')
@@ -241,27 +247,56 @@ class Cli_tools extends CI_Controller {
 			->result_array();
 		if (!empty($orders)) {
 			foreach ($orders as $item) {
+				$result_array[$item['order_id']]['address']                    = $item['address'];
+				$result_array[$item['order_id']]['start_date']                 = $item['start_date'];
+				$result_array[$item['order_id']]['duration']                   = $item['duration'];
+				$result_array[$item['order_id']]['total_cleaner_price']        = $item['total_cleaner_price'];
 				$result_array[$item['order_id']]['users'][$item['cleaner_id']] = $item['phone'];
 			}
 		}
-
 
 		if (empty($result_array)) {
 			exit;
 		}
 
+		$query = $this->db
+			->where_in('order_id', array_keys($result_array))
+			->get('order_sms_log');
+
+		$sms_logs = array();
+		foreach ($query->result_array() as $row) {
+			$sms_logs[$row['order_id']]['users'][$row['user_id']] = $row['phone'];
+		}
+
 		require APPPATH.'third_party/stream_telecom/StreamClass.php';
 		$stream = new STREAM();
-
 		$session = $stream->GetSessionId($this->sms_server,$this->sms_login,$this->sms_pswd);
-
 		$sourceAddress = 'Plecle.com';	//имя отправителя сообщения (отличное от testsms, имя отправителя Вы можете запросить в личном кабинете)
+
 		foreach ($result_array as $order_id => $item) {
-			$data = 'Zakaz #'.$order_id; //текст сообщения
-			$destinationAddresses = implode(', ', $item['users']);
+			if (isset($sms_logs[$order_id])) {
+				$item['users'] = array_diff_key($item['users'], $sms_logs[$order_id]['users']);
+			}
+
+			if (empty($item['users'])) {
+				continue;
+			}
+
+			$data = 'Заказ #'.$order_id.', '.$item['address'].', '.date('d.m.Y в H:i', $item['start_date']).', '.$item['duration'].' час(а), '.floatval($item['total_cleaner_price']).' руб'; //текст сообщения
+			$data = translitIt($data, true);
+			$destinationAddresses = implode(', ', array_keys($item['users']));
+			//$send_bulk = $stream->SendBulk($this->sms_server, $session, $sourceAddress, $destinationAddresses, $data, 1440);
+
+			$insert_sql = array();
+			foreach ($item['users'] as $user_id => $phone) {
+				$insert_sql[] = array(
+					'order_id' => $order_id,
+					'user_id'  => $user_id,
+					'phone'    => $phone,
+					'add_date' => time(),
+				);
+			}
+			$this->db->insert_batch('order_sms_log', $insert_sql);
 		}
-	//	$send_bulk = $stream->SendBulk($this->sms_server, $session, $sourceAddress, $destinationAddresses, $data, 1440);
-		print_r($send_bulk);
-		echo "\n";
 	}
 }
