@@ -9,7 +9,7 @@ $unread_invites = !empty($unread_invites) ? '<div class="count invite_count">'.$
 	<a href="#request_orders" role="tab" data-toggle="tab">Эти сделки должны Вас заинтересовать</a>
 	<a href="#invite_orders"  role="tab" data-toggle="tab" class="invite_link">Вам предлагают<?php echo $unread_invites?></a>
 </h4>
-<div id="myTabContent" class="tab-content row">
+<div id="myTabContent" class="tab-content">
 	<div class="tab-pane active in" id="request_orders">
 		<?php echo $request_orders?>
 	</div>

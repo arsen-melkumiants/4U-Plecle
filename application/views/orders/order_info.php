@@ -34,6 +34,9 @@ if (!empty($order_info['add_durations'])) {
 	<dt>Заметки клиента для Вас</dt>
 	<dd><?php echo $order_info['comment']?></dd>
 </dl>
+
+<?php echo !empty($order_gallery) ? $order_gallery : false;?>
+
 <h4 class="title">Финансы</h4>
 <dl class="dl-horizontal list">
 	<dt>Сумма за рабочие часы</dt>

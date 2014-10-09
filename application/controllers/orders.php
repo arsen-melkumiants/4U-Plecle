@@ -92,6 +92,7 @@ class Orders extends CI_Controller {
 
 		$this->data['title'] = $this->data['header'] = 'Сделка #'.$order_id;
 
+		$this->data['order_gallery'] = $this->order_model->get_gallery($this->data['order_info']);
 		$this->data['payment_history'] = $this->payment_table($order_id);
 		$this->data['center_block'] = $this->load->view('orders/order_info', $this->data, true);
 

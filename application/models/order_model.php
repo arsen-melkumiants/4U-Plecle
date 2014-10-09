@@ -839,4 +839,81 @@ class Order_model extends CI_Model {
 
 		return $this->db->insert_id();
 	}
+
+	function get_gallery($order_info) {
+		if(empty($order_info)) {
+			return false;
+		}
+
+		$data['is_owner'] = false;
+		if ($this->data['user_info']['id'] == $order_info['client_id']) {
+			$data['is_owner'] = true;
+			$this->upload_order_photo($order_info);
+		}
+
+		if (!$data['is_owner'] && $this->data['user_info']['id'] != $order_info['cleaner_id']) {
+			return false;
+		}
+
+		$data['gallery_items'] = $this->db->where('order_id', $order_info['id'])->get('order_gallery')->result_array();
+		if (!$data['is_owner'] && empty($data['gallery_items'])) {
+			return false;
+		}
+
+		return $this->load->view('orders/order_gallery', $data, true);
+	}
+
+	function upload_order_photo($order_info) {
+		if (empty($_FILES)) {
+			return false;
+		}
+		$folder = $order_info['id'];
+
+		$config['upload_path']   = FCPATH.'uploads/order_gallery/'.$folder;
+		$config['max_size']      = '5000';
+		$config['allowed_types'] = 'jpg|jpeg|png|gif|';
+		$config['file_name'] = !empty($_FILES['userfile']) ? $_FILES['userfile']['size'] : false;
+
+		@mkdir($config['upload_path'], 0777, true);
+		@chmod($config['upload_path'], 0777);
+
+		$this->load->helper('file');
+		$this->load->library('upload');
+		$this->upload->initialize($config);
+
+		if (!$this->upload->do_upload()) {
+			$this->session->set_flashdata('danger', $this->upload->display_errors());
+			redirect(current_url(), 'refresh');
+		}
+
+		$data = $this->upload->data();
+		$this->db->insert('order_gallery', array(
+			'order_id'  => $order_info['id'],
+			'file_name' => $data['file_name'],
+			'add_date'  => time(),
+		));
+		$this->resize_image($data, 100, 'thumb');
+		$this->session->set_flashdata('success', 'Фото успешно добавлено');
+		redirect(current_url(), 'refresh');
+	}
+
+	private function resize_image($data, $new_height = false, $dir = 'thumb'){
+		if(empty($new_height)){
+			return false;
+		}
+
+		@mkdir($data['file_path'].$dir.'/', 0777, true);
+		@chmod($data['file_path'].$dir.'/', 0777);
+		$config['image_library']  = 'gd2';
+		$config['source_image']   = $data['full_path'];
+		$config['new_image']      = $data['file_path'].$dir.'/'.$data['file_name'];
+		$config['quality']        = '85%';
+		$config['height']         = $new_height;
+		$config['width']          = $new_height * 10;
+		$config['maintain_ratio'] = true;
+
+		$this->load->library('image_lib');
+		$this->image_lib->initialize($config);
+		$this->image_lib->resize();
+	}
 }

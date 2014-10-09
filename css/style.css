@@ -148,6 +148,12 @@ body .bootstrap-datetimepicker-widget td span {display: inline-block;float: none
 .detail_block ul {list-style: none;padding-left: 25px;}
 .detail_block li {padding: 5px 0;}
 
+.gallery_block {margin-left: -15px;}
+.gallery_block .item {width: 80px;height: 80px;background: #eee;border-radius: 6px;float: left;margin-left: 15px;overflow: hidden;}
+.gallery_block .item img {height: 100%;min-width: 100%;}
+.gallery_block .item.add {background: #eee url(../img/plus_bg.png) center no-repeat;cursor: pointer;}
+.gallery_block input {display: none;}
+
 .cleaner_block {background: url(../img/middle_promo_bg.png);padding: 35px 15px;border-top: 1px solid #007e99;color: #fff;margin-bottom: 25px;}
 .cleaner_block img {border: 5px solid #fff;background: #fff;}
 .cleaner_block .title {font-size: 14px;margin-top: 30px;}
