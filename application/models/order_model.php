@@ -39,6 +39,21 @@ class Order_model extends CI_Model {
 		$this->add_durations = $this->db->select('id, name, hours')->where('status', 1)->get('order_options')->result_array();
 	}
 
+	function cal_order_price($order_info) {
+		$result_array = array(
+			'price_per_hour'       => PRICE_PER_HOUR,
+			'cleaner_price'        => !empty($order_info['max_sallary']) ? MAX_CLEANER_SALARY : CLEANER_SALARY,
+			'detergent_price'      => isset($order_info['detergent_price']) ? $order_info['detergent_price'] : (!empty($order_info['need_detergents']) ? (DETERGENT_PRICE * $order_info['duration']) : 0),
+			'urgent_price'         => isset($order_info['urgent_price']) ? $order_info['urgent_price'] : (!empty($order_info['urgent_cleaning']) ? URGENT_PRICE : 0),
+			'urgent_cleaner_price' => isset($order_info['urgent_cleaner_price']) ? $order_info['urgent_cleaner_price'] : (!empty($order_info['urgent_cleaning']) ? URGENT_CLEANER_PRICE : 0),
+		);
+
+		$result_array['total_price']         = ($result_array['price_per_hour'] * $order_info['duration']) + $result_array['detergent_price'] + $result_array['urgent_price'];
+		$result_array['total_cleaner_price'] = ($result_array['cleaner_price'] * $order_info['duration']) + $result_array['detergent_price'] + $result_array['urgent_cleaner_price'];
+
+		return $result_array;
+	}
+
 	function get_user_order($order_id, $user_id = false, $user_type = false) {
 		if (empty($user_type)) {
 			if (!empty($this->data['user_info']['is_cleaner'])) {

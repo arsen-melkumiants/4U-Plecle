@@ -714,13 +714,9 @@ class Personal extends CI_Controller {
 				}
 			}
 			$duration += $add_hours;
+
 			$info = array(
 				'client_id'           => $user_id,
-				'price_per_hour'      => PRICE_PER_HOUR,
-				'cleaner_price'       => CLEANER_SALARY,
-				'detergent_price'     => $detergent_price * $duration,
-				'total_price'         => (PRICE_PER_HOUR * $duration) + ($detergent_price * $duration),
-				'total_cleaner_price' => (CLEANER_SALARY * $duration) + ($detergent_price * $duration),
 				'frequency'           => $this->input->post('frequency'),
 				'duration'            => $duration,
 				'add_durations'       => !empty($options_array) ? json_encode($options_array) : '',
@@ -737,6 +733,14 @@ class Personal extends CI_Controller {
 				'last_mark'           => '',
 				'status'              => 0,
 			);
+
+			$price_info = $this->order_model->cal_order_price(array(
+				'duration' => $duration,
+				'need_detergents' => $this->input->post('need_detergents'),
+				'urgent_cleaning' => $this->input->post('urgent_cleaning') + 1,
+			));
+			$info = $price_info + $info;
+
 			$this->db->trans_commit();
 
 			$this->db->insert('orders', $info);
