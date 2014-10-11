@@ -48,8 +48,8 @@ class Order_model extends CI_Model {
 			'urgent_cleaner_price' => isset($order_info['urgent_cleaner_price']) ? $order_info['urgent_cleaner_price'] : (!empty($order_info['urgent_cleaning']) ? URGENT_CLEANER_PRICE : 0),
 		);
 
-		$result_array['total_price']         = ($result_array['price_per_hour'] * $order_info['duration']) + $result_array['detergent_price'] + $result_array['urgent_price'];
-		$result_array['total_cleaner_price'] = ($result_array['cleaner_price'] * $order_info['duration']) + $result_array['detergent_price'] + $result_array['urgent_cleaner_price'];
+		$result_array['total_price']         = floatval(($result_array['price_per_hour'] * $order_info['duration']) + $result_array['detergent_price'] + $result_array['urgent_price']);
+		$result_array['total_cleaner_price'] = floatval(($result_array['cleaner_price'] * $order_info['duration']) + $result_array['detergent_price'] + $result_array['urgent_cleaner_price']);
 
 		return $result_array;
 	}
