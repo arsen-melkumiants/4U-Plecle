@@ -665,6 +665,7 @@ class Personal extends CI_Controller {
 					'Рабочие часы'    => isset($this->order_model->duration[$this->input->post('duration')]) ? $this->order_model->duration[$this->input->post('duration')] : false,
 					'Цена уборки'     => '<span class="cleaning_price">'.PRICE_PER_HOUR.'</span>',
 					'Моющие средства' => '<span class="detergent_price">'.$detergent_price.'</span>',
+					'Срочная уборка'  => '<span class="urgent_price"></span>',
 					'<b>Итого</b>'    => '<b class="total_price"></b>'
 				),
 			);
@@ -716,22 +717,23 @@ class Personal extends CI_Controller {
 			$duration += $add_hours;
 
 			$info = array(
-				'client_id'           => $user_id,
-				'frequency'           => $this->input->post('frequency'),
-				'duration'            => $duration,
-				'add_durations'       => !empty($options_array) ? json_encode($options_array) : '',
-				'need_ironing'        => intval($this->input->post('need_ironing')),
-				'have_pets'           => intval($this->input->post('have_pets')),
-				'need_detergents'     => $this->input->post('need_detergents'),
-				'comment'             => $this->input->post('comment'),
-				'country'             => $this->input->post('country'),
-				'city'                => $this->input->post('city'),
-				'address'             => $this->input->post('address'),
-				'zip'                 => $this->input->post('zip'),
-				'start_date'          => strtotime($this->input->post('start_date')),
-				'add_date'            => time(),
-				'last_mark'           => '',
-				'status'              => 0,
+				'client_id'       => $user_id,
+				'frequency'       => $this->input->post('frequency'),
+				'duration'        => $duration,
+				'add_durations'   => !empty($options_array) ? json_encode($options_array) : '',
+				'need_ironing'    => intval($this->input->post('need_ironing')),
+				'have_pets'       => intval($this->input->post('have_pets')),
+				'need_detergents' => $this->input->post('need_detergents'),
+				'urgent_cleaning' => $this->input->post('urgent_cleaning'),
+				'comment'         => $this->input->post('comment'),
+				'country'         => $this->input->post('country'),
+				'city'            => $this->input->post('city'),
+				'address'         => $this->input->post('address'),
+				'zip'             => $this->input->post('zip'),
+				'start_date'      => strtotime($this->input->post('start_date')),
+				'add_date'        => time(),
+				'last_mark'       => '',
+				'status'          => 0,
 			);
 
 			$price_info = $this->order_model->cal_order_price(array(

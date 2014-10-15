@@ -48,8 +48,10 @@
 
 <?php after_load('js', '/dist/js/jquery.cookie.js')?>
 <script>
-var price_per_hour = Number(<?php echo PRICE_PER_HOUR?>);
+var price_per_hour  = Number(<?php echo PRICE_PER_HOUR?>);
 var detergent_price = Number(<?php echo DETERGENT_PRICE?>);
+var urgent_price    = Number(<?php echo URGENT_PRICE?>);
+
 var collect_price = function() {
 	var duration = Number($('[name="duration"]').val());
 	var long_duration = false;
@@ -79,20 +81,22 @@ var collect_price = function() {
 	duration += add_durations;
 	var cleaning_price = duration * price_per_hour;
 	var need_detergents = $('[name="need_detergents"]').prop("checked") ? duration * detergent_price : 0;
+	var urgent_cleaning = Number($('[name="urgent_cleaning"]:checked').val()) * urgent_price;
 	$('.cleaning_price').text(cleaning_price);
 	$('.detergent_price').text(need_detergents);
-	$('.total_price').text(cleaning_price + need_detergents);
+	$('.urgent_price').text(urgent_cleaning);
+	$('.total_price').text(cleaning_price + need_detergents + urgent_cleaning);
 };
 
-var init_order_picker = function() {
+var init_order_picker = function(min_date) {
 	$('.date_time').datetimepicker({
 		language       : 'ru',
 		useCurrent     : false,
 		minuteStepping : 30,
-		minDate        : moment().add(1, 'days'),
+		minDate        : min_date,
 	}).on('dp.change',function (e) {
 		var min_date = moment().add(1, 'days');
-		var max_date = moment().add(2, 'days');
+		var max_date = moment().add(3, 'days');
 		$('.date_time').closest('.form-group').find('.text-danger').remove();
 		$('.date_time').closest('.form-group').find('.text-warning').remove();
 		if (e.date > min_date && e.date < max_date) {
@@ -115,16 +119,23 @@ window.onload = function () {
 		collect_price();
 	});
 
-	init_order_picker();
+	$('[name="urgent_cleaning"]').on('change', function() {
+		var min_date = Number($('[name="urgent_cleaning"]:checked').val()) ? moment().add(-1, 'days') : moment().add(1, 'days');
+		$('.date_time').data("DateTimePicker").setMinDate(min_date);
+		collect_price();
+	});
 
-	$('input').on('keyup', function() {
+	var min_date = Number($('[name="urgent_cleaning"]:checked').val()) ? moment().add(-1, 'days') : moment().add(1, 'days');
+	init_order_picker(min_date);
+
+	$('input[type="text"]').on('keyup', function() {
 		var input = $(this);
 		setTimeout(function() {
 			$('input[name="' + input.attr('name') + '"]').val(input.val());
 		}, 100);
 	});
 
-	$('input').on('change', function() {
+	$('input[type="text"]').on('change', function() {
 		var input = $(this);
 		$('input[name="' + input.attr('name') + '"]').val(input.val());
 	});

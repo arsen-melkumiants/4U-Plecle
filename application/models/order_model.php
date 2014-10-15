@@ -378,6 +378,12 @@ class Order_model extends CI_Model {
 				'group_class' => 'col-sm-12', 'label_width' => 6,
 				'type'        => 'd.m.Y H:i',
 			))
+			->radio('urgent_cleaning', array(
+				'valid_rules' => 'trim|xss_clean',
+				'label'       => 'Срочная уборка',
+				'inline'      => true, 'group_class' => 'col-sm-12', 'label_width' => 6,
+				'inputs'      => array('Нет', 'Да'),
+			))
 			->checkbox('special[]', array(
 				'valid_rules' => 'trim|xss_clean',
 				'label'       => 'Особые требования',
