@@ -31,7 +31,7 @@ if (!empty($order_info)) {
 					<div class="add_title">Начало уборки:</div>
 					<div class="big_status"><?php echo date('d.m.Y в H:i', $order_info['start_date'])?></div>
 					<?php if (in_array($order_info['status'], array(0,1)) && ($order_info['start_date'] - 86400 * 2) < time()) {
-					$time_left = $order_info['start_date'] - 86400 - time();
+					$time_left = $order_info['urgent_cleaning'] ? $order_info['start_date'] - time() : $order_info['start_date'] - 86400 - time();
 						if ($time_left > 0) {?>
 						<div class="black_link no_margin">
 							<?php
@@ -69,7 +69,8 @@ if (!empty($order_info)) {
 				<?php }?>
 			</div>
 			<div class="col-sm-5 text-left info_block">
-				<?php if (in_array($order_info['status'], array(0,1,2)) && $order_info['start_date'] > 86400 + time()) {?>
+				<?php $prepend_time = $order_info['urgent_cleaning'] ? time() : time() + 86400;
+				if (in_array($order_info['status'], array(0,1,2)) && $order_info['start_date'] > $prepend_time) {?>
 					<a data-toggle="modal" data-target="#ajaxModal" class="black_link no_margin" href="<?php echo site_url('orders/cancel/'.$order_info['id'])?>">Отказаться от сделки</a>
 					<?php if (in_array($order_info['status'], array(0,1))) {?>
 					<a target="_blank" href="<?php echo $pay_url?>" class="big_status no_margin">Оплатить сделку</a>

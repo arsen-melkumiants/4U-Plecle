@@ -109,7 +109,7 @@ class Order_model extends CI_Model {
 			$this->db
 				->where('o.cleaner_id', 0)
 				->where_in('o.status', array(0,1,2))
-				->where('o.start_date >', time() + 86400);
+				->where('((o.start_date > '.(time() + 86400).' AND o.urgent_cleaning = 0) OR (o.start_date > '.time().' AND o.urgent_cleaning = 1))');
 		} elseif ($status == 1) {
 			$this->db
 				->where('o.cleaner_id !=', 0)
@@ -117,6 +117,7 @@ class Order_model extends CI_Model {
 		} elseif ($status == 3) {
 			$this->db
 				->where('o.cleaner_id', 0)
+				->where('o.urgent_cleaning', 0)
 				->where('((o.status = 2 AND o.start_date > '.time().') OR (o.status  = 1 AND o.start_date > '.(time() + 86400).') )')
 				->where('((o.recommended) = 0 OR (o.recommended = 1 AND o.add_date + '.(3600 * 3).' < '.time().'))');
 		} elseif ($status == 4) {
@@ -124,11 +125,16 @@ class Order_model extends CI_Model {
 				->where('o.cleaner_id', 0)
 				->where('((o.status = 2 AND o.start_date > '.time().') OR (o.status  = 1 AND o.start_date > '.(time() + 86400).') )')
 				->join('order_invites AS i', 'o.id = i.order_id AND i.status = 0 AND i.cleaner_id = '.$user_id, 'inner');
+		} elseif ($status == 5) {
+			$this->db
+				->where('o.cleaner_id', 0)
+				->where('o.urgent_cleaning', 1)
+				->where('(o.status = 2 AND o.start_date > '.time().')');
 		} else {
 			$this->db->where('(o.status > 2 OR (o.status IN (0,1) AND o.start_date < '.(time() + 86400).') OR (o.status = 2 AND o.start_date < '.time().' AND o.cleaner_id = 0))');
 		}
 
-		if (!in_array($status, array(3,4))) {
+		if (!in_array($status, array(3,4,5))) {
 			$this->db->where('o.'.$user_type.'_id', $user_id);
 		}
 
@@ -181,6 +187,7 @@ class Order_model extends CI_Model {
 			'2' => 'Завершенные сделки',
 			//'3' => 'Эти сделки должны Вас заинтересовать',
 			//'4' => 'Вам предлагают',
+			'5' => 'Срочные уборки',
 		);
 
 		$page_names = array(
@@ -189,6 +196,7 @@ class Order_model extends CI_Model {
 			'2' => 'completed_page',
 			'3' => 'request_page',
 			'4' => 'invite_page',
+			'5' => 'urgent_page',
 		);
 
 		$this->table
@@ -203,7 +211,9 @@ class Order_model extends CI_Model {
 				'title' => 'Номер',
 				'width' => '37%',
 				'func'  => function($row, $params, $that, $CI) {
-					if (in_array($row['status'], array(0,1)) && $row['start_date'] < 86400 + time()) {
+					$prepend_time = $row['urgent_cleaning'] ? time() : time() + 86400;
+
+					if (in_array($row['status'], array(0,1)) && $row['start_date'] < $prepend_time) {
 						return '<span class="label label-danger"><i class="icon_frown"></i>Сделка не состоялась</span>';
 					} elseif (in_array($row['status'], array(4,5))) {
 						return '<span class="label label-danger"><i class="icon_frown"></i>Сделка отменена</span>';
@@ -243,7 +253,7 @@ class Order_model extends CI_Model {
 				}
 		));
 		if (!empty($result_html) && !empty($status_labels[$status])) {
-			$result_html = '<h4 class="title">'.$status_labels[$status].'</h4>'.$result_html;
+			$result_html = '<div class="'.$page_names[$status].'"><h4 class="title">'.$status_labels[$status].'</h4>'.$result_html.'</div>';
 		}
 		return $result_html;
 	}
@@ -398,9 +408,10 @@ class Order_model extends CI_Model {
 			));
 
 		$zone_offset = isset($_POST['timezone']) ? date('Z') - $_POST['timezone'] : 0;
-		$is_late = (!empty($_POST['start_date']) && time() + (86400 * 2) > strtotime($_POST['start_date']) + $zone_offset);
+		$prepend_time = $this->input->post('urgent_cleaning') ? time() : time() + (86400 * 2);
+		$is_late = (!empty($_POST['start_date']) && $prepend_time > strtotime($_POST['start_date']) + $zone_offset);
 		if ($is_late) {
-			$this->form->form_data[2]['params']['error'] = 'Поздняя дата, выберите пожалуйста более раннюю (минимум за два дня)';
+			$this->form->form_data[2]['params']['error'] = 'Поздняя дата, выберите пожалуйста более раннюю '.($this->input->post('urgent_cleaning') ? '' : '(минимум за два дня)');
 		}
 
 		$duration = $this->input->post('duration');
@@ -465,7 +476,8 @@ class Order_model extends CI_Model {
 			return false;
 		}
 
-		$pay_time = ($order_info['start_date'] - 86400) > time();
+		$prepend_time = $order_info['urgent_cleaning'] ? time() : time() + 86400;
+		$pay_time = ($order_info['start_date'] > $prepend_time);
 		if ($pay_time && ($order_info['status'] == 0 || $order_info['status'] == 1)) {
 			$payment_info = $this->db->where(array('order_id' => $order_info['id'], 'status' => 0))->get('payments')->row_array();
 			if (empty($payment_info)) {

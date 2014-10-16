@@ -47,6 +47,15 @@ if (!empty($order_info['add_durations'])) {
 	<?php }?>
 	<dt>Сумма за моющие средства</dt>
 	<dd><?php echo $order_info['detergent_price'] * $order_info['need_detergents']?> рублей</dd>
+
+	<?php if ($order_info['urgent_cleaning'] && $user_info['is_cleaner']) {?>
+	<dt>Сумма за срочность</dt>
+	<dd><?php echo floatval($order_info['urgent_cleaner_price'])?> рублей</dd>
+	<?php } elseif ($order_info['urgent_cleaning'] && !$user_info['is_cleaner']) {?>
+	<dt>Сумма за срочность</dt>
+	<dd><?php echo floatval($order_info['urgent_price'])?> рублей</dd>
+	<?php }?>
+
 	<dt><b>Итого</b></dt>
 	<?php if ($user_info['is_cleaner']) {?>
 	<dd><b><?php echo floatval($order_info['total_cleaner_price'])?> рублей</b></dd>

@@ -1,3 +1,4 @@
+<?php echo (!empty($urgent_orders) ? $urgent_orders: '')."\n";?>
 <?php echo (!empty($created_orders) ? $created_orders: '')."\n";?>
 <?php echo (!empty($active_orders) ? $active_orders: '')."\n";?>
 

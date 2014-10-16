@@ -203,6 +203,7 @@ table .btn {border-radius: 0;padding: 2px 12px;border: 0;margin: -10px 0;}
 table .btn.btn-primary {color: #fff;background-color: #008caa;}
 table .btn.btn-primary:hover {color: #fff;background-color: #005668;}
 
+.list.orders {margin-top: -15px;}
 .list.orders * {font-size: 14px;}
 .list.orders tr {cursor: pointer;}
 .list.orders .label {display: inline-block;border-radius: 0;padding: 13px 10px 13px 50px;position: relative;font-weight: normal;}
@@ -221,7 +222,7 @@ table .btn.btn-primary:hover {color: #fff;background-color: #005668;}
 .list.orders tr:hover .label-warning {background-color: #ffae00;}
 .list.orders tr:hover .label-danger {background-color: #ff452c;}
 
-.list.orders .small_photo {float: left;margin-right: 10px;position: relative;}
+.list.orders .small_photo {float: left;margin: 0 10px;position: relative;}
 .list.orders .count {position: absolute;padding: 1px 5px;background: #f41e1e;color: #fff;font-size: 10px;right: -6px;top: 2px;border-radius: 50%;}
 .list.orders .info {margin-top: 10px;}
 .list.orders .info .price {color: #d57d32;}
@@ -230,6 +231,12 @@ table .btn.btn-primary:hover {color: #fff;background-color: #005668;}
 
 .more_orders {display: block;text-align: center;text-decoration: none;color: #333;font-size: 14px;padding-bottom: 20px;background: url('../img/more_arrow.png') bottom center no-repeat;}
 .more_orders:hover {text-decoration: none;color: #333;}
+
+.urgent_page .title {position: relative;border-color: #ffa3a3;color: #ff0000;}
+.urgent_page .title:after {display: block;content: "";background: url(../img/urgent_icon.png) -5px -1px;width: 16px;height: 21px;position: absolute;top: -3px;left: 145px;}
+.urgent_page table.orders {background: #ffebeb;}
+.urgent_page .list.orders tr .label {background-color: #ff0000;}
+.urgent_page .list.orders tr:hover .label {background-color: #ff452c;}
 
 table.cleaners .text_edit {width: 100%;min-height: 60px;}
 table.cleaners .text_edit:hover {cursor: text;}

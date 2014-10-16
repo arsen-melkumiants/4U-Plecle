@@ -61,6 +61,7 @@ class Orders extends CI_Controller {
 
 			$this->data['request_orders'] = $this->order_model->order_table(3);
 			$this->data['invite_orders'] = $this->order_model->order_table(4);
+			$this->data['urgent_orders'] = $this->order_model->order_table(5);
 			$this->load->view('orders/cleaner_top', $this->data);
 		} else {
 			$this->load->view('orders/client_top', $this->data);
@@ -284,6 +285,7 @@ class Orders extends CI_Controller {
 				}
 
 				if ($update_array['status'] === 1) {
+					$update_array['urgent_cleaning'] = 0;
 					$price_info = $this->order_model->cal_order_price(array(
 						'duration'        => $order_info['duration'],
 						'need_detergents' => $order_info['need_detergents'],
@@ -343,7 +345,8 @@ class Orders extends CI_Controller {
 
 		if ($this->input->is_ajax_request()) {
 			if (isset($_POST['delete'])) {
-				$cancel_time = ($order_info['start_date'] > time() + 86400);
+				$prepend_time = $order_info['urgent_cleaning'] ? time() : time() + 86400;
+				$cancel_time = ($order_info['start_date'] > $prepend_time);
 				if (in_array($order_info['status'], array(0,1,2)) && $cancel_time) {
 					$update_array['cancel_date'] = time();
 					if ($order_info['status'] == 2) {
