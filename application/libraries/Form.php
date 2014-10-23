@@ -319,11 +319,12 @@ class Form {
 
 	public function create($params = false) {
 		$html = '';
+		$CI =& get_instance();
 
 		//js editor for textarea
 		if (file_exists(FCPATH.'dist/ckeditor/ckeditor.js') && $this->load_editor && $this->load_editor !== 'exists') {
 			$this->load_editor = 'exists';
-			echo '<script>window.onload = function(){CKEDITOR.config.allowedContent = true;};</script>';
+			$CI->output->set_output('<script>window.onload = function(){CKEDITOR.config.allowedContent = true;};</script>');
 			after_load('js', '/dist/ckeditor/ckeditor.js');
 		}
 
@@ -359,7 +360,6 @@ class Form {
 			}
 			$group_class = !empty($item['params']['group_class']) ? ' '.$item['params']['group_class'] : '';
 			if (is_callable($item['form'])) {
-				$CI =& get_instance();
 				$html .= $item['form']($item['params'], $CI);
 			} elseif (isset($item['params']['type']) && $item['params']['type'] == 'hidden') {
 				$html .= $item['form'].PHP_EOL;
