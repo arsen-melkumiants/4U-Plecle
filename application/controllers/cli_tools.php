@@ -40,6 +40,41 @@ class Cli_tools extends CI_Controller {
 		}
 	}
 
+	public function take_orders_without_cleaners() {
+		$result = $this->db
+			->where('cleaner_id', 0)
+			->where_in('status', array(0, 1, 2))
+			->get('orders')
+			->result_array();
+		if (empty($result)) {
+			return false;
+		}
+
+		$hour = 3600;
+		$now = time();
+		$normal_offset = $hour * TIME_GET_NORMAL_ORDER;
+		$urgent_offset = $hour * TIME_GET_URGENT_ORDER;
+
+
+		foreach ($result as $item) {
+			$end_date = $item['start_date'] + ($hour * $item['duration']);
+			$end_date = !empty($item['urgent_cleaning']) ? $end_date + $urgent_offset : $end_date + $normal_offset;
+			if ($end_date < $now) {
+				continue;
+			}
+
+			$update_array = array(
+				'cleaner_id' => 1
+			);
+
+			if ($item['status'] == 0) {
+				$update_array['status'] = 1;
+			}
+
+			$this->db->where('id', $item['id'])->update('orders', $update_array);
+		}
+	}
+
 	public function autocomplete_orders() {
 		$this->load->library('ion_auth');
 

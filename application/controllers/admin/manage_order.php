@@ -188,7 +188,13 @@ class Manage_order extends CI_Controller {
 			->edit(array('link' => $this->MAIN_URL.'edit/%d'))
 			->create(function($CI) {
 				return $CI->admin_order_model->get_all_orders($CI->data['status']);
-			});
+			}, array(
+				'tr_func' => function ($row, $table_params, $this, $CI) {
+					if ($row['cleaner_id'] == 1) {
+						return 'class="warning"';
+					}
+				}
+			));
 
 		load_admin_views();
 	}

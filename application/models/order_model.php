@@ -172,9 +172,15 @@ class Order_model extends CI_Model {
 			$sql .= ' AND ('.implode(' OR ', $sql_like).')';
 		}
 		$sql .= ' GROUP BY u.id ORDER BY rating desc';
-		return $this->db
+		$data = $this->db
 			->query($sql)
 			->result_array();
+
+		if (empty($data)) {
+			$data = $this->db->where('id', 1)->get('users')->result_array();
+		}
+
+		return $data;
 	}
 
 	function order_table($status = 0, $limit = 0) {

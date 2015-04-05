@@ -112,6 +112,21 @@ class Admin_control_panel extends CI_Controller {
 				'width'       => '2',
 				'symbol'      => 'руб',
 			))
+			->separator()
+			->text('TIME_GET_NORMAL_ORDER', array(
+				'value'       => (defined('TIME_GET_NORMAL_ORDER') ? TIME_GET_NORMAL_ORDER : ''),
+				'valid_rules' => 'required|trim|xss_clean|numeric',
+				'label'       => 'Время, когда робот забирает обычные сделки',
+				'width'       => '2',
+				'symbol'      => 'час(ов)',
+			))
+			->text('TIME_GET_URGENT_ORDER', array(
+				'value'       => (defined('TIME_GET_URGENT_ORDER') ? TIME_GET_URGENT_ORDER: ''),
+				'valid_rules' => 'required|trim|xss_clean|numeric',
+				'label'       => 'Время, когда робот забирает срочные сделки',
+				'width'       => '2',
+				'symbol'      => 'час(ов)',
+			))
 			->btn(array('offset' => 3, 'value' => 'Изменить'))
 			->create();
 
@@ -122,15 +137,18 @@ class Admin_control_panel extends CI_Controller {
 		} else {
 			$data = $this->input->post();
 
-			$data['PRICE_PER_HOUR']       = abs(round($data['PRICE_PER_HOUR'], 2));
-			$data['DETERGENT_PRICE']      = abs(round($data['DETERGENT_PRICE'], 2));
-			$data['MAX_CLEANER_SALARY']   = abs(round($data['MAX_CLEANER_SALARY'], 2));
-			$data['CLEANER_SALARY']       = abs(round($data['CLEANER_SALARY'], 2));
+			$data['PRICE_PER_HOUR']        = abs(round($data['PRICE_PER_HOUR'], 2));
+			$data['DETERGENT_PRICE']       = abs(round($data['DETERGENT_PRICE'], 2));
+			$data['MAX_CLEANER_SALARY']    = abs(round($data['MAX_CLEANER_SALARY'], 2));
+			$data['CLEANER_SALARY']        = abs(round($data['CLEANER_SALARY'], 2));
 
-			$data['URGENT_PRICE']         = abs(round($data['URGENT_PRICE'], 2));
-			$data['URGENT_CLEANER_PRICE'] = abs(round($data['URGENT_CLEANER_PRICE'], 2));
+			$data['URGENT_PRICE']          = abs(round($data['URGENT_PRICE'], 2));
+			$data['URGENT_CLEANER_PRICE']  = abs(round($data['URGENT_CLEANER_PRICE'], 2));
 
-			$data['FINE_PRICE']           = abs(round($data['FINE_PRICE'], 2));
+			$data['FINE_PRICE']            = abs(round($data['FINE_PRICE'], 2));
+
+			$data['TIME_GET_NORMAL_ORDER'] = abs(round($data['TIME_GET_NORMAL_ORDER'], 2));
+			$data['TIME_GET_URGENT_ORDER'] = abs(round($data['TIME_GET_URGENT_ORDER'], 2));
 
 			$add_sets = '';
 			foreach($data as $key => $row) {
