@@ -1,8 +1,14 @@
 <div class="users_block">
 	<div class="container">
-		<?php if (!empty($cleaners)) {?>
-		<h1>Список горничных в Вашем районе</h1>
-		<h3>Кто первый согласиться на сделку, того и заказ!</h3>
+		<?php if (!empty($cleaners)) { ?>
+
+		<?php if (empty($auto_clean)) { ?>
+			<h1>Список горничных в Вашем районе</h1>
+			<h3>Кто первый согласиться на сделку, того и заказ!</h3>
+		<?php } else { ?>
+			<h1>Ваш заказ будет выполнен сотрудниками PleaseClean</h1>
+			<br />
+		<?php } ?>
 		<div class="row">
 			<?php foreach ($cleaners as $item) {?>
 			<div class="col-sm-2">

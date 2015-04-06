@@ -629,7 +629,7 @@ class Personal extends CI_Controller {
 		if (empty($this->data['cleaners'])) {
 			return $this->order_request($this->data['user_info']);
 		} elseif (count($this->data['cleaners']) == 1 && $this->data['cleaners'][0]['id'] == 1) {
-			$auto_clean = true;
+			$this->data['auto_clean'] = true;
 		}
 
 		if (!isset($_POST['duration'])) {
@@ -723,7 +723,7 @@ class Personal extends CI_Controller {
 
 			$info = array(
 				'client_id'       => $user_id,
-				'cleaner_id'      => !empty($auto_clean) ? $this->data['cleaners'][0]['id'] : 0,
+				'cleaner_id'      => !empty($this->data['auto_clean']) ? $this->data['cleaners'][0]['id'] : 0,
 				'frequency'       => $this->input->post('frequency'),
 				'duration'        => $duration,
 				'add_durations'   => !empty($options_array) ? json_encode($options_array) : '',
@@ -739,7 +739,7 @@ class Personal extends CI_Controller {
 				'start_date'      => strtotime($this->input->post('start_date')),
 				'add_date'        => time(),
 				'last_mark'       => '',
-				'status'          => !empty($auto_clean) ? 1 : 0,
+				'status'          => !empty($this->data['auto_clean']) ? 1 : 0,
 			);
 
 			$price_info = $this->order_model->cal_order_price(array(
