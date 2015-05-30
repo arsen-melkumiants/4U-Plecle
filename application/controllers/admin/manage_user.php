@@ -227,6 +227,7 @@ class Manage_user extends CI_Controller {
 			}
 		}
 
+		$this->load->library('form_validation');
 		$this->form_validation->set_message('is_unique_without', 'Это номер уже используется. Пожалуйста, укажите другой');
 		return $this->form
 			->text('first_name', array('value' => $user_info['first_name'], 'valid_rules' => 'required|trim|xss_clean|max_length[150]',  'label' => lang('create_user_fname_label')))

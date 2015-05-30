@@ -101,12 +101,14 @@ class Orders extends CI_Controller {
 			$this->messages($order_id, true);
 		}
 
+		$client_info = $this->ion_auth->user($this->data['order_info']['client_id'])->row_array();
 		$this->data['right_info']   = array(
 			'title'      => 'Детали заявки',
 			'info_array' => array(
 				'Индекс'          => $this->data['order_info']['zip'],
 				'Дата'            => date('d.m.Y', $this->data['order_info']['start_date']),
 				'Время'           => date('H:i', $this->data['order_info']['start_date']),
+				'Телефон'         => '<b>'.$client_info['phone'].'</b>',
 				'Частота'         => $this->order_model->frequency[$this->data['order_info']['frequency']],
 				'Рабочие часы'    => $this->data['order_info']['duration'].' часов',
 				'Цена за час'     => floatval($this->data['order_info']['price_per_hour']).' рублей',
@@ -117,7 +119,7 @@ class Orders extends CI_Controller {
 
 		$this->load->view('header', $this->data);
 		if ($this->data['user_info']['is_cleaner']) {
-			$this->data['client_info'] = $this->ion_auth->user($this->data['order_info']['client_id'])->row_array();
+			$this->data['client_info'] = $client_info;
 			$this->load->view('orders/cleaner_top', $this->data);
 
 			$this->data['right_info']['info_array']['Цена за час'] = floatval($this->data['order_info']['cleaner_price']).' рублей';
