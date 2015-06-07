@@ -113,6 +113,14 @@ class Admin_control_panel extends CI_Controller {
 				'symbol'      => 'руб',
 			))
 			->separator()
+			->text('MAX_HOURS_CLEANING', array(
+				'value'       => (defined('MAX_HOURS_CLEANING') ? MAX_HOURS_CLEANING : ''),
+				'valid_rules' => 'required|trim|xss_clean|numeric',
+				'label'       => 'Максимальная длительность уборки',
+				'width'       => '2',
+				'symbol'      => 'час(ов)',
+			))
+			->separator()
 			->text('TIME_GET_NORMAL_ORDER', array(
 				'value'       => (defined('TIME_GET_NORMAL_ORDER') ? TIME_GET_NORMAL_ORDER : ''),
 				'valid_rules' => 'required|trim|xss_clean|numeric',
@@ -147,6 +155,7 @@ class Admin_control_panel extends CI_Controller {
 
 			$data['FINE_PRICE']            = abs(round($data['FINE_PRICE'], 2));
 
+			$data['MAX_HOURS_CLEANING']    = abs(round($data['MAX_HOURS_CLEANING'], 2));
 			$data['TIME_GET_NORMAL_ORDER'] = abs(round($data['TIME_GET_NORMAL_ORDER'], 2));
 			$data['TIME_GET_URGENT_ORDER'] = abs(round($data['TIME_GET_URGENT_ORDER'], 2));
 

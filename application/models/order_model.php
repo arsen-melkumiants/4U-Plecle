@@ -14,29 +14,36 @@ class Order_model extends CI_Model {
 		'every_2_weeks' => 'Каждые две недели',
 	);
 
-	public $duration = array(
-		'1'   => '1 час',
-		'1.5' => '1.5 часа',
-		'2'   => '2 часа',
-		'2.5' => '2.5 часа',
-		'3'   => '3 часа',
-		'3.5' => '3.5 часа',
-		'4'   => '4 часа',
-		'4.5' => '4.5 часа',
-	);
+	public $duration = array();
+
+	public $add_durations = array();
 
 	public $special = array(
 		'need_ironing' => 'Нужна глажка',
 		'have_pets'    => 'Есть домашнее животное',
 	);
 
-	public $add_durations = array();
-
 	function __construct() {
 		parent::__construct();
 		$this->load->database();
 
+		$this->create_durations();
 		$this->add_durations = $this->db->select('id, name, hours')->where('status', 1)->get('order_options')->result_array();
+	}
+
+	function create_durations() {
+		$max = MAX_HOURS_CLEANING ? MAX_HOURS_CLEANING : 24;
+		for ($i = 1; $i <= $max; $i += 0.5) {
+			if ($i == 1) {
+				$time = 'час';
+			} elseif ($i <= 5) {
+				$time = 'часа';
+			} else {
+				$time = 'часов';
+			}
+
+			$this->duration[(string)$i] = $i.' '.$time;
+		}
 	}
 
 	function cal_order_price($order_info) {
